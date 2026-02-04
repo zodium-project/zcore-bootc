@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+        - avahi-tools
+        - cups
+        - cups-client
+        - cups-filters
+        - cups-filters-driverless
+        - cups-browsed
+        - nss-mdns 
+        - ipp-usb

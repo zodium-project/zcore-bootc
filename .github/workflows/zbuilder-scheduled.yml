@@ -1,0 +1,54 @@
+name: zbuilder (scheduled)
+on:
+  schedule:
+    - cron: "23 06 * * *"
+    - cron: "47 11 * * *"
+    - cron: "33 17 * * *"
+    - cron: "17 21 * * *"
+
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+jobs:
+  bluebuild:
+    name: zbuild (scheduled)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        recipe:
+          - zcore-mesa.yml
+          - zcore-nvidia.yml
+          - zcore-hybrid.yml
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Extract NVIDIA module signing key
+        if: matrix.recipe != 'zcore-mesa.yml'
+        shell: bash
+        env:
+           ZODIUM_NVIDIA_PRIV: ${{ secrets.ZODIUM_NVIDIA_PRIV }}
+        run: |
+         mkdir -p /tmp/certs
+         chmod 700 /tmp/certs
+         echo "${ZODIUM_NVIDIA_PRIV}" > /tmp/certs/kernel_key_action_builded.pem
+         chmod 600 /tmp/certs/kernel_key_action_builded.pem
+
+      - name: Build Zodium Image
+        uses: blue-build/github-action@v1.11
+        with:
+          recipe: ${{ matrix.recipe }}
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
+          maximize_build_space: true
+          build_chunked_oci: true
+          verify_install: true

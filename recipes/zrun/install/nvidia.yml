@@ -1,0 +1,39 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+
+  - type: files
+    files:
+      - source: nvidia-files   # copies `files/nvidia-files/*` (* means everything inside it) into your image's root folder `/`
+        destination: /
+
+  - type: script
+    env:
+      PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-nvidia.der
+    secrets:
+      - type: file
+        source: /tmp/certs/kernel_key_action_builded.pem
+        mount:
+          type: file
+          destination: /tmp/certs/kernel_key.pem
+    scripts:
+      - install-nvidia-modules.sh
+      - install-nvidia-check-files.sh
+      - install-nvidia-sign-modules.sh
+      - install-nvidia-drivers.sh
+
+  - type: kargs
+    kargs:
+      - rd.driver.blacklist=nouveau
+      - modprobe.blacklist=nouveau
+      - nvidia-drm.modeset=1
+      - nvidia-drm.fbdev=1
+
+  - type: script
+    snippets:
+      - cp /usr/lib/modprobe.d/nvidia-modeset.conf /etc/modprobe.d/nvidia-modeset.conf
+      - sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+      - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+      - systemctl enable zodium-nvidia.service
+      - systemctl enable nvidia-persistenced.service

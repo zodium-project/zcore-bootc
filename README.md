@@ -1,0 +1,1 @@
+zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 26/2/2026)

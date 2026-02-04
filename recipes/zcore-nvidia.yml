@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# image will be published to ghcr.io/<user>/<name>
+
+####################
+#### Image Info ####
+####################
+
+name: zcore-nvidia
+description: zcore image for NVIDIA GPUs
+
+base-image: quay.io/fedora/fedora-bootc
+image-version: latest
+platforms:
+  - linux/amd64
+
+#################
+#### MODULES ####
+#################
+modules:
+
+## Import Modules/Scripts ##
+  - from-file: zrun/install/dnf-repos.yml
+  - from-file: zrun/install/base.yml
+  - from-file: zrun/install/firmwares.yml
+  - from-file: zrun/install/network.yml
+  - from-file: zrun/install/nm-vpn.yml
+  #- from-file: zrun/install/brew.yml
+  - from-file: zrun/install/codecs.yml
+  - from-file: zrun/install/vulkan-mesa.yml
+  - from-file: zrun/install/nvidia.yml
+  - from-file: zrun/install/pipewire.yml
+  - from-file: zrun/install/cpu-gpu-utils.yml
+  - from-file: zrun/install/cli-tools.yml
+  - from-file: zrun/install/dev-tools.yml
+  - from-file: zrun/install/printing.yml
+  - from-file: zrun/install/services.yml
+  - from-file: zrun/install/plymouth.yml
+
+  - from-file: zrun/remove/extras.yml
+  - from-file: zrun/remove/unused-repos.yml
+  - from-file: zrun/remove/flatpak-fedora.yml
+  - from-file: zrun/remove/fedora-bloat.yml
+  - from-file: zrun/remove/services.yml
+  
+#############################
+### End of System Modules ###
+#############################
+
+## OS-release Module ##
+  - type: os-release
+    properties:
+      ID: fedora
+      NAME: zcore-os
+      PRETTY_NAME: zcore by zodium project (nvidia)
+
+## initramfs module ##
+  - type: initramfs
+
+## Signing Module ##
+  - type: signing
+  
+###################
+### END of File ###
+###################

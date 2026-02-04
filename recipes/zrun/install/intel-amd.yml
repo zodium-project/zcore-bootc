@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+      - mesa-vulkan-drivers
+      - intel-media-driver
+      - intel-vpl-gpu-rt
+      - mesa-va-drivers-freeworld
+      - mesa-vdpau-drivers-freeworld

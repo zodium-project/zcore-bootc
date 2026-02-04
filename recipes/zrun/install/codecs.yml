@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: dnf
+    install:
+       install-weak-deps: false
+       packages:
+         - ffmpeg
+         - ffmpeg-libs
+         - fdk-aac
+         - gstreamer1-plugin-libav
+         - gstreamer1-plugins-bad-free-extras
+         - gstreamer1-plugins-bad-freeworld
+         - gstreamer1-plugins-ugly
+         - gstreamer1-vaapi
+         - libheif-freeworld
+         - libjxl
+         - libwebp
+         - exiv2

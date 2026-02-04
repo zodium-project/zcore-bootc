@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: dnf
+    install:
+       install-weak-deps: false
+       packages:
+         - vim
+         - fzf
+         - fd-find
+         - bat
+         - eza
+         - zoxide
+         - ripgrep
+         - trash-cli
+         - zsh
+         - zsh-autosuggestions
+         - zsh-syntax-highlighting
+         - starship
+         - fastfetch
