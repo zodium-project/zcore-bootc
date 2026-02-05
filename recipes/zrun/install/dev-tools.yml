@@ -10,6 +10,3 @@ modules:
          - podman
          - podman-compose
          - git
-         - gh
-         - btop
-         - glab

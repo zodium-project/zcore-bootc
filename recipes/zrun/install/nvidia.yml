@@ -25,10 +25,12 @@ modules:
 
   - type: kargs
     kargs:
-      - rd.driver.blacklist=nouveau
-      - modprobe.blacklist=nouveau
+      - rd.driver.blacklist=nouveau,nova_core
+      - modprobe.blacklist=nouveau,nova_core
       - nvidia-drm.modeset=1
       - nvidia-drm.fbdev=1
+      - nvidia.NVreg_PreserveVideoMemoryAllocations=1
+      - nvidia.NVreg_TemporaryFilePath=/var/tmp
 
   - type: script
     snippets:

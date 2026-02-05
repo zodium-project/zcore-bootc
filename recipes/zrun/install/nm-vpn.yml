@@ -9,5 +9,4 @@ modules:
        - NetworkManager-openvpn
        - NetworkManager-vpnc
        - openvpn
-       - wireguard-tools
        - vpnc
