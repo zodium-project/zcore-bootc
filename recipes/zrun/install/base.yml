@@ -25,3 +25,22 @@ modules:
       - unbound-anchor
       - usbmuxd
       - flatpak
+
+ - type: kargs
+   kargs:
+      - preempt=voluntary
+      - loglevel=3
+      - rd.udev.log_level=3
+      - nowatchdog
+      - mitigations=auto
+      - mem_sleep_default=deep
+      - sched_autogroup_enabled=0
+      - nohz=on
+      - skew_tick=1
+      - i915.enable_psr=0
+      - split_lock_detect=off
+
+ - type: script
+   scripts:
+       - set-hwp-scripts.sh
+       - install-flathub.sh

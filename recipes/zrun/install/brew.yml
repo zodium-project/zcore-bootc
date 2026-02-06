@@ -2,7 +2,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
 
 modules:
-#=> Setups & installs homebrew along with its services.
   - type: brew
     direct-pull: true
     nofile-limits: true

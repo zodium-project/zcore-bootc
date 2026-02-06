@@ -1,0 +1,59 @@
+# Lines configured by Zodium Project
+# Do not edit — use ~/.zshrc to override or disable via env vars
+
+# ---- Zsh plugins ----
+
+if [[ -r /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] &&
+   [[ -z "$DISABLE_ZSH_AUTOSUGGESTIONS" ]]; then
+  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+if [[ -r /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] &&
+   [[ -z "$DISABLE_ZSH_SYNTAX_HIGHLIGHTING" ]]; then
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+if [[ -r /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh ]] &&
+   [[ -z "$DISABLE_ZSH_AUTOCOMPLETE" ]]; then
+  source /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+fi
+
+# ---- Prompt ----
+
+if command -v starship >/dev/null 2>&1 &&
+   [[ -z "$DISABLE_STARSHIP" ]]; then
+  eval "$(starship init zsh)"
+fi
+
+# ---- Directory jumping ----
+
+if command -v zoxide >/dev/null 2>&1 &&
+   [[ -z "$DISABLE_ZOXIDE" ]]; then
+  eval "$(zoxide init zsh)"
+fi
+
+# ---- Aliases ----
+
+if command -v eza >/dev/null 2>&1 &&
+   [[ -z "$DISABLE_EZA_ALIASES" ]]; then
+  alias ll='eza --all -l --icons --color'
+  alias ls='eza --icons --color'
+  alias lstree='eza --tree --color --icons'
+  alias lstree-all='eza --all --tree --color --icons'
+fi
+
+if command -v zoxide >/dev/null 2>&1 &&
+   [[ -z "$DISABLE_ZOXIDE_CD" ]]; then
+  alias cd='z'
+fi
+
+if command -v fd >/dev/null 2>&1 &&
+   [[ -z "$DISABLE_FD_ALIAS" ]]; then
+  alias find='fd'
+fi
+
+# ---- KDE / Plasma tweaks ----
+# Force virtual keyboard availability in Plasma (KWin)
+if [[ -z "$DISABLE_KWIN_IM_SHOW_ALWAYS" ]]; then
+  export KWIN_IM_SHOW_ALWAYS=1
+fi

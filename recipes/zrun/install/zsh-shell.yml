@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+
+  - type: dnf
+    install:
+       install-weak-deps: false
+       packages:
+         - zsh
+         - zsh-autosuggestions
+         - zsh-autocomplete
+         - zsh-syntax-highlighting
+
+  - type: script
+    scripts:
+      - set-useradd-defaults.sh
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+       - FiraCode
+       - Hack
+       - Mononoki
+       - Iosevka
