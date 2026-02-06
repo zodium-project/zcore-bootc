@@ -35,7 +35,7 @@ modules:
 
   - type: script
     snippets:
-      - cp /usr/lib/modprobe.d/nvidia-modeset.conf /etc/modprobe.d/nvidia-modeset.conf
+      - cp /usr/lib/modprobe.d/99-nvidia-zodium.conf /etc/modprobe.d/99-nvidia-zodium.conf
       - sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
       - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
       - systemctl enable zodium-nvidia.service
