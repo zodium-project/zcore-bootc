@@ -1,0 +1,18 @@
+[Unit]
+Description=Switch Flatpak remotes to Flathub
+After=network-online.target
+Wants=network-online.target
+# Only run if Fedora remote exists
+ConditionPathExists=/var/lib/flatpak/repo/
+[Service]
+Type=oneshot
+# Disable Fedora Flatpak repo (if present)
+ExecStart=/usr/bin/flatpak remote-modify --system --disable fedora
+# Add Flathub if missing
+ExecStart=/usr/bin/flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+# Ensure Flathub is enabled
+ExecStart=/usr/bin/flatpak remote-modify --system --enable flathub
+# Mark service as successful forever after first run
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target

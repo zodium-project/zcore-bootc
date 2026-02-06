@@ -39,4 +39,3 @@ modules:
  - type: script
    scripts:
        - set-hwp-scripts.sh
-       - install-flathub.sh

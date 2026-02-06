@@ -6,3 +6,4 @@ modules:
     snippets:
       - "systemctl enable zodium-machine-id.service"
       - "systemctl enable zodium-set-hostname.service"
+      - "systemctl enable zodium-flatpak-repo.service"
