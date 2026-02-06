@@ -25,13 +25,13 @@ modules:
   - from-file: zrun/install/firmwares.yml
   - from-file: zrun/install/network.yml
   - from-file: zrun/install/nm-vpn.yml
-  - from-file: zrun/install/brew.yml
   - from-file: zrun/install/codecs.yml
   - from-file: zrun/install/vulkan-mesa.yml
   - from-file: zrun/install/nvidia.yml
   - from-file: zrun/install/pipewire.yml
   - from-file: zrun/install/cpu-gpu-utils.yml
   - from-file: zrun/install/cli-tools.yml
+  - from-file: zrun/install/brew.yml
   - from-file: zrun/install/dev-tools.yml
   - from-file: zrun/install/printing.yml
   - from-file: zrun/install/services.yml
