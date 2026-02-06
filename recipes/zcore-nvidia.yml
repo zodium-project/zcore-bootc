@@ -39,8 +39,6 @@ modules:
   - from-file: zrun/install/zsh-shell.yml
 
   - from-file: zrun/remove/extras.yml
-  - from-file: zrun/remove/unused-repos.yml
-  - from-file: zrun/remove/flatpak-fedora.yml
   - from-file: zrun/remove/fedora-bloat.yml
   - from-file: zrun/remove/services.yml
   
