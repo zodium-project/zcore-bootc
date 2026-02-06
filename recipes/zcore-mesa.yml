@@ -36,6 +36,7 @@ modules:
   - from-file: zrun/install/printing.yml
   - from-file: zrun/install/services.yml
   - from-file: zrun/install/plymouth.yml
+  - from-file: zrun/install/zsh-shell.yml
 
   - from-file: zrun/remove/extras.yml
   - from-file: zrun/remove/unused-repos.yml
