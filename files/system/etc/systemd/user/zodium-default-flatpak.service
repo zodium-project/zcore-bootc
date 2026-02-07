@@ -5,6 +5,6 @@ After=zodium-flatpak-repo.service network-online.target
 Wants=network-online.target
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/flatpak install -y --system flathub bazaar
+ExecStart=/usr/bin/flatpak install flathub io.github.kolunmi.Bazaar -y
 [Install]
 WantedBy=multi-user.target
