@@ -9,7 +9,6 @@ modules:
        packages:
          - zsh
          - zsh-autosuggestions
-         - zsh-autocomplete
          - zsh-syntax-highlighting
 
   - type: script

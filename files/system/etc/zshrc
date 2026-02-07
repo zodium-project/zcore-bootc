@@ -13,11 +13,6 @@ if [[ -r /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] &&
   source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-if [[ -r /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh ]] &&
-   [[ -z "$DISABLE_ZSH_AUTOCOMPLETE" ]]; then
-  source /usr/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-fi
-
 # ---- Prompt ----
 
 if command -v starship >/dev/null 2>&1 &&
@@ -50,10 +45,4 @@ fi
 if command -v fd >/dev/null 2>&1 &&
    [[ -z "$DISABLE_FD_ALIAS" ]]; then
   alias find='fd'
-fi
-
-# ---- KDE / Plasma tweaks ----
-# Force virtual keyboard availability in Plasma (KWin)
-if [[ -z "$DISABLE_KWIN_IM_SHOW_ALWAYS" ]]; then
-  export KWIN_IM_SHOW_ALWAYS=1
 fi
