@@ -9,4 +9,5 @@ modules:
          - distrobox
          - podman
          - podman-compose
+         - podman-docker
          - git
