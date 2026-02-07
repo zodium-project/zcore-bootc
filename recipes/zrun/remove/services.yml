@@ -5,3 +5,5 @@ modules:
   - type: script
     snippets:
       - "systemctl mask systemd-remount-fs.service"
+      - "systemctl disable bootc-fetch-apply-updates.timer"
+      - "systemctl mask bootc-fetch-apply-updates.timer"

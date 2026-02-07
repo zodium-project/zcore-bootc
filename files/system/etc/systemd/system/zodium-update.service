@@ -1,0 +1,10 @@
+# /usr/lib/systemd/system/zodium-update.service
+[Unit]
+Description=Zodium OS Update (Stage Only, No Reboot)
+ConditionPathExists=/run/ostree-booted
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bootc upgrade --stage-only --quiet

@@ -6,7 +6,6 @@ modules:
     install:
        install-weak-deps: false
        packages:
-         - vim
          - fzf
          - fd-find
          - bat
@@ -16,3 +15,5 @@ modules:
          - fastfetch
          - starship
          - zoxide
+         - neovim
+         - btop
