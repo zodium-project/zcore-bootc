@@ -1,0 +1,12 @@
+# /usr/lib/systemd/system/zodium-update.timer
+[Unit]
+Description=Zodium OS Update Timer (Every 6 Hours)
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=6h
+Persistent=true
+RandomizedDelaySec=20min
+
+[Install]
+WantedBy=timers.target
