@@ -13,3 +13,6 @@ modules:
          - buildah
          - git
          - git-lfs
+         - git-annex
+         - git-delta
+         - crun
