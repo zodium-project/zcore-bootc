@@ -1,0 +1,10 @@
+[Unit]
+Description=Zodium Default Flatpak (Bazaar)
+Requires=zodium-flatpak-repo.service
+After=zodium-flatpak-repo.service network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak install -y --system flathub bazaar
+[Install]
+WantedBy=multi-user.target
