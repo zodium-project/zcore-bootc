@@ -44,4 +44,4 @@ modules:
 
  - type: script
    scripts:
-       - set-hwp-scripts.sh
+       - setup-libexec-scripts.sh

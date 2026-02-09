@@ -1,11 +1,12 @@
 [Unit]
-Description=Add User to gamemode Group
+Description=Add desktop users to gamemode group
 After=multi-user.target
+ConditionPathExists=/etc/passwd
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash -c 'u=$(logname 2>/dev/null || echo $SUDO_USER); [ -n "$u" ] && /usr/sbin/usermod -aG gamemode "$u"'
+ExecStart=/usr/libexec/zodium-set-gamemode.sh
 RemainAfterExit=yes
 
 [Install]
-WantedBy=multi-user.target   
+WantedBy=multi-user.target
