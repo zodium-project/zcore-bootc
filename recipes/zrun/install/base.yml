@@ -28,6 +28,8 @@ modules:
       - unbound-anchor
       - usbmuxd
       - flatpak
+      - zram-generator
+      - zram-generator-defaults
 
  - type: kargs
    kargs:
