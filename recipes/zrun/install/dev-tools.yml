@@ -3,6 +3,13 @@
 
 modules:
   - type: dnf
+    group-install:
+      with-optional: false
+      install-weak-deps: false
+      packages:
+          - development-tools
+
+  - type: dnf
     install:
        install-weak-deps: false
        packages:
