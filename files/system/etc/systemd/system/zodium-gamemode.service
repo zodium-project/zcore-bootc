@@ -1,0 +1,11 @@
+[Unit]
+Description=Add User to gamemode Group
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'u=$(logname 2>/dev/null || echo $SUDO_USER); [ -n "$u" ] && /usr/sbin/usermod -aG gamemode "$u"'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target   
