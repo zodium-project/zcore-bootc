@@ -5,7 +5,7 @@ modules:
 
   - type: files
     files:
-      - source: nvidia-files   # copies `files/nvidia-files/*` (* means everything inside it) into your image's root folder `/`
+      - source: nvidia-files
         destination: /
 
   - type: script

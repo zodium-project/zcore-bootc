@@ -9,3 +9,5 @@ modules:
       - mesa-libGLU
       - vulkan-tools
       - libva-utils
+      - vainfo
+      - vdpauinfo
