@@ -16,4 +16,3 @@ modules:
          - starship
          - zoxide
          - neovim
-         - btop
