@@ -17,11 +17,14 @@ modules:
       - alsa-utils
       - libcamera-ipa
       - libinput
+      - systemd-oomd-defaults
+      - uresourced
       - libinput-utils
       - lm_sensors
       - usbutils
       - pciutils
       - v4l-utils
+      - dbus-daemon
       - unbound-anchor
       - usbmuxd
       - flatpak
