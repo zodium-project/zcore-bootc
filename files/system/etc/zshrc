@@ -47,7 +47,8 @@ if command -v fd >/dev/null 2>&1 &&
   alias find='fd'
 fi
 
-# Homebrew (Linux) – add to PATH only if present and not disabled
+# ---- Homebrew ----
+
 if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] &&
    [[ -z "$DISABLE_HOMEBREW" ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
