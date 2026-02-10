@@ -5,6 +5,9 @@ HISTSIZE=1250
 SAVEHIST=1250
 bindkey -e
 setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
 setopt CORRECT
 autoload -Uz compinit
 compinit -C
