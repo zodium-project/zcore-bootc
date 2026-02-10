@@ -9,6 +9,6 @@ modules:
         - micro
         - htop
         - nvtop
-        - vim-common
-        - vim-enhanced
-        - vim-data
+        #- vim-common
+        #- vim-enhanced
+        #- vim-data
