@@ -15,4 +15,3 @@ modules:
          - fastfetch
          - starship
          - zoxide
-         - neovim
