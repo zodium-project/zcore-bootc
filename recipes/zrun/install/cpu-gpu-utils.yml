@@ -12,3 +12,8 @@ modules:
         - tuned-ppd
         - gamemode
         - mangohud
+
+ - type: files
+   files:
+     - source: gamemode-settings
+       destination: /
