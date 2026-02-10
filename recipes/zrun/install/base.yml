@@ -42,7 +42,6 @@ modules:
       - split_lock_detect=off
       - split_lock_mitigate=0
       - transparent_hugepage=always
-      #- transparent_hugepage_defrag=defer
       - zswap.enabled=0
 
  - type: script
