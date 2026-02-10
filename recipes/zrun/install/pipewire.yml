@@ -17,4 +17,3 @@ modules:
          - pipewire-gstreamer
          - pipewire-utils
          - pipewire-config-raop
-         - vlc-plugin-pipewire
