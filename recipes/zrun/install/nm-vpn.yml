@@ -7,6 +7,4 @@ modules:
      install-weak-deps: false
      packages:
        - NetworkManager-openvpn
-       - NetworkManager-vpnc
        - openvpn
-       - vpnc
