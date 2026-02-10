@@ -5,6 +5,7 @@ HISTSIZE=1250
 SAVEHIST=1250
 bindkey -e
 setopt AUTO_CD
+setopt CORRECT
 autoload -Uz compinit
 compinit -C
 export DISABLE_ZSH_AUTOSUGGESTIONS=1
