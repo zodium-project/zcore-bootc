@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+log() {
+  echo -e "[zupdate] $*"
+}
+
+# ---------- Homebrew ----------
+if command -v brew >/dev/null 2>&1; then
+  log "Updating Homebrew"
+  brew update
+  brew upgrade
+else
+  log "brew not found, skipping"
+fi
+
+# ---------- Flatpak ----------
+if command -v flatpak >/dev/null 2>&1; then
+  log "Updating Flatpaks"
+  flatpak update -y
+else
+  log "flatpak not found, skipping"
+fi
+
+# ---------- rpm-ostree ----------
+if command -v rpm-ostree >/dev/null 2>&1; then
+  log "Updating system (rpm-ostree)"
+  if [[ $EUID -ne 0 ]]; then
+    exec sudo rpm-ostree upgrade
+  else
+    rpm-ostree upgrade
+  fi
+else
+  log "rpm-ostree not found, skipping"
+fi
+
+log "Update complete"

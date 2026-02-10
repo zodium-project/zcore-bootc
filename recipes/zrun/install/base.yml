@@ -46,4 +46,4 @@ modules:
 
  - type: script
    scripts:
-       - setup-libexec-scripts.sh
+       - setup-usr-executables.sh
