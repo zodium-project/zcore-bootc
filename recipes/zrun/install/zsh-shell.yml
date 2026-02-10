@@ -20,5 +20,3 @@ modules:
       nerd-fonts:
        - FiraCode
        - Hack
-       - Mononoki
-       - Iosevka
