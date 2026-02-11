@@ -9,3 +9,4 @@ modules:
       - usbutils
       - v4l-utils
       - libinput-utils
+      - pciutils
