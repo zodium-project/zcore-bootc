@@ -20,7 +20,6 @@ modules:
       - systemd-oomd-defaults
       - uresourced
       - lm_sensors
-      - usbutils
       - pciutils
       - dbus-daemon
       - unbound-anchor
