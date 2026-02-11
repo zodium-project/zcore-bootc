@@ -15,5 +15,4 @@ modules:
          - pipewire-alsa
          - pipewire-plugin-libcamera
          - pipewire-gstreamer
-         - pipewire-utils
          - pipewire-config-raop

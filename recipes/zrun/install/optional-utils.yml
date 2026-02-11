@@ -10,3 +10,4 @@ modules:
       - v4l-utils
       - libinput-utils
       - pciutils
+      - pipewire-utils
