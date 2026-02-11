@@ -19,7 +19,6 @@ modules:
       - libinput
       - systemd-oomd-defaults
       - uresourced
-      - libinput-utils
       - lm_sensors
       - usbutils
       - pciutils
