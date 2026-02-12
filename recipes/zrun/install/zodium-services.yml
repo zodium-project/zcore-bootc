@@ -9,3 +9,4 @@ modules:
       - "systemctl enable zodium-flatpak-repo.service"
       - "systemctl enable zodium-gamemode.service"
       - "systemctl enable zodium-update.timer"
+      - "systemctl enable zodium-tuned-sync.path"
