@@ -29,7 +29,6 @@ modules:
   - from-file: zrun/install/bluetooth.yml
   - from-file: zrun/install/codecs-nonfree.yml
   - from-file: zrun/install/mesa-vulkan.yml
-  - from-file: zrun/install/mesa-nonfree.yml
   - from-file: zrun/install/nvidia-open.yml
   - from-file: zrun/install/pipewire-stack.yml
   - from-file: zrun/install/power-management.yml
