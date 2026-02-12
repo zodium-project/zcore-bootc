@@ -13,7 +13,7 @@ modules:
 
   - type: script
     scripts:
-      - set-useradd-defaults.sh
+      - useradd-config.sh
 
   - type: fonts
     fonts:

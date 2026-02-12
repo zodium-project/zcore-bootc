@@ -38,4 +38,4 @@ modules:
       
  - type: script
    scripts:
-       - setup-usr-executables.sh
+       - chmod-libexec.sh

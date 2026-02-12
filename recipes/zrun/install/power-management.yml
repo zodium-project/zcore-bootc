@@ -20,7 +20,7 @@ modules:
 
  - type: script
    scripts:
-     - remove-tuned-extra-presets.sh
+     - remove-tuned-fedora-profiles.sh
 
  - type: files
    files:
