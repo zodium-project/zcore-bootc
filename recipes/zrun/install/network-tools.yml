@@ -6,21 +6,11 @@ modules:
    install:
      install-weak-deps: false
      packages:
-       - wpa_supplicant
        - iptables-nft
        - dnsmasq
-       - dhcp-client
-       - NetworkManager-wwan
-       - NetworkManager-wifi
-       - bluez
-       - bluez-libs
-       - NetworkManager-bluetooth
-       - NetworkManager
-       - NetworkManager-config-connectivity-fedora
        - traceroute
        - tcpdump
        - nmap
-       - iw
        - cifs-utils
        - fuse-sshfs
        - firewalld
