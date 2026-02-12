@@ -35,8 +35,7 @@ modules:
       - mitigations=auto
       - split_lock_detect=off
       - split_lock_mitigate=0
-      #- transparent_hugepage=always
-
+      
  - type: script
    scripts:
        - setup-usr-executables.sh
