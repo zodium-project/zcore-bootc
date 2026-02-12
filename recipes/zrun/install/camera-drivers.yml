@@ -10,3 +10,6 @@ modules:
          - libcamera-ipa
          - libcamera-gstreamer
          - pipewire-plugin-libcamera
+         - v4l-utils
+         - libcamera-v4l2
+         - pipewire-v4l2

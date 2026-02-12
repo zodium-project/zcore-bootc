@@ -7,7 +7,6 @@ modules:
      install-weak-deps: false
      packages:
       - usbutils
-      - v4l-utils
       - libinput-utils
       - pciutils
       - pipewire-utils
