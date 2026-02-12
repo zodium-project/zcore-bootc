@@ -17,3 +17,12 @@ modules:
    files:
      - source: gamemode-settings
        destination: /
+
+ - type: script
+   scripts:
+     - remove-tuned-extra-presets.sh
+
+ - type: files
+   files:
+     - source: zodium-tuned-profiles
+       destination: /
