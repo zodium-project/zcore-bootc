@@ -15,7 +15,6 @@ modules:
       - kernel-modules-extra
       - alsa-ucm
       - alsa-utils
-      - libcamera-ipa
       - libinput
       - systemd-oomd-defaults
       - uresourced

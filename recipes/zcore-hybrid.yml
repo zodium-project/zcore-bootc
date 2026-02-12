@@ -32,6 +32,7 @@ modules:
   - from-file: zrun/install/mesa-nonfree.yml
   - from-file: zrun/install/nvidia-open.yml
   - from-file: zrun/install/pipewire-stack.yml
+  - from-file: zrun/install/camera-drivers.yml
   - from-file: zrun/install/power-management.yml
   - from-file: zrun/install/cli-utils.yml
   - from-file: zrun/install/basic-tools.yml

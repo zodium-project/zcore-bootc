@@ -13,6 +13,5 @@ modules:
          - pipewire-jack-audio-connection-kit
          - pipewire-pulseaudio
          - pipewire-alsa
-         - pipewire-plugin-libcamera
          - pipewire-gstreamer
          - pipewire-config-raop
