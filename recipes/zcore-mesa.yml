@@ -21,13 +21,16 @@ modules:
 
 ## Import Modules/Scripts ##
   - from-file: zrun/install/nonfree-repos.yml
-  - from-file: zrun/install/base.yml
+  - from-file: zrun/install/linux-base.yml
   - from-file: zrun/install/sound-wifi-firmwares.yml
   - from-file: zrun/install/network.yml
+  - from-file: zrun/install/network-tools.yml
   - from-file: zrun/install/openvpn.yml
+  - from-file: zrun/install/bluetooth.yml
   - from-file: zrun/install/codecs-nonfree.yml
   - from-file: zrun/install/mesa-vulkan.yml
   - from-file: zrun/install/mesa-nonfree.yml
+  - from-file: zrun/install/nvidia-open.yml
   - from-file: zrun/install/pipewire-stack.yml
   - from-file: zrun/install/power-management.yml
   - from-file: zrun/install/cli-tools.yml
