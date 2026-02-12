@@ -15,7 +15,7 @@ modules:
 
  - type: files
    files:
-     - source: gamemode-settings
+     - source: gamemode-config
        destination: /
 
  - type: script
@@ -24,5 +24,5 @@ modules:
 
  - type: files
    files:
-     - source: zodium-tuned-profiles
+     - source: tuned-profiles
        destination: /

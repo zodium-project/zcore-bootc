@@ -4,7 +4,7 @@
 modules:
  - type: files
    files:
-     - source: zodium-basic
+     - source: base-config
        destination: /
 
  - type: dnf
