@@ -20,21 +20,21 @@ platforms:
 modules:
 
 ## Import Modules/Scripts ##
-  - from-file: zrun/install/dnf-repos.yml
+  - from-file: zrun/install/nonfree-repos.yml
   - from-file: zrun/install/base.yml
-  - from-file: zrun/install/firmwares.yml
+  - from-file: zrun/install/sound-wifi-firmwares.yml
   - from-file: zrun/install/network.yml
-  - from-file: zrun/install/nm-vpn.yml
-  - from-file: zrun/install/codecs.yml
-  - from-file: zrun/install/vulkan-mesa.yml
-  - from-file: zrun/install/intel-amd.yml
-  - from-file: zrun/install/pipewire.yml
-  - from-file: zrun/install/cpu-gpu-utils.yml
+  - from-file: zrun/install/openvpn.yml
+  - from-file: zrun/install/codecs-nonfree.yml
+  - from-file: zrun/install/mesa-vulkan.yml
+  - from-file: zrun/install/mesa-nonfree.yml
+  - from-file: zrun/install/pipewire-stack.yml
+  - from-file: zrun/install/power-management.yml
   - from-file: zrun/install/cli-tools.yml
-  - from-file: zrun/install/dev-tools.yml
-  - from-file: zrun/install/brew.yml
-  - from-file: zrun/install/printing.yml
-  - from-file: zrun/install/services.yml
+  - from-file: zrun/install/basic-tools.yml
+  - from-file: zrun/install/homebrew.yml
+  - from-file: zrun/install/cups-printing.yml
+  - from-file: zrun/install/zodium-services.yml
   - from-file: zrun/install/plymouth.yml
   - from-file: zrun/install/zsh-shell.yml
 
