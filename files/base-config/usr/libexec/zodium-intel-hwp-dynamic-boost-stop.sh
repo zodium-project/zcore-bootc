@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 HWP="/sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost"
 
 if [[ -w "$HWP" ]]; then
-    echo 1 > "$HWP"
+    echo 0 > "$HWP"
 fi
