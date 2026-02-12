@@ -29,9 +29,9 @@ fi
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 RELEASE="$(rpm -E '%fedora.%_arch')"
 
-curl -fLsS --retry 5 \
-    -o /etc/yum.repos.d/negativo17-fedora-multimedia.repo \
-    https://negativo17.org/repos/fedora-multimedia.repo
+#curl -fLsS --retry 5 \
+#    -o /etc/yum.repos.d/negativo17-fedora-multimedia.repo \
+#    https://negativo17.org/repos/fedora-multimedia.repo
 
 curl -fLsS --retry 5 \
     -o /etc/yum.repos.d/negativo17-fedora-nvidia.repo \
