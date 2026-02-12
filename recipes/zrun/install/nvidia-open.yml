@@ -5,7 +5,7 @@ modules:
 
   - type: files
     files:
-      - source: nvidia-files
+      - source: zodium-nvidia-settings
         destination: /
 
   - type: script
