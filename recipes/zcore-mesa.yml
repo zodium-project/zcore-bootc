@@ -33,7 +33,7 @@ modules:
   - from-file: zrun/install/nvidia-open.yml
   - from-file: zrun/install/pipewire-stack.yml
   - from-file: zrun/install/power-management.yml
-  - from-file: zrun/install/cli-tools.yml
+  - from-file: zrun/install/cli-utils.yml
   - from-file: zrun/install/basic-tools.yml
   - from-file: zrun/install/homebrew.yml
   - from-file: zrun/install/cups-printing.yml
