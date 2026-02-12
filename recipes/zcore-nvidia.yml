@@ -40,9 +40,9 @@ modules:
   - from-file: zrun/install/plymouth.yml
   - from-file: zrun/install/zsh-shell.yml
 
-  - from-file: zrun/remove/extras.yml
-  - from-file: zrun/remove/fedora-bloat.yml
-  - from-file: zrun/remove/services.yml
+  - from-file: zrun/remove/fedora-tui.yml
+  - from-file: zrun/remove/fedora-preinstalled.yml
+  - from-file: zrun/remove/fedora-services.yml
   
 #############################
 ### End of System Modules ###
