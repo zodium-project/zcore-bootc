@@ -60,43 +60,44 @@ mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
 echo "Reinstalling akmod-nvidia to restore clean spec file..."
 dnf reinstall -y --setopt=install_weak_deps=False akmod-nvidia
 
-echo "Creating build directory patch wrapper..."
-mv /usr/sbin/akmods /usr/sbin/akmods.real
+echo "Creating akmodsbuild wrapper to fix build directory issue..."
+mv /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.real
 
-cat > /usr/sbin/akmods << 'WRAPPER_EOF'
+cat > /usr/sbin/akmodsbuild << 'WRAPPER_EOF'
 #!/bin/bash
-# Pre-create the build directory before akmods runs
-sleep 1 &
-/usr/sbin/akmods.real "$@" &
-AKMODS_PID=$!
+# Wrapper to create missing build directories
 
-# Give it a moment to start
-sleep 3
+# Start the real akmodsbuild in background
+/usr/sbin/akmodsbuild.real "$@" &
+BUILD_PID=$!
 
-# Create missing build directories as they appear
-for i in {1..60}; do
-    if ! kill -0 $AKMODS_PID 2>/dev/null; then
+# Monitor and create directories as needed
+sleep 2
+for i in {1..30}; do
+    if ! kill -0 $BUILD_PID 2>/dev/null; then
         break
     fi
     
-    for builddir in /tmp/akmodsbuild.*/BUILD/nvidia-kmod-*-build/open-gpu-kernel-modules-*/; do
-        if [ -d "$builddir" ]; then
-            parent=$(dirname "$builddir")
-            for kmod_target in "$parent"/_kmod_build_*; do
-                target_name="${kmod_target##*/}"
-                if [[ "$target_name" == "_kmod_build_"* ]] && [ ! -e "$kmod_target" ]; then
-                    mkdir -p "$kmod_target"
+    # Look for the BUILD directory and create _kmod_build directories
+    for dir in /tmp/akmodsbuild.*/BUILD/nvidia-kmod-*-build; do
+        if [ -d "$dir/open-gpu-kernel-modules-"* ] 2>/dev/null; then
+            # Create the missing _kmod_build directory
+            for kver_dir in "$dir"/_kmod_build_*; do
+                if [[ ! -e "$kver_dir" ]]; then
+                    mkdir -p "$kver_dir" 2>/dev/null || true
                 fi
             done
         fi
     done
-    sleep 0.5
+    
+    sleep 0.3
 done
 
-wait $AKMODS_PID
+wait $BUILD_PID
 exit $?
 WRAPPER_EOF
-chmod +x /usr/sbin/akmods
+
+chmod +x /usr/sbin/akmodsbuild
 ############# Remove it later when the issue is resolved upstream #############
 
 echo "Installing kmod..."
