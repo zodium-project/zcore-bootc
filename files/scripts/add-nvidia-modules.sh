@@ -57,19 +57,46 @@ dnf install -y --setopt=install_weak_deps=False \
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
 
 ###################### Emergency workaround , no need to keep it for long #######
-echo "Patching nvidia-kmod spec file..."
-SPEC_FILE="/usr/src/akmods/nvidia-kmod.latest"
+echo "Reinstalling akmod-nvidia to restore clean spec file..."
+dnf reinstall -y --setopt=install_weak_deps=False akmod-nvidia
 
-if [ -f "$SPEC_FILE" ]; then
-    if grep -q "mkdir -p _kmod_build" "$SPEC_FILE"; then
-        echo "Spec file already patched, skipping..."
-    else
-        sed -i '/for kernel_version in/a mkdir -p _kmod_build_${kernel_version%%%%___*}' "$SPEC_FILE"
-        echo "Spec file patched successfully"
+echo "Creating build directory patch wrapper..."
+mv /usr/sbin/akmods /usr/sbin/akmods.real
+
+cat > /usr/sbin/akmods << 'WRAPPER_EOF'
+#!/bin/bash
+# Pre-create the build directory before akmods runs
+sleep 1 &
+/usr/sbin/akmods.real "$@" &
+AKMODS_PID=$!
+
+# Give it a moment to start
+sleep 3
+
+# Create missing build directories as they appear
+for i in {1..60}; do
+    if ! kill -0 $AKMODS_PID 2>/dev/null; then
+        break
     fi
-else
-    echo "WARNING: Spec file not found at $SPEC_FILE"
-fi
+    
+    for builddir in /tmp/akmodsbuild.*/BUILD/nvidia-kmod-*-build/open-gpu-kernel-modules-*/; do
+        if [ -d "$builddir" ]; then
+            parent=$(dirname "$builddir")
+            for kmod_target in "$parent"/_kmod_build_*; do
+                target_name="${kmod_target##*/}"
+                if [[ "$target_name" == "_kmod_build_"* ]] && [ ! -e "$kmod_target" ]; then
+                    mkdir -p "$kmod_target"
+                fi
+            done
+        fi
+    done
+    sleep 0.5
+done
+
+wait $AKMODS_PID
+exit $?
+WRAPPER_EOF
+chmod +x /usr/sbin/akmods
 ############# Remove it later when the issue is resolved upstream #############
 
 echo "Installing kmod..."
