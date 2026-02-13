@@ -28,7 +28,8 @@ modules:
        destination: /
 
  - type: script
+   scripts:
+      - chmod-tuned-sync.sh
    snippets:
-      - "chmod 0755 /usr/libexec/zodium-tuned-sync.sh"
       - "systemctl enable zodium-tuned-2-firmware-sync.path"
       - "systemctl enable zodium-firmware-2-tuned-sync.path"
