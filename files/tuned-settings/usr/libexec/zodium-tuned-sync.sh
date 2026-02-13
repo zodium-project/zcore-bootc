@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
+## let values settle ##
+sleep 0.35 
 
+### Main Script ###
 PLATFORM_PROFILE="/sys/firmware/acpi/platform_profile"
 TUNED_STATE="/etc/tuned/active_profile"
 LOCKFILE="/run/zodium-tuned-sync.lock"
