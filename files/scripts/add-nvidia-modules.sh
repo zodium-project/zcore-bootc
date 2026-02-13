@@ -54,6 +54,22 @@ dnf install -y --setopt=install_weak_deps=False \
 
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
 
+###################### Emergency workaround , no need to keep it for long #######
+echo "Patching nvidia-kmod spec file..."
+SPEC_FILE="/usr/src/akmods/nvidia-kmod.latest"
+
+if [ -f "$SPEC_FILE" ]; then
+    if grep -q "mkdir -p _kmod_build" "$SPEC_FILE"; then
+        echo "Spec file already patched, skipping..."
+    else
+        sed -i '/for kernel_version in/a mkdir -p _kmod_build_${kernel_version%%%%___*}' "$SPEC_FILE"
+        echo "Spec file patched successfully"
+    fi
+else
+    echo "WARNING: Spec file not found at $SPEC_FILE"
+fi
+############# Remove it later when the issue is resolved upstream #############
+
 echo "Installing kmod..."
 akmods --force --kernels "${KERNEL_VERSION}" --kmod nvidia
 
