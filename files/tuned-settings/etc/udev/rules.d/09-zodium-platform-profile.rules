@@ -1,0 +1,2 @@
+SUBSYSTEM=="platform-profile", ACTION=="change", \
+RUN+="/usr/bin/systemctl start zodium-firmware-2-tuned-sync.service"
