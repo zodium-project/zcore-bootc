@@ -57,47 +57,8 @@ dnf install -y --setopt=install_weak_deps=False \
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
 
 ###################### Emergency workaround , no need to keep it for long #######
-echo "Reinstalling akmod-nvidia to restore clean spec file..."
-dnf reinstall -y --setopt=install_weak_deps=False akmod-nvidia
-
-echo "Creating akmodsbuild wrapper to fix build directory issue..."
-mv /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.real
-
-cat > /usr/sbin/akmodsbuild << 'WRAPPER_EOF'
-#!/bin/bash
-# Wrapper to create missing build directories
-
-# Start the real akmodsbuild in background
-/usr/sbin/akmodsbuild.real "$@" &
-BUILD_PID=$!
-
-# Monitor and create directories as needed
-sleep 2
-for i in {1..30}; do
-    if ! kill -0 $BUILD_PID 2>/dev/null; then
-        break
-    fi
-    
-    # Look for the BUILD directory and create _kmod_build directories
-    for dir in /tmp/akmodsbuild.*/BUILD/nvidia-kmod-*-build; do
-        if [ -d "$dir/open-gpu-kernel-modules-"* ] 2>/dev/null; then
-            # Create the missing _kmod_build directory
-            for kver_dir in "$dir"/_kmod_build_*; do
-                if [[ ! -e "$kver_dir" ]]; then
-                    mkdir -p "$kver_dir" 2>/dev/null || true
-                fi
-            done
-        fi
-    done
-    
-    sleep 0.3
-done
-
-wait $BUILD_PID
-exit $?
-WRAPPER_EOF
-
-chmod +x /usr/sbin/akmodsbuild
+dnf install -y --allowerasing \
+  https://negativo17.org/repos/nvidia/fedora-43/x86_64/akmod-nvidia-590.48.01-1.fc43.x86_64.rpm
 ############# Remove it later when the issue is resolved upstream #############
 
 echo "Installing kmod..."
