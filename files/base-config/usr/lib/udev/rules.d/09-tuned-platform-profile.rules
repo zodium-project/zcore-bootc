@@ -1,1 +1,0 @@
-ACTION=="change", SUBSYSTEM=="platform_profile", RUN+="/usr/libexec/zodium-tuned-sync.sh"
