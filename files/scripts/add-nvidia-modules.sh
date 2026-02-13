@@ -46,7 +46,7 @@ dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
 cp /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.backup
 # Temporary upstream workaround
-sed -i '/if \[\[ -w \/var \]\] ; then/,/fi/d' /usr/sbin/akmodsbuild
+#sed -i '/if \[\[ -w \/var \]\] ; then/,/fi/d' /usr/sbin/akmodsbuild
 
 dnf install -y --setopt=install_weak_deps=False \
     nvidia-kmod-common \
