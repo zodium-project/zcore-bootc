@@ -24,9 +24,11 @@ modules:
 
  - type: files
    files:
-     - source: tuned-profiles
+     - source: tuned-settings
        destination: /
 
  - type: script
    snippets:
-      - "systemctl enable zodium-tuned-sync.path"
+      - "chmod 0755 /usr/libexec/zodium-tuned-sync.sh"
+      - "systemctl enable zodium-tuned-2-firmware-sync.path"
+      - "systemctl enable zodium-firmware-2-tuned-sync.path"
