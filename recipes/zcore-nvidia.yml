@@ -20,6 +20,7 @@ platforms:
 modules:
 
 ## Import Modules/Scripts ##
+### => Installation Modules/Scripts
   - from-file: zrun/install/nonfree-repos.yml
   - from-file: zrun/install/linux-base.yml
   - from-file: zrun/install/sound-wifi-firmwares.yml
@@ -41,6 +42,7 @@ modules:
   - from-file: zrun/install/plymouth.yml
   - from-file: zrun/install/zsh-shell.yml
 
+### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-tui.yml
   - from-file: zrun/remove/fedora-preinstalled.yml
   - from-file: zrun/remove/fedora-services.yml
