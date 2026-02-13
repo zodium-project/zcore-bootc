@@ -26,3 +26,7 @@ modules:
    files:
      - source: tuned-profiles
        destination: /
+
+ - type: script
+   snippets:
+      - "systemctl enable zodium-tuned-sync.path"
