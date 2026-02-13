@@ -28,18 +28,18 @@ platform_to_tuned() {
     esac
 }
 
-tuned_to_platform() {
-    case "$1" in
-        zodium-powersave) echo "low-power" ;;
-        zodium-balanced) echo "balanced" ;;
-        zodium-performance) echo "balanced-performance" ;;
-        zodium-latency) echo "performance" ;;
-        *) echo "" ;;
-    esac
-}
+#tuned_to_platform() {
+#    case "$1" in
+#        zodium-powersave) echo "low-power" ;;
+#        zodium-balanced) echo "balanced" ;;
+#        zodium-performance) echo "balanced-performance" ;;
+#        zodium-latency) echo "performance" ;;
+#        *) echo "" ;;
+#    esac
+#}
 
 TARGET_TUNED=$(platform_to_tuned "$CURRENT_PLATFORM")
-TARGET_PLATFORM=$(tuned_to_platform "$CURRENT_TUNED")
+#TARGET_PLATFORM=$(tuned_to_platform "$CURRENT_TUNED")
 
 # Firmware changed → fix tuned
 if [ -n "$TARGET_TUNED" ] && [ "$CURRENT_TUNED" != "$TARGET_TUNED" ]; then
@@ -48,9 +48,9 @@ if [ -n "$TARGET_TUNED" ] && [ "$CURRENT_TUNED" != "$TARGET_TUNED" ]; then
 fi
 
 # Tuned changed → fix firmware
-if [ -n "$TARGET_PLATFORM" ] && [ "$CURRENT_PLATFORM" != "$TARGET_PLATFORM" ]; then
-    echo "$TARGET_PLATFORM" > "$PLATFORM_PROFILE"
-    exit 0
-fi
+#if [ -n "$TARGET_PLATFORM" ] && [ "$CURRENT_PLATFORM" != "$TARGET_PLATFORM" ]; then
+#    echo "$TARGET_PLATFORM" > "$PLATFORM_PROFILE"
+#    exit 0
+#fi
 
 exit 0
