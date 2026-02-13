@@ -50,11 +50,6 @@ dnf install -y --setopt=install_weak_deps=False \
 
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
 
-###################### Emergency workaround , no need to keep it for long #######
-dnf install -y --allowerasing \
-  https://negativo17.org/repos/nvidia/fedora-43/x86_64/akmod-nvidia-590.48.01-1.fc43.x86_64.rpm
-############# Remove it later when the issue is resolved upstream #############
-
 echo "Installing kmod..."
 akmods --force --kernels "${KERNEL_VERSION}" --kmod nvidia
 
