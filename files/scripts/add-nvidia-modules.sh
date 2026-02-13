@@ -4,6 +4,8 @@
 # Built with BlueBuild (Fedora ostree / bootc)
 
 set -oue pipefail
+## temporary remove -x after debugging ##
+set -x
 
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
