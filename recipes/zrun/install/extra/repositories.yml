@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+#=> install Terra repo setup script
+  - type: script
+    scripts:
+      - add-terra-repo.sh
+# => Add starship , Vscode Repo , Vivaldi Repo , Brave Repo .
+  - type: dnf
+    repos:
+      keys:
+          - https://packages.microsoft.com/keys/microsoft.asc
+      files:
+         - vscode.repo

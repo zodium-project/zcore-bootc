@@ -31,6 +31,7 @@ modules:
   - from-file: zrun/install/core/camera-drivers.yml
   - from-file: zrun/install/core/printer-drivers.yml
 
+  - from-file: zrun/install/extra/repositories.yml
   - from-file: zrun/install/extra/openvpn.yml
   - from-file: zrun/install/extra/power-management.yml
   - from-file: zrun/install/extra/cli-tools.yml
