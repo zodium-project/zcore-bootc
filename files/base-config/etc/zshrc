@@ -53,3 +53,32 @@ if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] &&
    [[ -z "$DISABLE_HOMEBREW" ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
+
+# ---- Modern CLI suggestions ----
+
+if [[ -o interactive ]] &&
+   [[ -z "$DISABLE_MODERN_CLI_SUGGESTIONS" ]]; then
+
+  autoload -Uz add-zsh-hook
+  typeset -gA _zodium_seen
+
+  _zodium_suggest() {
+    print -P "%F{blue}[zodium]%f Tip: try '$2' instead of '$1'"
+  }
+
+  _zodium_preexec() {
+    local words=(${(z)1})
+    local cmd="${words[1]}"
+    [[ "$cmd" == "sudo" ]] && cmd="${words[2]}"
+
+    case "$cmd" in
+      cat)  command -v bat   >/dev/null 2>&1 && [[ -z ${_zodium_seen[cat]}  ]] && _zodium_suggest cat  bat        && _zodium_seen[cat]=1 ;;
+      grep) command -v rg    >/dev/null 2>&1 && [[ -z ${_zodium_seen[grep]} ]] && _zodium_suggest grep rg         && _zodium_seen[grep]=1 ;;
+      find) command -v fd    >/dev/null 2>&1 && [[ -z ${_zodium_seen[find]} ]] && _zodium_suggest find fd         && _zodium_seen[find]=1 ;;
+      cd)   command -v z     >/dev/null 2>&1 && [[ -z ${_zodium_seen[cd]}   ]] && _zodium_suggest cd   "z (zoxide)" && _zodium_seen[cd]=1 ;;
+      rm)   command -v trash >/dev/null 2>&1 && [[ -z ${_zodium_seen[rm]}   ]] && _zodium_suggest rm   trash      && _zodium_seen[rm]=1 ;;
+    esac
+  }
+
+  add-zsh-hook preexec _zodium_preexec
+fi
