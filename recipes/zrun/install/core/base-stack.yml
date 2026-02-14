@@ -23,6 +23,7 @@ modules:
       - unbound-anchor
       - usbmuxd
       - flatpak
+      - distrobox
       - zram-generator
       - zram-generator-defaults
 
