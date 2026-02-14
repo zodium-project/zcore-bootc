@@ -54,7 +54,6 @@ modules:
 #############################
 ### End of System Modules ###
 #############################
-
 ## OS-release Module ##
   - type: os-release
     properties:
@@ -62,13 +61,10 @@ modules:
       ID_LIKE: fedora
       NAME: zcore-bootc
       PRETTY_NAME: Zcore Linux
-
 ## initramfs module ##
   - type: initramfs
-
 ## Signing Module ##
   - type: signing
-  
 ###################
 ### END of File ###
 ###################
