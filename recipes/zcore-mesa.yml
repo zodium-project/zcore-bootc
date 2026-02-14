@@ -57,9 +57,10 @@ modules:
 ## OS-release Module ##
   - type: os-release
     properties:
-      ID: fedora
-      NAME: zcore-os
-      PRETTY_NAME: zcore by zodium project (amd/intel)
+      ID: zcore
+      ID_LIKE: fedora
+      NAME: zcore-bootc
+      PRETTY_NAME: Zcore Linux
 
 ## initramfs module ##
   - type: initramfs
