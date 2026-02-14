@@ -17,6 +17,7 @@ platforms:
 modules:
 ## Import Modules/Scripts ##
 ### => Installation Modules/Scripts
+#### => Core Packages / Tweaks to install.
   - from-file: zrun/install/core/base-stack.yml
   - from-file: zrun/install/core/firmwares.yml
   - from-file: zrun/install/core/network-stack.yml
@@ -26,7 +27,7 @@ modules:
   - from-file: zrun/install/core/pipewire-stack.yml
   - from-file: zrun/install/core/camera-drivers.yml
   - from-file: zrun/install/core/printer-drivers.yml
-
+#### => Extra Packages / Tweaks to install.
   - from-file: zrun/install/extra/repositories.yml
   - from-file: zrun/install/extra/openvpn.yml
   - from-file: zrun/install/extra/power-management.yml
@@ -36,12 +37,11 @@ modules:
   - from-file: zrun/install/extra/zodium-services.yml
   - from-file: zrun/install/extra/plymouth.yml
   - from-file: zrun/install/extra/zsh-shell.yml
-
+#### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/install/nonfree/repositories.yml
   - from-file: zrun/install/nonfree/codecs.yml
   - from-file: zrun/install/nonfree/mesa-drivers.yml
   - from-file: zrun/install/nonfree/nvidia-drivers.yml
-
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-tui.yml
   - from-file: zrun/remove/fedora-preinstalled.yml

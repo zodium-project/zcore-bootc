@@ -17,6 +17,7 @@ platforms:
 modules:
 ## Import Modules/Scripts ##
 ### => Installation Modules/Scripts
+#### => Core Packages / Tweaks to install.
   - from-file: zrun/install/core/base-stack.yml
   - from-file: zrun/install/core/firmwares.yml
   - from-file: zrun/install/core/network-stack.yml
