@@ -40,7 +40,7 @@ modules:
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/install/nonfree/repositories-nonfree.yml
   - from-file: zrun/install/nonfree/codecs.yml
-  - from-file: zrun/install/nonfree/mesa-drivers.yml
+  - from-file: zrun/install/nonfree/mesa-freeworld.yml
   - from-file: zrun/install/nonfree/nvidia-open.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-tui.yml
