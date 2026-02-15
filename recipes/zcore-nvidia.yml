@@ -33,7 +33,7 @@ modules:
   - from-file: zrun/install/extra/power-management.yml
   - from-file: zrun/install/extra/cli-tools.yml
   - from-file: zrun/install/extra/dev-tools.yml
-  - from-file: zrun/install/extra/brew.yml
+  - from-file: zrun/install/extra/homebrew.yml
   - from-file: zrun/install/extra/zodium-services.yml
   - from-file: zrun/install/extra/plymouth.yml
   - from-file: zrun/install/extra/zsh-setup.yml
