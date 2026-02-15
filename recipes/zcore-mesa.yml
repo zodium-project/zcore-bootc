@@ -31,7 +31,7 @@ modules:
   - from-file: zrun/install/extra/repositories.yml
   - from-file: zrun/install/extra/openvpn.yml
   - from-file: zrun/install/extra/power-management.yml
-  - from-file: zrun/install/extra/cli-tools.yml
+  - from-file: zrun/install/extra/new-cli-tools.yml
   - from-file: zrun/install/extra/dev-tools.yml
   - from-file: zrun/install/extra/homebrew.yml
   - from-file: zrun/install/extra/zodium-services.yml
