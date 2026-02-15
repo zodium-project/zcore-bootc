@@ -51,8 +51,7 @@ modules:
 ## OS-release Module ##
   - type: os-release
     properties:
-      ID: zcore
-      ID_LIKE: fedora
+      ID: fedora
       NAME: zcore-bootc
       PRETTY_NAME: Zcore Linux
 ## initramfs module ##
