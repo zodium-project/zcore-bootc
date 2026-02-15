@@ -39,7 +39,7 @@ modules:
   - from-file: zrun/install/extra/zsh-shell-setup.yml
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/install/nonfree/repositories-nonfree.yml
-  - from-file: zrun/install/nonfree/codecs.yml
+  - from-file: zrun/install/nonfree/codecs-freeworld.yml
   - from-file: zrun/install/nonfree/nvidia-open.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-tui.yml
