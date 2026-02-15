@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Exit immediately if a command exits with a non-zero status, if an undefined variable is used, or if any command in a pipeline fails.
+# Enable debug mode to print each command before executing it.
+set -oue pipefail
+set -x
+
 # Zodium Project : github.com/zodium-project
 # This script is intended to be run on a clean Fedora installation to install the NVIDIA driver and related components. It performs the following steps:
 # 1. Disables any potentially conflicting repositories (e.g., RPM Fusion, Terra).
@@ -11,8 +16,6 @@
 # 7. Cleans up temporary files and restores any modified repository configurations.
 # 8. Installs the NVIDIA Container Toolkit and related packages for GPU support in containers.
 # 9. Cleans up any remaining installation artifacts and restores the system to a clean state.
-
-set -oue pipefail
 
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
