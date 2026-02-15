@@ -58,6 +58,12 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-p
 
 modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz
 
+########### SCRIPT 1 END   ##########
+########### SCRIPT 2 START ##########
+#!/usr/bin/env bash
+set -euo pipefail
+set -x
+
 echo "== NVIDIA module & signing key detection =="
 
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
@@ -98,6 +104,13 @@ for m in "${modules[@]}"; do
 done
 
 echo "== NVIDIA detection PASSED =="
+
+########### SCRIPT 2 END   ##########
+########### SCRIPT 3 START ##########
+
+#!/usr/bin/env bash
+set -euo pipefail
+set -x
 
 echo "== NVIDIA module signing =="
 
@@ -164,6 +177,15 @@ done
 
 echo "== NVIDIA module signing COMPLETE =="
 
+############# SCRIPT 3 END   ##########
+############# SCRIPT 4 START ##########
+
+#!/usr/bin/env bash
+
+# Zodium Project
+
+set -oue pipefail
+
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
@@ -213,3 +235,7 @@ if [[ -f "$REPO_SNAPSHOT" ]]; then
 
   rm -f "$REPO_SNAPSHOT"
 fi
+
+######## SCRIPT 4 END   ##########
+######## All scripts have been completed. #######
+######## Note: The above scripts are intended to be run in sequence as part of the NVIDIA driver installation process. Each script performs specific tasks such as installing the driver, verifying module signing keys, signing the modules, and cleaning up after installation.
