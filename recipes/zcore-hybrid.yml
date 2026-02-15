@@ -41,7 +41,7 @@ modules:
   - from-file: zrun/install/nonfree/repositories-nonfree.yml
   - from-file: zrun/install/nonfree/codecs.yml
   - from-file: zrun/install/nonfree/mesa-drivers.yml
-  - from-file: zrun/install/nonfree/nvidia-drivers.yml
+  - from-file: zrun/install/nonfree/nvidia-open.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-tui.yml
   - from-file: zrun/remove/fedora-preinstalled.yml
