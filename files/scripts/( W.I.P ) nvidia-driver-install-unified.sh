@@ -114,6 +114,7 @@ done
 echo "== NVIDIA detection PASSED =="
 
 # Sign the NVIDIA kernel modules using the provided signing key. This is necessary for environments where unsigned modules cannot be loaded.
+# This ensures that NVIDIA modules are loaded on system as fedora kernel is configured to only load signed modules.
 echo "== NVIDIA module signing =="
 
 MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
