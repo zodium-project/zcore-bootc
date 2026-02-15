@@ -28,7 +28,7 @@ modules:
   - from-file: zrun/install/core/camera-drivers.yml
   - from-file: zrun/install/core/printer-drivers.yml
 #### => Extra Packages / Tweaks to install.
-  - from-file: zrun/install/extra/repositories.yml
+  - from-file: zrun/install/extra/repositories-extra.yml
   - from-file: zrun/install/extra/openvpn.yml
   - from-file: zrun/install/extra/power-utils.yml
   - from-file: zrun/install/extra/better-cli-tools.yml
@@ -38,7 +38,7 @@ modules:
   - from-file: zrun/install/extra/plymouth-setup.yml
   - from-file: zrun/install/extra/zsh-shell-setup.yml
 #### => Nonfree Packages / Tweaks to install.
-  - from-file: zrun/install/nonfree/repositories.yml
+  - from-file: zrun/install/nonfree/repositories-nonfree.yml
   - from-file: zrun/install/nonfree/codecs.yml
   - from-file: zrun/install/nonfree/nvidia-drivers.yml
 ### => Removal Modules/Scripts
