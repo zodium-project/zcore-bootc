@@ -17,9 +17,11 @@ set -x
 # 8. Installs the NVIDIA Container Toolkit and related packages for GPU support in containers.
 # 9. Cleans up any remaining installation artifacts and restores the system to a clean state.
 
+# Make sure /var/tmp exists and is writable by all users (with the sticky bit set to prevent deletion by other users).
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
+# Save the list of currently enabled repositories to a temporary file so we can restore them later.
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 
 dnf repolist --enabled \
@@ -38,6 +40,8 @@ if (( ${#SANDBOX_REPOS[@]} > 0 )); then
   done
 fi
 
+# Determine the current kernel version and architecture to ensure we install the correct kernel modules and drivers.
+# Add the Negativo17 repository for NVIDIA drivers, which provides pre-built kernel modules compatible with the current kernel.
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 RELEASE="$(rpm -E '%fedora.%_arch')"
 
@@ -70,17 +74,9 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-p
 
 modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz
 
-########### SCRIPT 1 END   ##########
-########### SCRIPT 2 START ##########
-#!/usr/bin/env bash
-set -euo pipefail
-set -x
-
+# Detect NVIDIA modules & signing key before signing to ensure everything is in place and avoid partial signing if something is missing.
 echo "== NVIDIA module & signing key detection =="
-
-KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-
 PRIVATE_KEY="/tmp/certs/kernel_key.pem"
 PUBLIC_KEY="/etc/pki/akmods/certs/zodium-nvidia.der"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
@@ -117,21 +113,12 @@ done
 
 echo "== NVIDIA detection PASSED =="
 
-########### SCRIPT 2 END   ##########
-########### SCRIPT 3 START ##########
-
-#!/usr/bin/env bash
-set -euo pipefail
-set -x
-
+# Sign the NVIDIA kernel modules using the provided signing key. This is necessary for environments where unsigned modules cannot be loaded.
 echo "== NVIDIA module signing =="
 
-KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-
 PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
 PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-nvidia.der"
-
 WORKDIR="/tmp/certs"
 PUBLIC_KEY_CRT="${WORKDIR}/zodium-nvidia.crt"
 PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
@@ -189,18 +176,10 @@ done
 
 echo "== NVIDIA module signing COMPLETE =="
 
-############# SCRIPT 3 END   ##########
-############# SCRIPT 4 START ##########
-
-#!/usr/bin/env bash
-
-# Zodium Project
-
-set -oue pipefail
-
-mkdir -p /var/tmp
-chmod 1777 /var/tmp
-
+# Clean up temporary files and restore any modified repository configurations to ensure the system is left in a clean state after installation.
+# Install the NVIDIA Container Toolkit and related packages to enable GPU support in containerized environments (e.g., Docker, Podman).
+# Install NVIDIA user-space libraries and tools for CUDA support and GPU management in containers.
+# Clean up any remaining installation artifacts and restore the system to a clean state by removing temporary files and re-enabling any previously disabled repositories.
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 
 nvidia_packages_list=( \
@@ -247,7 +226,5 @@ if [[ -f "$REPO_SNAPSHOT" ]]; then
 
   rm -f "$REPO_SNAPSHOT"
 fi
-
-######## SCRIPT 4 END   ##########
-######## All scripts have been completed. #######
-######## Note: The above scripts are intended to be run in sequence as part of the NVIDIA driver installation process. Each script performs specific tasks such as installing the driver, verifying module signing keys, signing the modules, and cleaning up after installation.
+# NVIDIA driver installation complete.
+# Work in progress: Further testing and validation needed to ensure all components are installed correctly and the system is stable with the new NVIDIA drivers.
