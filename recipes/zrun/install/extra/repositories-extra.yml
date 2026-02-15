@@ -5,7 +5,7 @@ modules:
 #=> install Terra repo setup script
   - type: script
     scripts:
-      - add-terra-repo.sh
+      - terra-repo-add.sh
 # => Add starship , Vscode Repo , Vivaldi Repo , Brave Repo .
   - type: dnf
     repos:
