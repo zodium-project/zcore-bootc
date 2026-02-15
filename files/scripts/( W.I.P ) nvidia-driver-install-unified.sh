@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
-# Zodium Project
-# Built with BlueBuild (Fedora ostree / bootc)
+# Zodium Project : github.com/zodium-project
+# This script is intended to be run on a clean Fedora installation to install the NVIDIA driver and related components. It performs the following steps:
+# 1. Disables any potentially conflicting repositories (e.g., RPM Fusion, Terra)
+# 2. Installs the necessary kernel development packages and akmods for building the NVIDIA kernel modules
+# 3. Installs the NVIDIA driver packages from the Negativo17 repository
+# 4. Builds the NVIDIA kernel modules using akmods
+# 5. Verifies that the NVIDIA kernel modules were built successfully
+# 6. Signs the NVIDIA kernel modules using a custom signing key
+# 7. Cleans up temporary files and restores any modified repository configurations
 
 set -oue pipefail
 
