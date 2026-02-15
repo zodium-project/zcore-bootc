@@ -11,5 +11,5 @@ modules:
 
  - type: files
    files:
-    - source: zodium-plymouth
+    - source: plymouth-logos
       destination: /
