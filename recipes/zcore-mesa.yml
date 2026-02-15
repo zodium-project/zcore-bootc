@@ -45,7 +45,6 @@ modules:
   - from-file: zrun/remove/fedora-tui.yml
   - from-file: zrun/remove/fedora-preinstalled.yml
   - from-file: zrun/remove/fedora-services.yml
-
 #############################
 ### End of System Modules ###
 #############################
