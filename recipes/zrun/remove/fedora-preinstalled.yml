@@ -8,5 +8,3 @@ modules:
         - firefox
         - firefox-langpacks
         - toolbox
-        - usermode
-        - libuser
