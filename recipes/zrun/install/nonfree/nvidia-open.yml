@@ -39,3 +39,10 @@ modules:
       - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
       - systemctl enable zodium-nvidia.service
       - systemctl enable nvidia-persistenced.service
+
+  - type: dnf
+    group-install:
+      with-optional: false
+      install-weak-deps: false
+      packages:
+          - development-tools
