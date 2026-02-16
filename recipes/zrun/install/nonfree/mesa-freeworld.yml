@@ -6,7 +6,7 @@ modules:
    install:
      install-weak-deps: false
      packages:
-      - mesa-vulkan-drivers
+      - mesa-vulkan-drivers-freeworld
       - intel-media-driver
       - intel-vpl-gpu-rt
       - mesa-va-drivers-freeworld

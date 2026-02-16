@@ -12,7 +12,6 @@ modules:
          - gstreamer1-plugin-libav
          - gstreamer1-plugins-good
          - gstreamer1-plugins-good-extras
-         - gstreamer1-plugins-bad-free-extras
          - gstreamer1-plugins-bad-freeworld
          - gstreamer1-plugins-ugly
          - gstreamer1-vaapi

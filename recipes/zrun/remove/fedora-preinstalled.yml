@@ -9,3 +9,6 @@ modules:
         - firefox-langpacks
         - toolbox
         - fdk-aac-free
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-free-extras
+        - gstreamer1-plugins-ugly-free
