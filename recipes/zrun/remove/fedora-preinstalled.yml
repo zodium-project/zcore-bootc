@@ -8,3 +8,4 @@ modules:
         - firefox
         - firefox-langpacks
         - toolbox
+        - fdk-aac-free
