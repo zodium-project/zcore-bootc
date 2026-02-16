@@ -57,15 +57,18 @@ dnf install -y --setopt=install_weak_deps=False \
 
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
+## Workaround fix , remove when no longer needed ##
 cp /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.backup
 # Temporary upstream workaround
 sed -i '/if \[\[ -w \/var \]\] ; then/,/fi/d' /usr/sbin/akmodsbuild
-
+###################################################
 dnf install -y --setopt=install_weak_deps=False \
     nvidia-kmod-common \
     nvidia-modprobe
 
+## remove when no longer needed ##
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
+##################################
 
 echo "Installing kmod..."
 akmods --force --kernels "${KERNEL_VERSION}" --kmod nvidia
