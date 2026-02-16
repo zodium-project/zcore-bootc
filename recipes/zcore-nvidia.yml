@@ -24,7 +24,6 @@ modules:
   - from-file: zrun/install/core/network-tools.yml
   - from-file: zrun/install/core/bluetooth.yml
   - from-file: zrun/install/core/mesa-vulkan-drivers.yml
-  - from-file: zrun/install/core/pipewire-stack.yml
   - from-file: zrun/install/core/camera-drivers.yml
   - from-file: zrun/install/core/printer-drivers.yml
 #### => Extra Packages / Tweaks to install.
