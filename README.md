@@ -7,3 +7,7 @@ TO-DO:
 4. downstream brew ?
 5. downstream devtools/devpackages ?
 6. make it more minimal (remove any extra/not-needed-to boot) things ?
+7. move to negativo17 codecs ?
+8. add adios/bore scheduler ?
+9. switch to cachyos/zen kernel ?
+10. ship zodium-kde as part of zcore as zcore-kinoite (can be done but might over-complicate stuff )??
