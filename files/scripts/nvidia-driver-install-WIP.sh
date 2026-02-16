@@ -5,6 +5,7 @@
 set -oue pipefail
 set -x
 
+## Work in Progress: NVIDIA Driver Installation Script for Fedora ##
 # Zodium Project : github.com/zodium-project
 # This script is intended to be run on a clean Fedora installation to install the NVIDIA driver and related components. It performs the following steps:
 # 1. Disables any potentially conflicting repositories (e.g., RPM Fusion, Terra).
