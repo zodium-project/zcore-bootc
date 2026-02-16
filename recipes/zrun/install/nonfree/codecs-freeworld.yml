@@ -20,7 +20,7 @@ modules:
          - libwebp
          - libldac
          - exiv2
-         - x264
-         - x265
-         - svt-av1
-         - svt-av1-libs
+         #- x264
+         #- x265
+         #- svt-av1
+         #- svt-av1-libs
