@@ -11,3 +11,8 @@ TO-DO:
 8. add adios/bore scheduler ?
 9. switch to cachyos/zen kernel ?
 10. ship zodium-kde as part of zcore as zcore-kinoite (can be done but might over-complicate stuff )??
+11. custom+better zram configs ?
+12. better compression tweaks (btrfs) ? (very experimental)
+13. better sysctl.d settings ( zram tweaks) ( use arch-wiki ,etc.. for performance optimization tweaks)
+
+Current Release : Snapshot 3 (usable but not 100% stable)

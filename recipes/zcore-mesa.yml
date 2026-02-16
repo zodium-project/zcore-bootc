@@ -54,7 +54,7 @@ modules:
     properties:
       ID: fedora
       NAME: zcore-bootc
-      PRETTY_NAME: Zcore Linux
+      PRETTY_NAME: ZCORE-LINUX (bootc)
 ## initramfs module ##
   - type: initramfs
 ## Signing Module ##
