@@ -20,7 +20,7 @@ modules:
          - libwebp
          - libldac
          - exiv2
-         #- x264
-         #- x265
-         #- svt-av1
-         #- svt-av1-libs
+         #- x264 (cli tool is not needed, and the library is a dependency of ffmpeg, so it will be installed as a dependency of ffmpeg)
+         #- x265 (cli tool is not needed, and the library is a dependency of ffmpeg, so it will be installed as a dependency of ffmpeg)
+         #- svt-av1 ( experimental and not needed as of now.)
+         #- svt-av1-libs ( pulled as a dependency of ffmpeg, but not needed as of now as svt-av1 is experimental and not needed as of now. )
