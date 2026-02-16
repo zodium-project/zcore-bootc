@@ -24,7 +24,6 @@ modules:
   - from-file: zrun/install/core/network-tools.yml
   - from-file: zrun/install/core/bluetooth.yml
   - from-file: zrun/install/core/mesa-vulkan-drivers.yml
-  - from-file: zrun/install/core/pipewire-stack.yml
   - from-file: zrun/install/core/camera-drivers.yml
   - from-file: zrun/install/core/printer-drivers.yml
 #### => Extra Packages / Tweaks to install.
@@ -40,6 +39,7 @@ modules:
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/install/nonfree/repositories-nonfree.yml
   - from-file: zrun/install/nonfree/codecs-freeworld.yml
+  - from-file: zrun/install/nonfree/pipewire-stack.yml
   - from-file: zrun/install/nonfree/mesa-freeworld.yml
   - from-file: zrun/install/nonfree/nvidia-open.yml
 ### => Removal Modules/Scripts

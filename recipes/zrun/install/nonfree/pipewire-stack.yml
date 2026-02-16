@@ -11,6 +11,7 @@ modules:
          - pipewire-libs
          - pipewire-jack-audio-connection-kit-libs
          - pipewire-jack-audio-connection-kit
+         - pipewire-codec-aptx
          - pipewire-pulseaudio
          - pipewire-alsa
          - pipewire-gstreamer

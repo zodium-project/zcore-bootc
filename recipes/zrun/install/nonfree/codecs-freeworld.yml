@@ -18,6 +18,7 @@ modules:
          - libheif-freeworld
          - libjxl
          - libwebp
+         - libldac
          - exiv2
          - x264
          - x265
