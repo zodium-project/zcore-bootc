@@ -19,3 +19,5 @@ modules:
          - libjxl
          - libwebp
          - exiv2
+         - x264
+         - x265
