@@ -22,3 +22,4 @@ modules:
          - exiv2
          - x264
          - x265
+         - svt-av1
