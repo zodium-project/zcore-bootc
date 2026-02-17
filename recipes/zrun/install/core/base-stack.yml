@@ -25,7 +25,6 @@ modules:
       - flatpak
       - distrobox
       - zram-generator
-      - zram-generator-defaults
 
  - type: kargs
    kargs:
