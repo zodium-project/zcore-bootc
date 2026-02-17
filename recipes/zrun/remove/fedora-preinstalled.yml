@@ -11,5 +11,6 @@ modules:
         - fdk-aac-free
         - gstreamer1-plugins-bad-free
         - gstreamer1-plugins-bad-free-extras
+        - jack-audio-connection-kit
         #- gstreamer1-plugins-ugly-free (cant be removed as it is a dependency of gstreamer1-plugins-ugly)
         #- openh264 ( IGNORED as it is a dependency of firefox + KDE/GNOME needs it for WebRTC )
