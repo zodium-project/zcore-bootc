@@ -14,5 +14,6 @@ TO-DO:
 11. custom+better zram configs ?
 12. better compression tweaks (btrfs) ? (very experimental)
 13. better sysctl.d settings ( zram tweaks) ( use arch-wiki ,etc.. for performance optimization tweaks)
+14. add "dgpu-run" & add supergfxctl or switcheroo-control
 
 Current Release : Snapshot 3 (usable but not 100% stable)
