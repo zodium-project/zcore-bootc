@@ -14,3 +14,9 @@ modules:
         - jack-audio-connection-kit
         #- gstreamer1-plugins-ugly-free (cant be removed as it is a dependency of gstreamer1-plugins-ugly)
         #- openh264 ( IGNORED as it is a dependency of firefox + KDE/GNOME needs it for WebRTC )
+
+  - type: script
+    snippets:
+      - "dnf5 autoremove -y"
+      - "dnf5 clean all"
+      - "dnf5 clean packages"
