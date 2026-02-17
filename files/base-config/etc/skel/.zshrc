@@ -1,5 +1,6 @@
 ## User Zsh settings ( confiure zsh here) ##
-
+## Default zsh settings, you can override them by copying this file to ~/.zshrc and edit it there ##
+## Dont edit file in /etc/skel/ directly, it will be overwritten on update, copy it to your home directory and edit there ##
 HISTFILE=~/.zsh_history
 HISTSIZE=1250
 SAVEHIST=1250
