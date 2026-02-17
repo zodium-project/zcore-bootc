@@ -1,0 +1,304 @@
+#!/usr/bin/env bash
+
+shopt -s nullglob
+
+verbose=0
+selected_device=""
+interactive=0
+list_devices=0
+args=()
+
+# ----------------------------
+# Colors (TTY only)
+# ----------------------------
+if [ -t 1 ]; then
+    RESET="\e[0m"
+    BOLD="\e[1m"
+    DIM="\e[2m"
+    RED="\e[31m"
+    GREEN="\e[32m"
+    YELLOW="\e[33m"
+    CYAN="\e[36m"
+    BLUE="\e[34m"
+else
+    RESET=""; BOLD=""; DIM=""
+    RED=""; GREEN=""; YELLOW=""
+    CYAN=""; BLUE=""
+fi
+
+# ----------------------------
+# Help
+# ----------------------------
+show_help() {
+    echo "Usage: dgpu-run [OPTIONS] [command]"
+    echo
+    echo "Options:"
+    echo "  -v, --verbose              Show detailed info"
+    echo "  --use-device <id>          cardX | nvidia | amd | intel"
+    echo "  --interactive-choose       Select GPU interactively"
+    echo "  --list-devices             List detected GPUs"
+    echo "  --help                     Show this help"
+    echo
+    echo "Examples:"
+    echo "  dgpu-run --use-device nvidia glxinfo"
+    echo "  dgpu-run --interactive-choose blender"
+    echo
+}
+
+# ----------------------------
+# Parse arguments
+# ----------------------------
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -v|--verbose)
+            verbose=1
+            shift
+            ;;
+        --use-device)
+            selected_device="$2"
+            shift 2
+            ;;
+        --interactive-choose)
+            interactive=1
+            shift
+            ;;
+        --list-devices)
+            list_devices=1
+            shift
+            ;;
+        --help)
+            show_help
+            exit 0
+            ;;
+        *)
+            args+=("$1")
+            shift
+            ;;
+    esac
+done
+
+cards=()
+declare -A pci bus driver boot_vga has_edp type
+
+# ----------------------------
+# Collect GPU info
+# ----------------------------
+for card in /sys/class/drm/card[0-9]; do
+    [ -e "$card/device" ] || continue
+    cards+=("$card")
+
+    devpath=$(readlink -f "$card/device")
+    pci_path=$(basename "$devpath")
+
+    pci["$card"]="$pci_path"
+    bus["$card"]="$(echo "$pci_path" | cut -d':' -f2)"
+    driver["$card"]="$(basename "$(readlink -f "$card/device/driver")" 2>/dev/null)"
+    boot_vga["$card"]="$(cat "$card/device/boot_vga" 2>/dev/null || echo 0)"
+
+    if ls "$card"-eDP-* >/dev/null 2>&1; then
+        has_edp["$card"]=1
+    else
+        has_edp["$card"]=0
+    fi
+done
+
+gpu_count=${#cards[@]}
+
+if [ "$gpu_count" -eq 0 ]; then
+    echo "No DRM GPUs detected."
+    exit 1
+fi
+
+# ----------------------------
+# Detect Primary GPU
+# ----------------------------
+lowest_bus=999
+lowest_card=""
+
+for c in "${cards[@]}"; do
+    bus_val=${bus[$c]:-00}
+    bus_dec=$((16#$bus_val))
+
+    if [ "$bus_dec" -lt "$lowest_bus" ]; then
+        lowest_bus="$bus_dec"
+        lowest_card="$c"
+    fi
+done
+
+igpu_card=""
+confidence=0
+reason=""
+
+# Rule 1 — Unique eDP
+edp_count=0
+for c in "${cards[@]}"; do
+    if [ "${has_edp[$c]}" -eq 1 ]; then
+        igpu_card="$c"
+        ((edp_count++))
+    fi
+done
+
+if [ "$edp_count" -eq 1 ]; then
+    confidence=100
+    reason="Unique eDP owner"
+else
+    igpu_card=""
+    boot_count=0
+
+    for c in "${cards[@]}"; do
+        if [ "${boot_vga[$c]}" = "1" ]; then
+            igpu_card="$c"
+            ((boot_count++))
+        fi
+    done
+
+    if [ "$boot_count" -eq 1 ]; then
+        confidence=80
+        reason="Unique boot_vga"
+    else
+        igpu_card="$lowest_card"
+        confidence=60
+        reason="Closest to PCI root"
+    fi
+fi
+
+dgpu_card=""
+for c in "${cards[@]}"; do
+    if [ "$c" = "$igpu_card" ]; then
+        type["$c"]="iGPU"
+    else
+        type["$c"]="dGPU"
+        dgpu_card="$c"
+    fi
+done
+
+# ----------------------------
+# Resolve --use-device
+# ----------------------------
+resolve_device() {
+    local input="$1"
+
+    for c in "${cards[@]}"; do
+        card_name=$(basename "$c")
+
+        case "$input" in
+            "$card_name")
+                echo "$c"; return ;;
+            nvidia)
+                [ "${driver[$c]}" = "nvidia" ] && echo "$c" && return ;;
+            amd)
+                [[ "${driver[$c]}" =~ amdgpu|radeon ]] && echo "$c" && return ;;
+            intel)
+                [ "${driver[$c]}" = "i915" ] && echo "$c" && return ;;
+        esac
+    done
+}
+
+if [ -n "$selected_device" ]; then
+    forced=$(resolve_device "$selected_device")
+    if [ -z "$forced" ]; then
+        echo "Invalid device: $selected_device"
+        exit 1
+    fi
+    igpu_card="$forced"
+fi
+
+# ----------------------------
+# Interactive Mode
+# ----------------------------
+if [ "$interactive" -eq 1 ]; then
+    echo "Select GPU:"
+    index=1
+    declare -A map
+
+    for c in "${cards[@]}"; do
+        card_name=$(basename "$c")
+        echo "  [$index] $card_name (${driver[$c]} - ${type[$c]})"
+        map[$index]="$c"
+        ((index++))
+    done
+
+    read -rp "Choice: " choice
+
+    if [[ -n "${map[$choice]}" ]]; then
+        igpu_card="${map[$choice]}"
+    else
+        echo "Invalid selection"
+        exit 1
+    fi
+fi
+
+# ----------------------------
+# List Devices
+# ----------------------------
+if [ "$list_devices" -eq 1 ]; then
+    echo -e "${BOLD}${CYAN}Detected GPUs:${RESET}"
+    for c in "${cards[@]}"; do
+        echo "  $(basename "$c")  ${driver[$c]}  ${type[$c]}"
+    done
+    exit 0
+fi
+
+# ----------------------------
+# INFO MODE
+# ----------------------------
+if [ "${#args[@]}" -eq 0 ]; then
+    echo -e "${BOLD}${CYAN}=== GPU Detection ===${RESET}"
+    echo -e "${BOLD}${BLUE}Primary:${RESET} ${GREEN}$(basename "$igpu_card")${RESET}"
+    echo -e "${BOLD}${BLUE}Confidence:${RESET} ${YELLOW}$confidence%${RESET} ${DIM}($reason)${RESET}"
+
+    if [ "$verbose" -eq 1 ]; then
+        echo -e "\n${BOLD}${CYAN}--- GPU Details ---${RESET}"
+
+        for c in "${cards[@]}"; do
+            card_name=$(basename "$c")
+
+            if [ "$c" = "$igpu_card" ]; then
+                icon="🟢"; color="$GREEN"
+            else
+                icon="🔴"; color="$RED"
+            fi
+
+            echo -e "${BOLD}${color}${icon} ${card_name}${RESET}"
+            echo -e "  ${DIM}Driver:${RESET} ${driver[$c]}"
+            echo -e "  ${DIM}eDP:${RESET}    ${has_edp[$c]}"
+            echo -e "  ${DIM}Role:${RESET}   ${type[$c]}"
+        done
+    fi
+
+    exit 0
+fi
+
+# ----------------------------
+# EXEC MODE
+# ----------------------------
+
+# Default to dGPU unless user selected something
+run_card="$igpu_card"
+
+if [ -z "$selected_device" ] && [ "$interactive" -eq 0 ]; then
+    if [ -n "$dgpu_card" ]; then
+        run_card="$dgpu_card"
+    fi
+fi
+
+if [ -z "$run_card" ]; then
+    echo "No suitable GPU selected."
+    exit 1
+fi
+
+drv="${driver[$run_card]}"
+
+case "$drv" in
+    nvidia)
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export __VK_LAYER_NV_optimus=NVIDIA_only
+        export DRI_PRIME=1
+        ;;
+    amdgpu|radeon|i915)
+        export DRI_PRIME=1
+        ;;
+esac
+
+exec "${args[@]}"
