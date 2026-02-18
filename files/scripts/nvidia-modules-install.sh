@@ -9,7 +9,7 @@ mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
-dnf install 'dnf5-command(config-manager)'
+dnf install 'dnf5-command(config-manager)' -y --setopt=install_weak_deps=False
 dnf repolist --enabled \
   | awk 'NR>1 {print $1}' \
   > "$REPO_SNAPSHOT"
