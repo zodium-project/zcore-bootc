@@ -29,7 +29,6 @@ modules:
 #### => Extra Packages / Tweaks to install.
   - from-file: zrun/install/extra/repositories-extra.yml
   - from-file: zrun/install/extra/openvpn.yml
-  - from-file: zrun/install/extra/power-utils.yml
   - from-file: zrun/install/extra/better-cli-tools.yml
   - from-file: zrun/install/extra/developer-tools.yml
   - from-file: zrun/install/extra/homebrew.yml

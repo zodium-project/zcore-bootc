@@ -38,3 +38,27 @@ modules:
  - type: script
    scripts:
        - libexec-executable.sh
+
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+        - thermald
+        - upower
+        - tuned
+        - tuned-ppd
+        - gamemode
+        - mangohud
+
+ - type: script
+   scripts:
+     - fedora-tuned-remove.sh
+
+ - type: files
+   files:
+     - source: tuned-settings
+       destination: /
+
+ - type: script
+   snippets:
+      - "chmod 0755 /usr/libexec/zodium-tuned-sync.sh"
