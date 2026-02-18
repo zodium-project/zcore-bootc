@@ -25,6 +25,12 @@ modules:
       - flatpak
       - distrobox
       - zram-generator
+      - thermald
+      - upower
+      - tuned
+      - tuned-ppd
+      - gamemode
+      - mangohud
 
  - type: kargs
    kargs:
@@ -38,21 +44,7 @@ modules:
  - type: script
    scripts:
        - libexec-executable.sh
-
- - type: dnf
-   install:
-     install-weak-deps: false
-     packages:
-        - thermald
-        - upower
-        - tuned
-        - tuned-ppd
-        - gamemode
-        - mangohud
-
- - type: script
-   scripts:
-     - fedora-tuned-remove.sh
+       - fedora-tuned-remove.sh
 
  - type: files
    files:
