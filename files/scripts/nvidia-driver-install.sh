@@ -53,4 +53,7 @@ if [[ -f "$REPO_SNAPSHOT" ]]; then
 
   rm -f "$REPO_SNAPSHOT"
 fi
-dnf remove -y 'dnf5-command(config-manager)'
+dnf remove -y dnf5-plugins
+dnf clean all
+dnf autoremove -y
+dnf5 clean packages
