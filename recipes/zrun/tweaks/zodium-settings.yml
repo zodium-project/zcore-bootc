@@ -11,10 +11,6 @@ modules:
       - mitigations=auto
       - split_lock_detect=off
       - split_lock_mitigate=0
-      
- - type: script
-   scripts:
-       - fedora-tuned-remove.sh
 
  - type: files
    files:
@@ -24,11 +20,8 @@ modules:
  - type: script
    scripts:
       - libexec-executable.sh
-
-
- - type: script
-   scripts:
       - useradd-config.sh
+      - fedora-tuned-remove.sh
 
  - type: script
    snippets:
