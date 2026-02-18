@@ -29,3 +29,11 @@ modules:
  - type: script
    scripts:
       - useradd-config.sh
+
+ - type: script
+   snippets:
+      - "systemctl enable zodium-machine-id.service"
+      - "systemctl enable zodium-set-hostname.service"
+      - "systemctl enable zodium-flatpak-repo.service"
+      - "systemctl enable zodium-gamemode.service"
+      - "systemctl enable zodium-update.timer"

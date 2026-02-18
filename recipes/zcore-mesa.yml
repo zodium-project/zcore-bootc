@@ -32,7 +32,6 @@ modules:
   - from-file: zrun/install/extra/better-cli-tools.yml
   - from-file: zrun/install/extra/developer-tools.yml
   - from-file: zrun/install/extra/homebrew.yml
-  - from-file: zrun/install/extra/zodium-services.yml
   - from-file: zrun/install/extra/plymouth-setup.yml
   - from-file: zrun/install/extra/zsh-shell-setup.yml
 #### => Nonfree Packages / Tweaks to install.
