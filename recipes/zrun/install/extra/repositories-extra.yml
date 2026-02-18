@@ -6,10 +6,4 @@ modules:
   - type: script
     scripts:
       - terra-repo-add.sh
-# => Add starship , Vscode Repo , Vivaldi Repo , Brave Repo .
-  - type: dnf
-    repos:
-      keys:
-          - https://packages.microsoft.com/keys/microsoft.asc
-      files:
-         - vscode.repo
+      - vscode-repo-install.sh
