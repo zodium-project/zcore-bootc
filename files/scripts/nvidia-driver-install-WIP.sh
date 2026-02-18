@@ -24,7 +24,7 @@ chmod 1777 /var/tmp
 
 # Save the list of currently enabled repositories to a temporary file so we can restore them later.
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
-
+dnf install 'dnf5-command(config-manager)' -y --setopt=install_weak_deps=False
 dnf repolist --enabled \
   | awk 'NR>1 {print $1}' \
   > "$REPO_SNAPSHOT"
@@ -231,6 +231,7 @@ if [[ -f "$REPO_SNAPSHOT" ]]; then
 
   rm -f "$REPO_SNAPSHOT"
 fi
+dnf remove -y 'dnf5-command(config-manager)'
 # NVIDIA driver installation complete.
 # Work in progress: Further testing and validation needed to ensure all components are installed correctly and the system is stable with the new NVIDIA drivers.
 
