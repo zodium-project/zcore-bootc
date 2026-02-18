@@ -30,4 +30,3 @@ modules:
  - type: script
    snippets:
       - "chmod 0755 /usr/libexec/zodium-tuned-sync.sh"
-      - "systemctl enable zodium-firmware-2-tuned-sync.path"
