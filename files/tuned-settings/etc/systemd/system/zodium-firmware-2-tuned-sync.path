@@ -1,8 +1,0 @@
-[Unit]
-Description=Watch firmware platform_profile for changes
-
-[Path]
-PathModifiedc=/sys/firmware/acpi/platform_profile
-
-[Install]
-WantedBy=multi-user.target
