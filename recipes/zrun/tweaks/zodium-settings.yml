@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+
+ - type: kargs
+   kargs:
+      - loglevel=3
+      - rd.udev.log_level=3
+      - nowatchdog
+      - mitigations=auto
+      - split_lock_detect=off
+      - split_lock_mitigate=0
+      
+ - type: script
+   scripts:
+       - fedora-tuned-remove.sh
+
+ - type: files
+   files:
+     - source: zodium-settings
+       destination: /
+
+ - type: script
+   scripts:
+      - libexec-executable.sh
+
+
+ - type: script
+   scripts:
+      - useradd-config.sh

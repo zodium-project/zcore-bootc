@@ -11,10 +11,6 @@ modules:
          - zsh-autosuggestions
          - zsh-syntax-highlighting
 
-  - type: script
-    scripts:
-      - useradd-config.sh
-
   - type: fonts
     fonts:
       nerd-fonts:

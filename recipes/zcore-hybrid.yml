@@ -46,6 +46,8 @@ modules:
   - from-file: zrun/remove/fedora-preinstalled.yml
   - from-file: zrun/remove/fedora-services.yml
   - from-file: zrun/remove/repositories.yml
+### => Tweaks Modules/Scripts
+  - from-file: zrun/tweaks/zodium-settings.yml
 #############################
 ### End of System Modules ###
 #############################
