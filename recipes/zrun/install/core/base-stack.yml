@@ -2,10 +2,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
 
 modules:
- - type: files
-   files:
-     - source: base-config
-       destination: /
 
  - type: dnf
    install:
@@ -43,14 +39,13 @@ modules:
       
  - type: script
    scripts:
-       - libexec-executable.sh
        - fedora-tuned-remove.sh
 
  - type: files
    files:
-     - source: tuned-settings
+     - source: zodium-settings
        destination: /
 
  - type: script
-   snippets:
-      - "chmod 0755 /usr/libexec/zodium-tuned-sync.sh"
+   scripts:
+      - libexec-executable.sh
