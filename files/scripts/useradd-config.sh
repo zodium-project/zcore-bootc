@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
 
 cd /etc/default
 
@@ -18,7 +17,3 @@ if grep -q '^GROUPS=' useradd; then
 else
     echo 'GROUPS=gamemode' >> useradd
 fi
-
-# Show final state
-cat useradd
-ls

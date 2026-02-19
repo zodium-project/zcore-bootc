@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
 
-cd /usr/lib/tuned/profiles/
-ls
 rm -rf /usr/lib/tuned/profiles/accelerator-performance/
 rm -rf /usr/lib/tuned/profiles/hpc-compute/
 rm -rf /usr/lib/tuned/profiles/latency-performance/
@@ -19,4 +16,3 @@ rm -rf /usr/lib/tuned/profiles/intel-sst/
 rm -rf /usr/lib/tuned/profiles/aws/
 rm -rf /usr/lib/tuned/profiles/balanced/
 rm -rf /usr/lib/tuned/profiles/balanced-battery/
-ls
