@@ -2,6 +2,8 @@
 set -euo pipefail
 ## let values settle ##
 sleep 0.35 
+## This script synchronizes the tuned profile with the current ACPI platform profile.
+## this script shall be depricated in linux kernel 6.19 or later , as kernel will fix this driver/module for these devices.
 
 ### Main Script ###
 PLATFORM_PROFILE="/sys/firmware/acpi/platform_profile"
