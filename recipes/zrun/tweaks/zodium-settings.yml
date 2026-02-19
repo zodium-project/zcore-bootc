@@ -23,9 +23,18 @@ modules:
       - useradd-config.sh
       - fedora-tuned-remove.sh
 
+## Disable Fedora Services
+ - type: script
+   snippets:
+      - "systemctl disable systemd-remount-fs.service"
+      - "systemctl mask systemd-remount-fs.service"
+      - "systemctl disable bootc-fetch-apply-updates.timer"
+      - "systemctl mask bootc-fetch-apply-updates.timer"
+      - "systemctl disable flatpak-add-fedora-repos.service"
+      - "systemctl mask flatpak-add-fedora-repos.service"
+
+## Enable Zodium Services
  - type: script
    snippets:
       - "systemctl enable zodium-set-hostname.service"
       - "systemctl enable zodium-update.timer"
-      - "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
-      - "flatpak remote-modify --no-filter --enable flathub"
