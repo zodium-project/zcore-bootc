@@ -27,3 +27,4 @@ modules:
       - tuned-ppd
       - gamemode
       - mangohud
+      - dnf5-plugins

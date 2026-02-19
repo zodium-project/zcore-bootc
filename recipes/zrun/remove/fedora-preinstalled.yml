@@ -12,7 +12,6 @@ modules:
         - gstreamer1-plugins-bad-free
         - gstreamer1-plugins-bad-free-extras
         - jack-audio-connection-kit
-        - dnf5-plugins
 
   - type: script
     snippets:
