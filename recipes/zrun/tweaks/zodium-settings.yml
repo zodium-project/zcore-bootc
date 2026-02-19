@@ -38,3 +38,4 @@ modules:
    snippets:
       - "systemctl enable zodium-set-hostname.service"
       - "systemctl enable zodium-update.timer"
+      - "systemctl enable zodium-add-flathub-repo.service"
