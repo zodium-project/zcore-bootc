@@ -29,3 +29,5 @@ modules:
       - "systemctl enable zodium-set-hostname.service"
       - "systemctl enable zodium-gamemode.service"
       - "systemctl enable zodium-update.timer"
+      - "flatpak remote-delete fedora"
+      - "flatpak remote-delete fedora-testing"
