@@ -36,7 +36,7 @@ modules:
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/add/nonfree/repos-nonfree.yml
   - from-file: zrun/add/nonfree/codecs.yml
-  - from-file: zrun/add/nonfree/pipewire-stack.yml
+  - from-file: zrun/add/nonfree/pipewire.yml
   - from-file: zrun/add/nonfree/nvidia.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-cli.yml
