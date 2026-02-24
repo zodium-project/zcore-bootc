@@ -37,8 +37,9 @@ modules:
       - cp /usr/lib/modprobe.d/99-nvidia-zodium.conf /etc/modprobe.d/99-nvidia-zodium.conf
       - sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
       - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
-      - systemctl enable zodium-nvidia.service
       - systemctl enable nvidia-persistenced.service
+      - systemctl enable zodium-nvctk-cdi.service
+      - systemctl enable zodium-nvidia-check.service
 
   - type: dnf
     group-install:
