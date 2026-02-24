@@ -40,9 +40,9 @@ modules:
   - from-file: zrun/add/nonfree/pipewire-stack.yml
   - from-file: zrun/add/nonfree/mesa-freeworld.yml
 ### => Removal Modules/Scripts
-  - from-file: zrun/remove/fedora-tui.yml
-  - from-file: zrun/remove/fedora-preinstalled.yml
-  - from-file: zrun/remove/repositories.yml
+  - from-file: zrun/remove/fedora-cli.yml
+  - from-file: zrun/remove/rpm-dnf-extra.yml
+  - from-file: zrun/remove/zodium-repos.yml
 ### => Tweaks Modules/Scripts
   - from-file: zrun/tweak/zodium-settings.yml
 #############################
