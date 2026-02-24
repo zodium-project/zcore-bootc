@@ -26,8 +26,8 @@ modules:
   - from-file: zrun/add/core/libcamera.yml
   - from-file: zrun/add/core/cups.yml
 #### => Extra Packages / Tweaks to install.
-  - from-file: zrun/add/extra/repositories-extra.yml
-  - from-file: zrun/add/extra/openvpn.yml
+  - from-file: zrun/add/extra/repos-extra.yml
+  - from-file: zrun/add/extra/vpn.yml
   - from-file: zrun/add/extra/zcore-cli.yml
   - from-file: zrun/add/extra/dev-tools.yml
   - from-file: zrun/add/extra/homebrew.yml
