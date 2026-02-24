@@ -16,7 +16,7 @@ TO-DO:
 /13/. better sysctl.d settings ( zram tweaks) ( use arch-wiki ,etc.. for performance optimization tweaks)
 14. add "dgpu-run" & add supergfxctl or switcheroo-control ( added experimentally )
 15. remove @development-tools package group ?
-16.
-17.
+16. make a nvidia 580 ( old gtx cards ) version ?
+17. make a framework iso ? (i dont have the hardware tho , might have to look other references)
 
 Current Release : Snapshot 3 (usable but not 100% stable)
