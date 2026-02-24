@@ -31,8 +31,8 @@ modules:
   - from-file: zrun/add/extra/zcore-cli.yml
   - from-file: zrun/add/extra/dev-tools.yml
   - from-file: zrun/add/extra/homebrew.yml
-  - from-file: zrun/add/extra/plymouth-setup.yml
-  - from-file: zrun/add/extra/zsh-shell-setup.yml
+  - from-file: zrun/add/extra/plymouth.yml
+  - from-file: zrun/add/extra/zsh-shell.yml
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/add/nonfree/repositories-nonfree.yml
   - from-file: zrun/add/nonfree/codecs-freeworld.yml
