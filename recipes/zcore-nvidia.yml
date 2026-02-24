@@ -34,10 +34,10 @@ modules:
   - from-file: zrun/add/extra/plymouth.yml
   - from-file: zrun/add/extra/zsh-shell.yml
 #### => Nonfree Packages / Tweaks to install.
-  - from-file: zrun/add/nonfree/repositories-nonfree.yml
-  - from-file: zrun/add/nonfree/codecs-freeworld.yml
+  - from-file: zrun/add/nonfree/repos-nonfree.yml
+  - from-file: zrun/add/nonfree/codecs.yml
   - from-file: zrun/add/nonfree/pipewire-stack.yml
-  - from-file: zrun/add/nonfree/nvidia-open.yml
+  - from-file: zrun/add/nonfree/nvidia.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-cli.yml
   - from-file: zrun/remove/rpm-dnf-extra.yml
