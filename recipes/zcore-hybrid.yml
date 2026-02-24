@@ -45,7 +45,7 @@ modules:
   - from-file: zrun/remove/rpm-dnf-extra.yml
   - from-file: zrun/remove/zodium-repos.yml
 ### => Tweaks Modules/Scripts
-  - from-file: zrun/tweak/zodium-settings.yml
+  - from-file: zrun/tweak/set-zcore-default.yml
 #############################
 ### End of System Modules ###
 #############################
