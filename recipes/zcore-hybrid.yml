@@ -18,34 +18,34 @@ modules:
 ## Import Modules/Scripts ##
 ### => Installation Modules/Scripts
 #### => Core Packages / Tweaks to install.
-  - from-file: zrun/install/core/base-stack.yml
-  - from-file: zrun/install/core/firmwares.yml
-  - from-file: zrun/install/core/network-stack.yml
-  - from-file: zrun/install/core/network-tools.yml
-  - from-file: zrun/install/core/bluetooth.yml
-  - from-file: zrun/install/core/mesa-vulkan-drivers.yml
-  - from-file: zrun/install/core/camera-drivers.yml
-  - from-file: zrun/install/core/printer-drivers.yml
+  - from-file: zrun/add/core/base-stack.yml
+  - from-file: zrun/add/core/firmwares.yml
+  - from-file: zrun/add/core/network-stack.yml
+  - from-file: zrun/add/core/network-tools.yml
+  - from-file: zrun/add/core/bluetooth.yml
+  - from-file: zrun/add/core/mesa-vulkan-drivers.yml
+  - from-file: zrun/add/core/camera-drivers.yml
+  - from-file: zrun/add/core/printer-drivers.yml
 #### => Extra Packages / Tweaks to install.
-  - from-file: zrun/install/extra/repositories-extra.yml
-  - from-file: zrun/install/extra/openvpn.yml
-  - from-file: zrun/install/extra/better-cli-tools.yml
-  - from-file: zrun/install/extra/developer-tools.yml
-  - from-file: zrun/install/extra/homebrew.yml
-  - from-file: zrun/install/extra/plymouth-setup.yml
-  - from-file: zrun/install/extra/zsh-shell-setup.yml
+  - from-file: zrun/add/extra/repositories-extra.yml
+  - from-file: zrun/add/extra/openvpn.yml
+  - from-file: zrun/add/extra/better-cli-tools.yml
+  - from-file: zrun/add/extra/developer-tools.yml
+  - from-file: zrun/add/extra/homebrew.yml
+  - from-file: zrun/add/extra/plymouth-setup.yml
+  - from-file: zrun/add/extra/zsh-shell-setup.yml
 #### => Nonfree Packages / Tweaks to install.
-  - from-file: zrun/install/nonfree/repositories-nonfree.yml
-  - from-file: zrun/install/nonfree/codecs-freeworld.yml
-  - from-file: zrun/install/nonfree/pipewire-stack.yml
-  - from-file: zrun/install/nonfree/mesa-freeworld.yml
-  - from-file: zrun/install/nonfree/nvidia-open.yml
+  - from-file: zrun/add/nonfree/repositories-nonfree.yml
+  - from-file: zrun/add/nonfree/codecs-freeworld.yml
+  - from-file: zrun/add/nonfree/pipewire-stack.yml
+  - from-file: zrun/add/nonfree/mesa-freeworld.yml
+  - from-file: zrun/add/nonfree/nvidia-open.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-tui.yml
   - from-file: zrun/remove/fedora-preinstalled.yml
   - from-file: zrun/remove/repositories.yml
 ### => Tweaks Modules/Scripts
-  - from-file: zrun/tweaks/zodium-settings.yml
+  - from-file: zrun/tweak/zodium-settings.yml
 #############################
 ### End of System Modules ###
 #############################
