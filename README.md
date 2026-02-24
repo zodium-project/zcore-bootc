@@ -15,5 +15,6 @@ TO-DO:
 12. better compression tweaks (btrfs) ? (very experimental) (done)
 13. better sysctl.d settings ( zram tweaks) ( use arch-wiki ,etc.. for performance optimization tweaks)
 14. add "dgpu-run" & add supergfxctl or switcheroo-control ( added experimentally )
+15. remove @development-tools package group ?
 
 Current Release : Snapshot 3 (usable but not 100% stable)
