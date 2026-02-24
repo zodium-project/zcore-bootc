@@ -18,19 +18,18 @@ modules:
 ## Import Modules/Scripts ##
 ### => Installation Modules/Scripts
 #### => Core Packages / Tweaks to install.
-  - from-file: zrun/add/core/base-stack.yml
+  - from-file: zrun/add/core/linux-stack.yml
   - from-file: zrun/add/core/firmwares.yml
-  - from-file: zrun/add/core/network-stack.yml
+  - from-file: zrun/add/core/wifi-lan.yml
   - from-file: zrun/add/core/network-tools.yml
   - from-file: zrun/add/core/bluetooth.yml
-  - from-file: zrun/add/core/mesa-vulkan-drivers.yml
-  - from-file: zrun/add/core/camera-drivers.yml
-  - from-file: zrun/add/core/printer-drivers.yml
+  - from-file: zrun/add/core/libcamera.yml
+  - from-file: zrun/add/core/cups.yml
 #### => Extra Packages / Tweaks to install.
   - from-file: zrun/add/extra/repositories-extra.yml
   - from-file: zrun/add/extra/openvpn.yml
-  - from-file: zrun/add/extra/better-cli-tools.yml
-  - from-file: zrun/add/extra/developer-tools.yml
+  - from-file: zrun/add/extra/zcore-cli.yml
+  - from-file: zrun/add/extra/dev-tools.yml
   - from-file: zrun/add/extra/homebrew.yml
   - from-file: zrun/add/extra/plymouth-setup.yml
   - from-file: zrun/add/extra/zsh-shell-setup.yml

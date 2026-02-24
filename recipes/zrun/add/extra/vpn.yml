@@ -8,3 +8,6 @@ modules:
      packages:
        - NetworkManager-openvpn
        - openvpn
+       - wireguard-tools
+       - wgctrl
+       - tailscale
