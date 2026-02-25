@@ -2,7 +2,7 @@ zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned 
 
 to-do :
 
-1. add latest laptop webcam/laptop-cam support (ipu6 akmods).
+1. */add latest laptop webcam/laptop-cam support (ipu6 akmods). {alredy in kernel}
 2. add old-nvidia cards support (580-lts image).
 3. downstream opinionated defaults + upstream universal defaults.
 4. add framework laptop support ( use bazzite implementation as reference )
@@ -12,7 +12,7 @@ to-do :
 8. fix experimental-tools ( dgpu-run & prime-run )
 9. depricate prime-run ? rework dgpu-run ?
 10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase , install-razer-support
-11. add xbox,sony etc controller support packages.
+11. */add xbox,sony etc controller support packages.
 12. add openrazer akmods ??
 13. use cachyos kernel & sign it ? or use linux-zen/liqorx and sign it ? or use OGC/Bazzite kernel and sign it ?
 14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
