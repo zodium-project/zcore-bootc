@@ -27,7 +27,7 @@ if command -v zoxide >/dev/null 2>&1 &&
   eval "$(zoxide init zsh)"
 fi
 
-# ---- Aliases ----
+# ---- CLI Aliases ----
 
 if command -v eza >/dev/null 2>&1 &&
    [[ -z "$DISABLE_EZA_ALIASES" ]]; then
@@ -45,6 +45,14 @@ fi
 if command -v fd >/dev/null 2>&1 &&
    [[ -z "$DISABLE_FD_ALIAS" ]]; then
   alias find='fd'
+fi
+
+# ---- Zodium Aliases ----
+
+if command -v zoxide >/dev/null 2>&1 &&
+   [[ -z "$DISABLE_ZODIUM_ALIASES" ]]; then
+  alias zupd='topgrade'
+  alias zbrew='bbrew'
 fi
 
 # ---- Homebrew ----
