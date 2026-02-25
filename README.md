@@ -15,7 +15,7 @@ to-do :
 12. add openrazer akmods ??
 13. use cachyos kernel & sign it ? or use linux-zen/liqorx and sign it ? or use OGC/Bazzite kernel and sign it ?
 14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
-15. depricate zupdate in favour of zjust update or zjust --choose
+15. 
 16. 
 17. make a custom copr for existing packages instead of directly placing them /usr/bin .
 18. 
