@@ -20,5 +20,6 @@ to-do :
 16. add zbrew ( cli to browse homebrew )
 17. make a custom copr for existing packages instead of directly placing them /usr/bin .
 18. add firmware-update cli ?
+19. make a new branch ( unstable & rename current one to stable)
 
 Current Release : Snapshot 7 (usable but not 100% stable)
