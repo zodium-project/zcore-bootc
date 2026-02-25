@@ -12,3 +12,7 @@ modules:
     upgrade-interval: 8h
     update-wait-after-boot: 2h
     upgrade-wait-after-boot: 4h
+
+  - type: script
+    snippets:
+       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Valkyrie00/bold-brew/main/install.sh)"
