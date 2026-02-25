@@ -1,4 +1,4 @@
-zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 26/2/2026)
+zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 5/3/2026)
 
 TO-DO:
 1. complete NVIDIA unified script + implement it. ( postponed to release 2 ) ( low priority )
