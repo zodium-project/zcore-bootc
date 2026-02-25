@@ -24,3 +24,7 @@ compinit -C
 # export DISABLE_MODERN_CLI_SUGGESTIONS=1
 # export DISABLE_ZSH_AUTOSUGGESTIONS=1
 # export DISABLE_HOMEBREW=1
+
+# Don't remove/edit this part of file !!!
+# Load Zodium core
+[[ -r /usr/lib/zcore-zshrc ]] && source /usr/lib/zcore-zshrc
