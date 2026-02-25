@@ -1,22 +1,21 @@
 zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 17/3/2026)
 
-TO-DO:
-1. complete NVIDIA unified script + implement it. ( postponed to release 2 ) ( low priority )
-/2./ remove bloat + better stack of default packages + replace ( free/restricted ) stuff with (freeworld/nonfree)
-/3./ downstream plymouth theme ?  nope
-/4./ downstream brew ? nope
-5. downstream devtools/devpackages ?
-/6./ make it more minimal (remove any extra/not-needed-to boot) things ? alredy minimal.
-/7/. move to negativo17 codecs ? (nope) (done)
-8. add adios/bore scheduler ?
-9. switch to cachyos/zen kernel ?
-/10/. ship zodium-kde as part of zcore as zcore-kinoite (can be done but might over-complicate stuff )?? (nah) (done)
-/11/. custom+better zram configs ? (done)
-/12/. better compression tweaks (btrfs) ? (very experimental) (done)
-/13/. better sysctl.d settings ( zram tweaks) ( use arch-wiki ,etc.. for performance optimization tweaks)
-/14./ add "dgpu-run" & add supergfxctl or switcheroo-control ( added experimentally )
-15. remove @development-tools package group ?
-16. make a nvidia 580 ( old gtx cards ) version ?
-17. make a framework iso ? (i dont have the hardware tho , might have to look other references)
+to-do :
+
+1. add latest laptop webcam/laptop-cam support (ipu6 akmods).
+2. add old-nvidia cards support (580-lts image).
+3. downstream opinionated defaults + upstream universal defaults.
+4. add framework laptop support ( use bazzite implementation as reference )
+5. add MS-surface laptops support ( linux-surface ?) {low priority}
+6. make custom asus-laptop iso ( asus-linux ?) {low priority}
+7. make apple-silicon iso ? ( asahi like ? ) {very low priority}
+8. fix experimental-tools ( dgpu-run & prime-run )
+9. depricate prime-run ? rework dgpu-run ?
+10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase , install-razer-support
+11. add xbox,sony etc controller support packages.
+12. add openrazer akmods ??
+13. use cachyos kernel & sign it ? or use linux-zen/liqorx and sign it ? or use OGC/Bazzite kernel and sign it ?
+14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
+15. depricate zupdate in favour of zjust update or zjust --choose
 
 Current Release : Snapshot 7 (usable but not 100% stable)
