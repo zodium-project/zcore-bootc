@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+## DEPRICATED ##
+
 echo "== NVIDIA module signing =="
 
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"

@@ -2,6 +2,7 @@
 
 # Zodium Project
 # Built with BlueBuild (Fedora ostree / bootc)
+## DEPRICATED ##
 
 set -oue pipefail
 

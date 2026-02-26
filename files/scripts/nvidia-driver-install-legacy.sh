@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Zodium Project
+## DEPRICATED ##
 
 set -oue pipefail
 

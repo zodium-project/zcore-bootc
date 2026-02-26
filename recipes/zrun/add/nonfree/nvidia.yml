@@ -18,10 +18,7 @@ modules:
           type: file
           destination: /tmp/certs/kernel_key.pem
     scripts:
-      - nvidia-modules-install.sh
-      - nvidia-modules-verify.sh
-      - nvidia-modules-sign.sh
-      - nvidia-driver-install.sh
+      - nvidia-open-install.sh
 
   - type: kargs
     kargs:
