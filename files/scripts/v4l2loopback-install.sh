@@ -13,7 +13,6 @@ chmod 1777 /var/tmp
 
 # ---- Variables & Paths ----
 WORKDIR="/tmp/certs"
-RELEASE="$(rpm -E '%fedora.%_arch')"
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
@@ -42,7 +41,6 @@ fi
 
 # ---- Install akmod-v4l2loopback & build deps ----
 echo "Installing kernel modules for kernel version: ${KERNEL_VERSION}"
-
 dnf install -y --setopt=install_weak_deps=False \
     "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
@@ -90,6 +88,7 @@ chmod 600 "$SIGNING_KEY"
 
 for module in "${MODULES[@]}"; do
   echo "Signing $(basename "$module")"
+
   compressed=false
   if [[ "$module" == *.xz ]]; then
     xz -d "$module"
