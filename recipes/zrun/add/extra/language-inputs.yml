@@ -4,6 +4,7 @@
 modules:
   - type: dnf
     remove:
+      packages:
        - glibc-all-langpacks
        - glibc-minimal-langpack
 
