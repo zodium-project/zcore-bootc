@@ -39,10 +39,6 @@ SIGNING_KEY="${WORKDIR}/signing_key.pem"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 WORKDIR="/tmp/certs"
 
-# to depricate
-PUBLIC_KEY="/etc/pki/akmods/certs/zodium-akmod.der"
-MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-
 # Save the list of currently enabled repositories to a temporary file so we can restore them later.
 dnf install 'dnf5-command(config-manager)' -y --setopt=install_weak_deps=False
 dnf repolist --enabled \
@@ -107,7 +103,7 @@ fail() {
 echo "Kernel version: $KERNEL_VERSION"
 
 [[ -f "$PRIVATE_KEY_PEM" ]] || fail "Private key missing: $PRIVATE_KEY_PEM"
-[[ -f "$PUBLIC_KEY" ]]  || fail "Public key missing: $PUBLIC_KEY"
+[[ -f "$PUBLIC_KEY_DER" ]]  || fail "Public key missing: $PUBLIC_KEY_DER"
 [[ -x "$SIGN_FILE" ]]   || fail "sign-file not found or not executable: $SIGN_FILE"
 
 grep -q "BEGIN PRIVATE KEY" "$PRIVATE_KEY_PEM" \
@@ -140,7 +136,7 @@ fail() { echo "ERROR: $*" >&2; exit 1; }
 [[ -f "$PRIVATE_KEY_PEM" ]] || fail "Missing kernel_key.pem"
 [[ -f "$PUBLIC_KEY_DER" ]] || fail "Missing zodium-akmod.der"
 [[ -x "$SIGN_FILE" ]] || fail "Missing sign-file"
-[[ -d "$MODULE_DIR" ]] || fail "Missing module dir"
+[[ -d "$NVIDIA_MODULE_DIR" ]] || fail "Missing module dir"
 
 mkdir -p "$WORKDIR"
 chmod 700 "$WORKDIR"
@@ -154,7 +150,7 @@ cat "$PRIVATE_KEY_PRIV" <(echo) "$PUBLIC_KEY_CRT" > "$SIGNING_KEY"
 chmod 600 "$SIGNING_KEY"
 
 shopt -s nullglob
-MODULES=("$MODULE_DIR"/*.ko*)
+MODULES=("$NVIDIA_MODULE_DIR"/*.ko*)
 shopt -u nullglob
 [[ ${#MODULES[@]} -gt 0 ]] || fail "No modules found"
 
