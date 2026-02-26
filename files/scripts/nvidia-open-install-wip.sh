@@ -13,20 +13,22 @@ mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
 # ---- Set Variables/Paths for Keys & Packages ----
+
+WORKDIR="/tmp/certs"
+
+RELEASE="$(rpm -E '%fedora.%_arch')"
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
-RELEASE="$(rpm -E '%fedora.%_arch')"
 
-NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-
-PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
-PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
-PUBLIC_KEY_CRT="${WORKDIR}/zodium-akmod.crt"
+PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
+
 SIGNING_KEY="${WORKDIR}/signing_key.pem"
+PUBLIC_KEY_CRT="${WORKDIR}/zodium-akmod.crt"
+PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
-WORKDIR="/tmp/certs"
+NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
 
 # ---- Disable External (Nonfree/Extra) Repos ----
 dnf repolist --enabled \
