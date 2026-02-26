@@ -13,7 +13,7 @@ modules:
       
  - type: files
    files:
-     - source: nvidia-settings
+     - source: secure-boot-der
        destination: /
 
 
