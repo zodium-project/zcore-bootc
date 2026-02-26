@@ -3,11 +3,6 @@
 
 modules:
   - type: dnf
-    remove:
-      packages:
-       - glibc-all-langpacks
-       - glibc-minimal-langpack
-
     install:
       install-weak-deps: false
       packages:
@@ -72,3 +67,8 @@ modules:
        - glibc-langpack-ro
        - glibc-langpack-hu
        - glibc-langpack-ms
+       
+    remove:
+      packages:
+       - glibc-all-langpacks
+       - glibc-minimal-langpack
