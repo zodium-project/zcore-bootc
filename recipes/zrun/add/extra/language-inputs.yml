@@ -25,6 +25,12 @@ modules:
        - langpacks-es
        - langpacks-pt
        - langpacks-pt_BR
+       - langpacks-bn
+       - langpacks-tr
+       - langpacks-id
+       - langpacks-fa
+       - langpacks-it
+
 
        - glibc-langpack-en
        - glibc-langpack-ja
@@ -39,3 +45,8 @@ modules:
        - glibc-langpack-de
        - glibc-langpack-es
        - glibc-langpack-pt
+       - glibc-langpack-bn
+       - glibc-langpack-tr
+       - glibc-langpack-id
+       - glibc-langpack-fa
+       - glibc-langpack-it
