@@ -20,5 +20,6 @@ to-do :
 17. make a custom copr for existing packages instead of directly placing them /usr/bin .
 18. 
 19. make a new branch ( unstable & rename current one to stable)
+20. v4l2loopback (akmod)
 
 Current Release : Snapshot 7 (usable but not 100% stable)
