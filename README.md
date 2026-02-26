@@ -1,7 +1,7 @@
 zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 17/3/2026)
 
 to-do :
-1. 
+1. add bold brew safely out of the box.
 2. add old-nvidia cards support (580-lts image).
 3. downstream opinionated defaults + upstream universal defaults.
 4. add framework laptop support ( use bazzite implementation as reference )
