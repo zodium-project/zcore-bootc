@@ -1,0 +1,41 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: dnf
+    remove:
+       - glibc-all-langpacks
+       - glibc-minimal-langpack
+
+    install:
+      install-weak-deps: false
+      packages:
+       - langpacks-en
+       - langpacks-ja
+       - langpacks-zh_CN
+       - langpacks-zh_TW
+       - langpacks-ko
+       - langpacks-th
+       - langpacks-vi
+       - langpacks-hi
+       - langpacks-ar
+       - langpacks-ru
+       - langpacks-fr
+       - langpacks-de
+       - langpacks-es
+       - langpacks-pt
+       - langpacks-pt_BR
+
+       - glibc-langpack-en
+       - glibc-langpack-ja
+       - glibc-langpack-zh
+       - glibc-langpack-ko
+       - glibc-langpack-th
+       - glibc-langpack-vi
+       - glibc-langpack-hi
+       - glibc-langpack-ar
+       - glibc-langpack-ru
+       - glibc-langpack-fr
+       - glibc-langpack-de
+       - glibc-langpack-es
+       - glibc-langpack-pt
