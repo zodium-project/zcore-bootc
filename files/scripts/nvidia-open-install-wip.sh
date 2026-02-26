@@ -40,7 +40,6 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 WORKDIR="/tmp/certs"
 
 # to depricate
-PRIVATE_KEY="/tmp/certs/kernel_key.pem"
 PUBLIC_KEY="/etc/pki/akmods/certs/zodium-akmod.der"
 MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
 
@@ -107,11 +106,11 @@ fail() {
 
 echo "Kernel version: $KERNEL_VERSION"
 
-[[ -f "$PRIVATE_KEY" ]] || fail "Private key missing: $PRIVATE_KEY"
+[[ -f "$PRIVATE_KEY_PEM" ]] || fail "Private key missing: $PRIVATE_KEY_PEM"
 [[ -f "$PUBLIC_KEY" ]]  || fail "Public key missing: $PUBLIC_KEY"
 [[ -x "$SIGN_FILE" ]]   || fail "sign-file not found or not executable: $SIGN_FILE"
 
-grep -q "BEGIN PRIVATE KEY" "$PRIVATE_KEY" \
+grep -q "BEGIN PRIVATE KEY" "$PRIVATE_KEY_PEM" \
   || fail "Private key is not PKCS#8 PEM"
 
 echo "Signing key: OK (PKCS#8 PEM)"
