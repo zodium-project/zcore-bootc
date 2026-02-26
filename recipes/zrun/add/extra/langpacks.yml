@@ -67,7 +67,8 @@ modules:
        - glibc-langpack-ro
        - glibc-langpack-hu
        - glibc-langpack-ms
-       
+
+  - type: dnf
     remove:
       packages:
        - glibc-all-langpacks
