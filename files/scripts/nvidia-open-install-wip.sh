@@ -21,8 +21,25 @@ set -x
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
-# Save the list of currently enabled repositories to a temporary file so we can restore them later.
+# Set values/file paths for use :
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
+KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
+RELEASE="$(rpm -E '%fedora.%_arch')"
+NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
+PRIVATE_KEY="/tmp/certs/kernel_key.pem"
+PUBLIC_KEY="/etc/pki/akmods/certs/zodium-akmod.der"
+SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
+MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
+PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
+PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
+WORKDIR="/tmp/certs"
+PUBLIC_KEY_CRT="${WORKDIR}/zodium-akmod.crt"
+PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
+SIGNING_KEY="${WORKDIR}/signing_key.pem"
+REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
+SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
+
+# Save the list of currently enabled repositories to a temporary file so we can restore them later.
 dnf install 'dnf5-command(config-manager)' -y --setopt=install_weak_deps=False
 dnf repolist --enabled \
   | awk 'NR>1 {print $1}' \
@@ -42,8 +59,6 @@ fi
 
 # Determine the current kernel version and architecture to ensure we install the correct kernel modules and drivers.
 # Add the Negativo17 repository for NVIDIA drivers, which provides pre-built kernel modules compatible with the current kernel.
-KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
-RELEASE="$(rpm -E '%fedora.%_arch')"
 
 curl -fLsS --retry 5 \
     -o /etc/yum.repos.d/negativo17-fedora-nvidia.repo \
@@ -79,10 +94,6 @@ modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset
 
 # Detect NVIDIA modules & signing key before signing to ensure everything is in place and avoid partial signing if something is missing.
 echo "== NVIDIA module & signing key detection =="
-NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-PRIVATE_KEY="/tmp/certs/kernel_key.pem"
-PUBLIC_KEY="/etc/pki/akmods/certs/zodium-akmod.der"
-SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 
 fail() {
   echo "ERROR: $*" >&2
@@ -119,16 +130,6 @@ echo "== NVIDIA detection PASSED =="
 # Sign the NVIDIA kernel modules using the provided signing key. This is necessary for environments where unsigned modules cannot be loaded.
 # This ensures that NVIDIA modules are loaded on system as default kernel is configured to only load signed modules.
 echo "== NVIDIA module signing =="
-
-MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
-PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
-WORKDIR="/tmp/certs"
-PUBLIC_KEY_CRT="${WORKDIR}/zodium-akmod.crt"
-PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
-SIGNING_KEY="${WORKDIR}/signing_key.pem"
-
-SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
@@ -184,7 +185,6 @@ echo "== NVIDIA module signing COMPLETE =="
 # Install the NVIDIA Container Toolkit and related packages to enable GPU support in containerized environments (e.g., Docker, Podman).
 # Install NVIDIA user-space libraries and tools for CUDA support and GPU management in containers.
 # Clean up any remaining installation artifacts and restore the system to a clean state by removing temporary files and re-enabling any previously disabled repositories.
-REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 
 nvidia_packages_list=( \
     nvidia-driver \
