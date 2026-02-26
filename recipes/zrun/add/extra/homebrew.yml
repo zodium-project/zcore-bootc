@@ -12,7 +12,3 @@ modules:
     upgrade-interval: 8h
     update-wait-after-boot: 2h
     upgrade-wait-after-boot: 4h
-
-  - type: script
-    snippets:
-       - eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew install Valkyrie00/homebrew-bbrew/bbrew
