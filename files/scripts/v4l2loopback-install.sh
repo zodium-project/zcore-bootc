@@ -118,10 +118,6 @@ dnf remove -y akmod-v4l2loopback akmods gcc-c++ kernel-devel kernel-headers
 # ---- Install userspace/tools ----
 dnf install -y --setopt=install_weak_deps=False v4l2loopback
 
-# ---- Load module & verify ----
-modprobe v4l2loopback
-modinfo "$V4L2_MODULE_DIR"/*.ko*
-
 # ---- Restore Terra repos ----
 if [[ -f "$REPO_SNAPSHOT" ]]; then
   while read -r repo; do
