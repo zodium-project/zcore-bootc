@@ -10,7 +10,7 @@ modules:
 
   - type: script
     env:
-      PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-nvidia.der
+      PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-akmod.der
     secrets:
       - type: file
         source: /tmp/certs/kernel_key_action_builded.pem

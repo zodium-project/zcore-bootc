@@ -11,6 +11,12 @@ modules:
       - "dnf5 clean packages"
       - "dnf upgrade --refresh --setopt=install_weak_deps=False -y"
       
+ - type: files
+   files:
+     - source: nvidia-settings
+       destination: /
+
+
  - type: dnf
    install:
      install-weak-deps: false
