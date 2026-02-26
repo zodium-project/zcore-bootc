@@ -33,7 +33,7 @@ modules:
   - from-file: zrun/add/extra/homebrew.yml
   - from-file: zrun/add/extra/plymouth.yml
   - from-file: zrun/add/extra/zsh-shell.yml
-  - from-file: zrun/add/extra/language-inputs.yml
+  - from-file: zrun/add/extra/langpacks.yml
   - from-file: zrun/add/extra/fonts.yml
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/add/nonfree/repos-nonfree.yml
