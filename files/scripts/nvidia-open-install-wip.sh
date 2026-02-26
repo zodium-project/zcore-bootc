@@ -82,7 +82,7 @@ modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset
 echo "== NVIDIA module & signing key detection =="
 NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
 PRIVATE_KEY="/tmp/certs/kernel_key.pem"
-PUBLIC_KEY="/etc/pki/akmods/certs/zodium-nvidia.der"
+PUBLIC_KEY="/etc/pki/akmods/certs/zodium-akmod.der"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 
 fail() {
@@ -123,9 +123,9 @@ echo "== NVIDIA module signing =="
 
 MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
 PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
-PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-nvidia.der"
+PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
 WORKDIR="/tmp/certs"
-PUBLIC_KEY_CRT="${WORKDIR}/zodium-nvidia.crt"
+PUBLIC_KEY_CRT="${WORKDIR}/zodium-akmod.crt"
 PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 SIGNING_KEY="${WORKDIR}/signing_key.pem"
 
@@ -134,7 +134,7 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
 [[ -f "$PRIVATE_KEY_PEM" ]] || fail "Missing kernel_key.pem"
-[[ -f "$PUBLIC_KEY_DER" ]] || fail "Missing zodium-nvidia.der"
+[[ -f "$PUBLIC_KEY_DER" ]] || fail "Missing zodium-akmod.der"
 [[ -x "$SIGN_FILE" ]] || fail "Missing sign-file"
 [[ -d "$MODULE_DIR" ]] || fail "Missing module dir"
 

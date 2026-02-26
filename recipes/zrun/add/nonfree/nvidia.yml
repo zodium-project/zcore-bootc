@@ -18,7 +18,7 @@ modules:
           type: file
           destination: /tmp/certs/kernel_key.pem
     scripts:
-      - nvidia-open-install.sh
+      - nvidia-open-install-wip.sh
 
   - type: kargs
     kargs:
