@@ -39,8 +39,8 @@ jobs:
         run: |
          mkdir -p /tmp/certs
          chmod 700 /tmp/certs
-         echo "${ZODIUM_NVIDIA_PRIV}" > /tmp/certs/kernel_key_action_builded.pem
-         chmod 600 /tmp/certs/kernel_key_action_builded.pem
+         echo "${ZODIUM_NVIDIA_PRIV}" > /tmp/certs/akmod-signing-private-key.pem
+         chmod 600 /tmp/certs/akmod-signing-private-key.pem
 
       - name: Build Zodium Image
         uses: blue-build/github-action@v1.11
