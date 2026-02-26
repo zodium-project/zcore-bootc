@@ -40,6 +40,7 @@ modules:
   - from-file: zrun/add/nonfree/codecs.yml
   - from-file: zrun/add/nonfree/pipewire.yml
   - from-file: zrun/add/nonfree/nvidia.yml
+  - from-file: zrun/add/nonfree/v4l2loopback.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-cli.yml
   - from-file: zrun/remove/rpm-dnf-extra.yml
