@@ -41,7 +41,7 @@ fi
 
 # ---- Install akmod-v4l2loopback & build deps ----
 echo "Installing kernel modules for kernel version: ${KERNEL_VERSION}"
-dnf install -y --setopt=install_weak_deps=False \
+dnf --refresh install -y --setopt=install_weak_deps=False \
     "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
