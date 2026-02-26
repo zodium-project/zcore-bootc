@@ -7,6 +7,10 @@ modules:
     install:
        install-weak-deps: false
        packages:
-         - zsh
-         - zsh-autosuggestions
-         - zsh-syntax-highlighting
+
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+       - FiraCode
+       - Hack
