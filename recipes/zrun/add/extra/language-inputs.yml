@@ -38,6 +38,9 @@ modules:
        - langpacks-sv
        - langpacks-da
        - langpacks-nb
+       - langpacks-ro
+       - langpacks-hu
+       - langpacks-ms 
 
        - glibc-langpack-en
        - glibc-langpack-ja
@@ -65,3 +68,6 @@ modules:
        - glibc-langpack-sv
        - glibc-langpack-da
        - glibc-langpack-nb
+       - glibc-langpack-ro
+       - glibc-langpack-hu
+       - glibc-langpack-ms
