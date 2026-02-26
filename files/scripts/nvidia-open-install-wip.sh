@@ -221,7 +221,6 @@ dnf remove -y \
 rm -f nvidia-container.pp
 rm -f /etc/yum.repos.d/nvidia-container-toolkit.repo
 rm -f /etc/yum.repos.d/negativo17-fedora-nvidia.repo
-rm -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 
 if [[ -f "$REPO_SNAPSHOT" ]]; then
   while read -r repo; do
