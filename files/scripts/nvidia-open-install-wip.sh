@@ -233,16 +233,3 @@ dnf remove -y dnf5-plugins
 dnf clean all
 dnf autoremove -y
 dnf5 clean packages
-# NVIDIA driver installation complete.
-
-# to do :
-#01. add fallbacks and error handling for each step to ensure the script can recover gracefully from failures.
-#02. add verification steps to confirm that the NVIDIA drivers and container toolkit are functioning correctly after installation.
-#03. add logic to handle workarounds or fixes for specific Fedora versions or kernel versions if needed.
-#04. remove any temporary workarounds once the underlying issues are resolved in the upstream packages or Fedora repositories.
-#05. remove more bloat from the script and optimize it for better performance and reliability.
-#06. better handling of signing keys and module signing.
-#07. add cuda (meta) package ??
-#08. add support for installing specific versions of the NVIDIA driver if needed.
-#09. add logic for version locking or pinning & also make it more customizable/configurable.
-#10. remove bloat from script and optimize it for better performance and reliability.
