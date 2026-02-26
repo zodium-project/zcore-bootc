@@ -29,6 +29,3 @@ modules:
       - mangohud
       - dnf5-plugins
       - vulkan-tools
-      ## Extra ( depricate in release 2)
-      - mesa-libGLU
-      - topgrade
