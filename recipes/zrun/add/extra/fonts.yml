@@ -7,7 +7,12 @@ modules:
     install:
        install-weak-deps: false
        packages:
-
+          - google-noto-serif-fonts
+          - google-noto-cjk-fonts
+          - google-noto-sans-arabic
+          - google-noto-sans-hebrew
+          - google-noto-sans-fonts
+          - google-noto-color-emoji-fonts
 
   - type: fonts
     fonts:
