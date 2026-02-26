@@ -12,9 +12,6 @@ set -x
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
-# Set values/file paths for use :
-
-# to upstream
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 RELEASE="$(rpm -E '%fedora.%_arch')"
@@ -30,7 +27,6 @@ SIGNING_KEY="${WORKDIR}/signing_key.pem"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 WORKDIR="/tmp/certs"
 
-# Save the list of currently enabled repositories to a temporary file so we can restore them later.
 dnf install 'dnf5-command(config-manager)' -y --setopt=install_weak_deps=False
 dnf repolist --enabled \
   | awk 'NR>1 {print $1}' \
@@ -47,9 +43,6 @@ if (( ${#SANDBOX_REPOS[@]} > 0 )); then
     dnf config-manager setopt "${repo}.enabled=0"
   done
 fi
-
-# Determine the current kernel version and architecture to ensure we install the correct kernel modules and drivers.
-# Add the Negativo17 repository for NVIDIA drivers, which provides pre-built kernel modules compatible with the current kernel.
 
 curl -fLsS --retry 5 \
     -o /etc/yum.repos.d/negativo17-fedora-nvidia.repo \
@@ -83,7 +76,6 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-p
 
 modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz
 
-# Detect NVIDIA modules & signing key before signing to ensure everything is in place and avoid partial signing if something is missing.
 echo "== NVIDIA module & signing key detection =="
 
 fail() {
@@ -117,9 +109,6 @@ for m in "${modules[@]}"; do
 done
 
 echo "== NVIDIA detection PASSED =="
-
-# Sign the NVIDIA kernel modules using the provided signing key. This is necessary for environments where unsigned modules cannot be loaded.
-# This ensures that NVIDIA modules are loaded on system as default kernel is configured to only load signed modules.
 echo "== NVIDIA module signing =="
 
 fail() { echo "ERROR: $*" >&2; exit 1; }
@@ -171,11 +160,6 @@ for module in "${MODULES[@]}"; do
 done
 
 echo "== NVIDIA module signing COMPLETE =="
-
-# Clean up temporary files and restore any modified repository configurations to ensure the system is left in a clean state after installation.
-# Install the NVIDIA Container Toolkit and related packages to enable GPU support in containerized environments (e.g., Docker, Podman).
-# Install NVIDIA user-space libraries and tools for CUDA support and GPU management in containers.
-# Clean up any remaining installation artifacts and restore the system to a clean state by removing temporary files and re-enabling any previously disabled repositories.
 
 nvidia_packages_list=( \
     nvidia-driver \
