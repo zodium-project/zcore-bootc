@@ -30,7 +30,14 @@ modules:
        - langpacks-id
        - langpacks-fa
        - langpacks-it
-
+       - langpacks-nl
+       - langpacks-pl
+       - langpacks-uk
+       - langpacks-cs
+       - langpacks-el
+       - langpacks-sv
+       - langpacks-da
+       - langpacks-nb
 
        - glibc-langpack-en
        - glibc-langpack-ja
@@ -50,3 +57,11 @@ modules:
        - glibc-langpack-id
        - glibc-langpack-fa
        - glibc-langpack-it
+       - glibc-langpack-nl
+       - glibc-langpack-pl
+       - glibc-langpack-uk
+       - glibc-langpack-cs
+       - glibc-langpack-el
+       - glibc-langpack-sv
+       - glibc-langpack-da
+       - glibc-langpack-nb
