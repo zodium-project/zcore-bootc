@@ -13,6 +13,8 @@ modules:
           - google-noto-sans-hebrew
           - google-noto-sans-fonts
           - google-noto-color-emoji-fonts
+          - liberation-fonts-all
+          - stix-fonts
 
   - type: fonts
     fonts:
