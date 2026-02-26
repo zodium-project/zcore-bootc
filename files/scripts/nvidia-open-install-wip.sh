@@ -5,9 +5,8 @@
 set -oue pipefail
 set -x
 
-## Work in Progress: NVIDIA Driver Installation Script for Fedora ##
+## NVIDIA Driver Installation Script for zcore linux ##
 # Zodium Project : github.com/zodium-project
-# This script is intended to be run on a clean Fedora installation to install the NVIDIA driver and related components. It performs the following steps:
 # 1. Disables any potentially conflicting repositories (e.g., RPM Fusion, Terra).
 # 2. Installs the necessary kernel development packages and akmods for building the NVIDIA kernel modules.
 # 3. Installs the NVIDIA driver packages from the Negativo17 repository.
@@ -118,7 +117,7 @@ done
 echo "== NVIDIA detection PASSED =="
 
 # Sign the NVIDIA kernel modules using the provided signing key. This is necessary for environments where unsigned modules cannot be loaded.
-# This ensures that NVIDIA modules are loaded on system as fedora kernel is configured to only load signed modules.
+# This ensures that NVIDIA modules are loaded on system as default kernel is configured to only load signed modules.
 echo "== NVIDIA module signing =="
 
 MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
@@ -236,7 +235,6 @@ dnf clean all
 dnf autoremove -y
 dnf5 clean packages
 # NVIDIA driver installation complete.
-# Work in progress: Further testing and validation needed to ensure all components are installed correctly and the system is stable with the new NVIDIA drivers.
 
 # to do :
 #01. add fallbacks and error handling for each step to ensure the script can recover gracefully from failures.
