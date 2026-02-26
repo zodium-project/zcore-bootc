@@ -51,7 +51,6 @@ sed -i '/if \[\[ -w \/var \]\] ; then/,/fi/d' /usr/sbin/akmodsbuild
 
 dnf install -y --setopt=install_weak_deps=False akmod-v4l2loopback
 
-# ---- Build v4l2loopback modules ----
 echo "Building v4l2loopback kernel modules for ${KERNEL_VERSION}"
 akmods --force --kernels "${KERNEL_VERSION}" --kmod v4l2loopback
 
