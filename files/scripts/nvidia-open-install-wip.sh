@@ -1,21 +1,12 @@
 #!/usr/bin/env bash
 
 # Exit immediately if a command exits with a non-zero status, if an undefined variable is used, or if any command in a pipeline fails.
-# Enable debug mode to print each command before executing it.
 set -oue pipefail
+# Enable debug mode to print each command before executing it.
 set -x
 
 ## NVIDIA Driver Installation Script for zcore linux ##
 # Zodium Project : github.com/zodium-project
-# 1. Disables any potentially conflicting repositories (e.g., RPM Fusion, Terra).
-# 2. Installs the necessary kernel development packages and akmods for building the NVIDIA kernel modules.
-# 3. Installs the NVIDIA driver packages from the Negativo17 repository.
-# 4. Builds the NVIDIA kernel modules using akmods.
-# 5. Verifies that the NVIDIA kernel modules were built successfully.
-# 6. Signs the NVIDIA kernel modules using a custom signing key.
-# 7. Cleans up temporary files and restores any modified repository configurations.
-# 8. Installs the NVIDIA Container Toolkit and related packages for GPU support in containers.
-# 9. Cleans up any remaining installation artifacts and restores the system to a clean state.
 
 # Make sure /var/tmp exists and is writable by all users (with the sticky bit set to prevent deletion by other users).
 mkdir -p /var/tmp
