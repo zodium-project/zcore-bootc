@@ -15,4 +15,4 @@ modules:
 
   - type: script
     snippets:
-       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Valkyrie00/bold-brew/main/install.sh)"
+       - eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew install Valkyrie00/homebrew-bbrew/bbrew
