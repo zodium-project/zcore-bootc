@@ -207,7 +207,7 @@ mode_choose() {
         --no-multi \
         --prompt="  ❯ " \
         --header="  zust ${VERSION}  —  $(printf '%d' "${#SCRIPT_NAMES[@]}") scripts  |  enter to run  ctrl-c to quit" \
-        --preview-window="right:55%:wrap" \
+        --preview-window="right:33%:wrap" \
         --preview='
             filepath={}
             name=$(basename "$filepath")
