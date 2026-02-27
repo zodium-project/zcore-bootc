@@ -18,146 +18,90 @@ else
     RED="" GREEN="" YELLOW="" BLUE="" CYAN="" MAGENTA="" WHITE="" BOLD="" RESET=""
 fi
 
-# ---- Status Prefixes ----
-STATUS_SUCCESS="${GREEN}[SUCCESS]${RESET}"
-STATUS_FAILED="${RED}[FAILED]${RESET}"
-STATUS_INFO="${BLUE}[INFO]${RESET}"
-
-# ---- Config ----
-SCRIPT_DIR="/usr/lib/zust-scripts"
-DRY_RUN=false
-QUIET=false
-VERBOSE=false
-
-LOG_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/zust.log"
-mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
-touch "$LOG_FILE" 2>/dev/null || true
-
-# ---- Logging ----
-_strip_ansi() { sed 's/\x1b\[[0-9;]*m//g'; }
-
-log() {
-    local msg="$1"
-    local level="${2:-INFO}"
-    local prefix=""
-    case "$level" in
-        SUCCESS) prefix="$STATUS_SUCCESS" ;;
-        FAILED)  prefix="$STATUS_FAILED" ;;
-        INFO)    prefix="$STATUS_INFO" ;;
-    esac
-
-    [[ "$QUIET" = false ]] && printf '%b\n' "$prefix $msg"
-    printf '%s | %s | %s\n' "$(date '+%F %T')" "$level" "$(echo -e "$prefix $msg" | _strip_ansi)" >> "$LOG_FILE"
-}
-
-debug() { [[ "$VERBOSE" = true ]] && log "$1" INFO || true; }
-
-# ---- UI Helpers ----
-print_line() { printf '%*s\n' 60 '' | tr ' ' '-'; }
-
-header() {
-    echo
-    echo -e "${BOLD}zust ${VERSION}${RESET}"
-    print_line
-}
-
-section() {
-    echo
-    echo -e "${BLUE}$1${RESET}"
-    print_line
-}
-
-# ---- Command Helpers ----
-command_exists() { command -v "$1" >/dev/null 2>&1; }
-
-confirm() {
-    read -r -p "$1 [y/N]: " ans
-    [[ "$ans" =~ ^[Yy]$ ]]
-}
-
-run_script() {
-    local script="$1"
-    if [[ ! -x "$script" ]]; then
-        log "Script not executable: $script" FAILED
-        return 1
-    fi
-
-    if $DRY_RUN; then
-        log "[DRY-RUN] Would execute: $script"
-        return 0
-    fi
-
-    debug "Running $script"
-    if "$script"; then
-        log "Executed $script successfully" SUCCESS
-    else
-        log "Execution failed: $script" FAILED
-    fi
-}
-
-list_scripts() {
-    section "Listing zust Scripts"
-    if [[ ! -d "$SCRIPT_DIR" ]]; then
-        log "Script directory not found: $SCRIPT_DIR" FAILED
-        return 1
-    fi
-
-    shopt -s nullglob
-    for f in "$SCRIPT_DIR"/*.sh; do
-        echo "  $(basename "$f")"
-    done
-}
-
 # ---- Help ----
 show_help() {
-    header
-    echo -e "${YELLOW}Usage:${RESET}"
-    echo "  zust list               List available scripts"
-    echo "  zust run <script>       Execute a script from $SCRIPT_DIR"
-    echo ""
-    echo -e "${YELLOW}Options:${RESET}"
-    echo "  --dry-run               Show commands without executing"
-    echo "  --verbose               Enable debug messages"
-    echo "  --quiet                 Suppress terminal output"
-    echo "  --help                  Show this help"
+    printf "%b — Script Launcher\n\n" "${BOLD}zust ${VERSION}${RESET}"
+    printf "Usage:\n"
+    printf "  %b --choose%b         Launch interactive script chooser\n" "${BLUE}" "${RESET}"
+    printf "  %b --list%b           List all available scripts\n" "${BLUE}" "${RESET}"
+    printf "  %b --help%b           Show this help\n\n" "${BLUE}" "${RESET}"
+
+    printf "Flags:\n"
+    printf "  %b--choose%b   Interactive selection with preview\n" "${BLUE}" "${RESET}"
+    printf "  %b--list%b     List scripts (no preview)\n" "${BLUE}" "${RESET}"
+    printf "  %b--help%b     Show this help\n\n" "${BLUE}" "${RESET}"
+
+    printf "Scripts are searched in:\n"
+    printf "  /etc/zust-scripts (preferred)\n"
+    printf "  /usr/lib/zust-scripts\n"
 }
 
-# ---- Argument Parsing ----
-if [[ $# -lt 1 ]]; then
+# ---- Script directories ----
+DIRS=(/etc/zust-scripts /usr/lib/zust-scripts)
+
+# ---- Gather scripts, deduplicate (prefer /etc) ----
+declare -A scripts
+for d in "${DIRS[@]}"; do
+    [[ -d "$d" ]] || continue
+    for f in "$d"/*.sh; do
+        [[ -f "$f" ]] || continue
+        name=$(basename "$f")
+        scripts["$name"]="$f"  # /etc will overwrite /usr/lib automatically
+    done
+done
+
+if [[ ${#scripts[@]} -eq 0 ]]; then
+    echo -e "${RED}[ERROR]${RESET} No zust scripts found in ${DIRS[*]}"
+    exit 1
+fi
+
+# ---- List-only mode ----
+if [[ "${1:-}" == "--list" ]]; then
+    echo "zust ${VERSION}"
+    echo "Available scripts:"
+    for s in "${!scripts[@]}"; do
+        echo "  $s"
+    done | sort
+    exit 0
+fi
+
+# ---- Choose mode ----
+if [[ "${1:-}" != "--choose" ]]; then
     show_help
     exit 0
 fi
 
-CMD="$1"; shift || true
+# ---- Check dependencies ----
+command -v fzf >/dev/null 2>&1 || { echo "fzf not found"; exit 1; }
 
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --dry-run) DRY_RUN=true ;;
-        --verbose) VERBOSE=true ;;
-        --quiet) QUIET=true ;;
-        --help) show_help; exit 0 ;;
-        *) break ;;
-    esac
-    shift
+USE_BAT=false
+if command -v bat >/dev/null 2>&1; then
+    USE_BAT=true
+fi
+
+# ---- Prepare fzf list ----
+SCRIPT_NAMES=()
+for s in "${!scripts[@]}"; do
+    SCRIPT_NAMES+=("$s")
 done
+IFS=$'\n' SORTED_SCRIPTS=($(sort <<<"${SCRIPT_NAMES[*]}"))
+unset IFS
 
-# ---- Command Dispatch ----
-header
-case "$CMD" in
-    list)
-        list_scripts
-        ;;
-    run)
-        if [[ $# -lt 1 ]]; then
-            log "No script specified to run" FAILED
-            exit 1
-        fi
-        SCRIPT_PATH="$SCRIPT_DIR/$1"
-        run_script "$SCRIPT_PATH"
-        ;;
-    *)
-        log "Unknown command: $CMD" FAILED
-        show_help
-        exit 1
-        ;;
-esac
+# ---- Launch fzf ----
+clear
+SELECTED=$(printf '%s\n' "${SORTED_SCRIPTS[@]}" | fzf \
+    --ansi \
+    --reverse \
+    --no-multi \
+    --prompt="Select a script (Ctrl-C to quit) > " \
+    --preview-window=right:70%:wrap \
+    --preview="[[ \$USE_BAT == true ]] && bat --style=numbers --color=always {} || cat {}" \
+    --bind "change:reload:scripts[{}]") || exit 0
+
+SCRIPT_PATH="${scripts[$SELECTED]}"
+
+clear
+echo -e "${GREEN}Running script:${RESET} $SELECTED"
+echo
+
+exec bash "$SCRIPT_PATH"
