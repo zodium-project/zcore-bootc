@@ -91,13 +91,13 @@ print_line() {
 
 header() {
     echo
-    echo "zsync ${VERSION}"
+    echo -e "${BOLD}zsync ${VERSION}${RESET}"
     print_line
 }
 
 section() {
     echo
-    echo "$1"
+    echo -e "${BLUE}$1${RESET}"
     print_line
 }
 
