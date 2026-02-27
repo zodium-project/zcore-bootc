@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-VERSION="3.1.1"
+VERSION="3.2.1"
 
 # ---- Colors ----
 
@@ -70,13 +70,6 @@ FAIL_COUNT=0
 
 START_TIME=$(date +%s)
 
-# ---- Handle Flag Conflicts ----
-
-if [[ "$QUIET" = true && "$VERBOSE" = true ]]; then
-    log "Both --quiet and --verbose passed; forcing VERBOSE=false" WARNING
-    VERBOSE=false
-fi
-
 # ---- Lock ----
 
 exec 9>"$LOCKFILE" || {
@@ -95,26 +88,30 @@ trap 'rm -f "$LOCKFILE"' EXIT
 mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
 touch "$LOG_FILE" 2>/dev/null || true
 
+# ---- ANSI stripping helper ----
+_strip_ansi() { sed 's/\x1b\[[0-9;]*m//g'; }
+
 log() {
     local msg="$1"
     local level="${2:-INFO}"  # default INFO
+    local prefix=""
 
     case "$level" in
         SUCCESS) prefix="$STATUS_SUCCESS" ;;
-        FAILED) prefix="$STATUS_FAILED" ;;
-        INFO) prefix="$STATUS_INFO" ;;
+        FAILED)  prefix="$STATUS_FAILED" ;;
+        INFO)    prefix="$STATUS_INFO" ;;
         WARNING) prefix="$STATUS_WARNING" ;;
-        DEBUG) prefix="$STATUS_DEBUG" ;;
-        *) prefix="" ;;
+        DEBUG)   prefix="$STATUS_DEBUG" ;;
     esac
 
-    [[ "$QUIET" = false ]] && echo -e "$prefix $msg"
-    echo "$(date '+%F %T') | $level | ${prefix//[$'\033']} $msg" >> "$LOG_FILE"
+    # Terminal output
+    [[ "$QUIET" = false ]] && printf '%b\n' "$prefix $msg"
+
+    # Log file (ANSI codes stripped)
+    printf '%s | %s | %s\n' "$(date '+%F %T')" "$level" "$(echo -e "$prefix $msg" | _strip_ansi)" >> "$LOG_FILE"
 }
 
-debug() {
-    [[ "$VERBOSE" = true ]] && log "$1" DEBUG
-}
+debug() { [[ "$VERBOSE" = true ]] && log "$1" DEBUG || true; }
 
 # ---- UI ----
 
@@ -160,8 +157,6 @@ run_module() {
 
     TOTAL_MODULES=$((TOTAL_MODULES + 1))
     section "$name"
-
-    local start=$(date +%s)
 
     local start end duration
     start=$(date +%s)
@@ -264,8 +259,16 @@ mod_firmware() {
 
 mod_rollback() {
     command_exists rpm-ostree || { echo "rpm-ostree not found"; exit 1; }
-    section "rpm-ostree Rollback"
-    run_cmd sudo rpm-ostree rollback
+    
+    if run_cmd sudo rpm-ostree rollback; then
+        REBOOT_REQUIRED=true
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+        log "Rollback completed successfully; reboot required" SUCCESS
+    else
+        FAIL_COUNT=$((FAIL_COUNT + 1))
+        log "Rollback failed" FAILED
+        return 1
+    fi
 }
 
 # ---- Help ----
@@ -351,6 +354,13 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+# ---- Handle Flag Conflicts ----
+
+if [[ "$QUIET" = true && "$VERBOSE" = true ]]; then
+    log "Both --quiet and --verbose passed; forcing VERBOSE=false" WARNING
+    VERBOSE=false
+fi
+
 # ---- Default Module Selection ----
 
 if ! $RUN_SYSTEM && ! $RUN_FLATPAK && ! $RUN_BREW && \
@@ -373,7 +383,6 @@ if $ROLLBACK; then
     section "rpm-ostree Rollback"
     log "Performing rpm-ostree rollback" INFO
     mod_rollback
-    exit 0
 fi
 
 $RUN_SYSTEM && run_module "rpm-ostree" mod_system
