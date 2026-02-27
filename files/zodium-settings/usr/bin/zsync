@@ -70,6 +70,13 @@ FAIL_COUNT=0
 
 START_TIME=$(date +%s)
 
+# ---- Handle Flag Conflicts ----
+
+if [[ "$QUIET" = true && "$VERBOSE" = true ]]; then
+    log "Both --quiet and --verbose passed; forcing VERBOSE=false" WARNING
+    VERBOSE=false
+fi
+
 # ---- Lock ----
 
 exec 9>"$LOCKFILE" || {
