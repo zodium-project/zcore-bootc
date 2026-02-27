@@ -19,7 +19,7 @@ modules:
 
  - type: script
    scripts:
-      - system-executable.sh
+      - system-executables.sh
       - useradd-config.sh
       - fedora-tuned-remove.sh
 
