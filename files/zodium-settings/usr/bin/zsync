@@ -150,12 +150,17 @@ mod_brew() {
     command_exists brew || { log "brew not found"; return 1; }
 
     run_cmd brew update || return 1
-    run_cmd brew upgrade || return 1
 
-    $MAINTAIN && {
+    if ! run_cmd brew upgrade; then
+        log "brew upgrade returned non-zero (possibly nothing to upgrade)"
+    fi
+
+    if $MAINTAIN; then
         run_cmd brew cleanup || true
         run_cmd brew autoremove || true
-    }
+    fi
+
+    return 0
 }
 
 mod_distrobox() {
@@ -168,22 +173,29 @@ mod_podman() {
 
     run_cmd podman auto-update || true
 
-    $MAINTAIN && {
+    if $MAINTAIN; then
         run_cmd podman image prune -f || true
         run_cmd podman container prune -f || true
         run_cmd podman system prune -f || true
-    }
+    fi
+
+    return 0
 }
 
 mod_firmware() {
     command_exists fwupdmgr || { log "fwupdmgr not found"; return 1; }
 
-    run_cmd sudo fwupdmgr refresh || return 1
-    run_cmd sudo fwupdmgr update || return 1
+    run_cmd sudo fwupdmgr refresh || true
+
+    if ! run_cmd sudo fwupdmgr update; then
+        log "fwupdmgr update returned non-zero (possibly no updates)"
+    fi
 
     if fwupdmgr get-updates | grep -qi reboot; then
         REBOOT_REQUIRED=true
     fi
+
+    return 0
 }
 
 mod_rollback() {
