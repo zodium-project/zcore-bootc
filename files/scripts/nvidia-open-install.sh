@@ -196,7 +196,8 @@ dnf remove -y \
     akmod-nvidia \
     akmods \
     kernel-devel \
-    kernel-headers
+    kernel-headers \
+    gcc-c++
 
 # ---- Remove Added Negativo & container-toolkit repo ----
 rm -f nvidia-container.pp

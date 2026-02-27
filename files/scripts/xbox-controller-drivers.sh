@@ -134,7 +134,7 @@ done
 echo "== xpadneo & xone module signing COMPLETE =="
 
 # ---- Cleanup: remove akmods & build deps ----
-dnf remove -y akmod-xpadneo akmod-xone akmods gcc-c++ kernel-devel kernel-headers
+dnf remove -y akmod-xpadneo akmod-xone akmods kernel-devel kernel-headers gcc-c++
 
 # ---- Remove added Negativo repo & restore original repos ----
 rm -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo
