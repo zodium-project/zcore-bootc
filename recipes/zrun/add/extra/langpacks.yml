@@ -6,70 +6,10 @@ modules:
     install:
       install-weak-deps: false
       packages:
-       - langpacks-en
-       - langpacks-ja
-       - langpacks-zh_CN
-       - langpacks-zh_TW
-       - langpacks-ko
-       - langpacks-th
-       - langpacks-vi
-       - langpacks-hi
-       - langpacks-ar
-       - langpacks-ru
-       - langpacks-fr
-       - langpacks-de
-       - langpacks-es
-       - langpacks-pt
-       - langpacks-pt_BR
-       - langpacks-bn
-       - langpacks-tr
-       - langpacks-id
-       - langpacks-fa
-       - langpacks-it
-       - langpacks-nl
-       - langpacks-pl
-       - langpacks-uk
-       - langpacks-cs
-       - langpacks-el
-       - langpacks-sv
-       - langpacks-da
-       - langpacks-nb
-       - langpacks-ro
-       - langpacks-hu
-       - langpacks-ms 
-
-       - glibc-langpack-en
-       - glibc-langpack-ja
-       - glibc-langpack-zh
-       - glibc-langpack-ko
-       - glibc-langpack-th
-       - glibc-langpack-vi
-       - glibc-langpack-hi
-       - glibc-langpack-ar
-       - glibc-langpack-ru
-       - glibc-langpack-fr
-       - glibc-langpack-de
-       - glibc-langpack-es
-       - glibc-langpack-pt
-       - glibc-langpack-bn
-       - glibc-langpack-tr
-       - glibc-langpack-id
-       - glibc-langpack-fa
-       - glibc-langpack-it
-       - glibc-langpack-nl
-       - glibc-langpack-pl
-       - glibc-langpack-uk
-       - glibc-langpack-cs
-       - glibc-langpack-el
-       - glibc-langpack-sv
-       - glibc-langpack-da
-       - glibc-langpack-nb
-       - glibc-langpack-ro
-       - glibc-langpack-hu
-       - glibc-langpack-ms
+       - gawk-all-langpacks
+       - glibc-all-langpacks
 
   - type: dnf
     remove:
       packages:
-       - glibc-all-langpacks
        - glibc-minimal-langpack
