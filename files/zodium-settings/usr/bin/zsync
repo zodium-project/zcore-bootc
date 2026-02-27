@@ -105,7 +105,7 @@ log() {
 }
 
 debug() {
-    [[ "$VERBOSE" = true ]] && log "[DEBUG] $1"
+    [[ "$VERBOSE" = true ]] && log "$1" DEBUG
 }
 
 # ---- UI ----
