@@ -31,8 +31,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Extract NVIDIA module signing key
-        if: matrix.recipe != 'zcore-mesa.yml'
+      - name: Extract Akmods module signing key
         shell: bash
         env:
            ZODIUM_NVIDIA_PRIV: ${{ secrets.ZODIUM_NVIDIA_PRIV }}
