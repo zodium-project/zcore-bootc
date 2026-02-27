@@ -359,7 +359,7 @@ printf "  %-18s %ss\n" "Duration:" "$DURATION"
 
 if $PROMPT_REBOOT && $REBOOT_REQUIRED; then
     if confirm "Reboot now?"; then
-        sudo reboot
+        run_cmd sudo reboot
     fi
 fi
 
