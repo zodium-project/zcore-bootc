@@ -48,7 +48,7 @@ curl -fLsS --retry 5 \
 
 # ---- Install build dependencies & akmods ----
 echo "Installing build dependencies and akmods for kernel ${KERNEL_VERSION}"
-dnf install -y --setopt=install_weak_deps=False \
+dnf --refresh install -y --setopt=install_weak_deps=False \
     "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
