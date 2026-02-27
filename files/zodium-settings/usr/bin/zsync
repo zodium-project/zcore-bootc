@@ -1,0 +1,334 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# ============================================================
+# zsync 3.0.0
+# Unified Atomic Update Orchestrator
+# ============================================================
+
+VERSION="3.0.0"
+LOCKFILE="/run/zsync.lock"
+LOG_FILE="/var/log/zsync.log"
+
+# ------------------------------------------------------------
+# State
+# ------------------------------------------------------------
+
+DRY_RUN=false
+QUIET=false
+VERBOSE=false
+NON_INTERACTIVE=false
+PROMPT_REBOOT=true
+MAINTAIN=false
+ROLLBACK=false
+
+RUN_SYSTEM=false
+RUN_FLATPAK=false
+RUN_BREW=false
+RUN_DISTROBOX=false
+RUN_PODMAN=false
+RUN_FIRMWARE=false
+
+REBOOT_REQUIRED=false
+TOTAL_MODULES=0
+SUCCESS_COUNT=0
+FAIL_COUNT=0
+
+START_TIME=$(date +%s)
+
+# ------------------------------------------------------------
+# Lock (User-safe)
+# ------------------------------------------------------------
+
+if [[ -n "${XDG_RUNTIME_DIR:-}" && -d "$XDG_RUNTIME_DIR" ]]; then
+    LOCKFILE="$XDG_RUNTIME_DIR/zsync.lock"
+else
+    LOCKFILE="/tmp/zsync-${UID}.lock"
+fi
+
+exec 9>"$LOCKFILE" || {
+    echo "zsync: cannot create lockfile at $LOCKFILE"
+    exit 1
+}
+
+if ! flock -n 9; then
+    echo "zsync: another instance is already running."
+    exit 1
+fi
+
+# ------------------------------------------------------------
+# Logging
+# ------------------------------------------------------------
+
+mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
+touch "$LOG_FILE" 2>/dev/null || true
+
+log() {
+    local msg="$1"
+    [[ "$QUIET" = false ]] && echo "$msg"
+    echo "$(date '+%F %T') | $msg" >> "$LOG_FILE"
+}
+
+debug() {
+    [[ "$VERBOSE" = true ]] && log "[DEBUG] $1"
+}
+
+# ------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------
+
+confirm() {
+    $NON_INTERACTIVE && return 1
+    read -r -p "$1 [y/N]: " ans
+    [[ "$ans" =~ ^[Yy]$ ]]
+}
+
+run_cmd() {
+    if $DRY_RUN; then
+        log "[DRY-RUN] $*"
+        return 0
+    fi
+    "$@"
+}
+
+section() {
+    echo
+    echo "------------------------------------------------------------"
+    echo " $1"
+    echo "------------------------------------------------------------"
+}
+
+run_module() {
+    local name="$1"
+    shift
+    TOTAL_MODULES=$((TOTAL_MODULES + 1))
+
+    section "$name"
+
+    local start=$(date +%s)
+    if "$@"; then
+        local end=$(date +%s)
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+        log "Status: SUCCESS (${end-start}s)"
+    else
+        local end=$(date +%s)
+        FAIL_COUNT=$((FAIL_COUNT + 1))
+        log "Status: FAILED (${end-start}s)"
+    fi
+}
+
+# ------------------------------------------------------------
+# Modules
+# ------------------------------------------------------------
+
+mod_system() {
+    run_cmd sudo rpm-ostree upgrade || return 1
+
+    if rpm-ostree status | grep -q "^\s*●"; then
+        REBOOT_REQUIRED=true
+    fi
+
+    if $MAINTAIN; then
+        run_cmd sudo rpm-ostree cleanup -m || true
+    fi
+}
+
+mod_flatpak() {
+    run_cmd flatpak update -y || return 1
+
+    if $MAINTAIN; then
+        run_cmd flatpak uninstall --unused -y || true
+    fi
+}
+
+mod_brew() {
+    run_cmd brew update || return 1
+    run_cmd brew upgrade || return 1
+
+    if $MAINTAIN; then
+        run_cmd brew cleanup || true
+        run_cmd brew autoremove || true
+    fi
+}
+
+mod_distrobox() {
+    run_cmd distrobox upgrade --all || return 1
+}
+
+mod_podman() {
+    run_cmd podman auto-update || true
+
+    if $MAINTAIN; then
+        run_cmd podman image prune -f || true
+        run_cmd podman container prune -f || true
+        run_cmd podman system prune -f || true
+    fi
+}
+
+mod_firmware() {
+    run_cmd sudo fwupdmgr refresh || return 1
+    run_cmd sudo fwupdmgr update || return 1
+
+    if fwupdmgr get-updates | grep -qi "reboot"; then
+        REBOOT_REQUIRED=true
+    fi
+}
+
+mod_rollback() {
+    section "rpm-ostree Rollback"
+    run_cmd sudo rpm-ostree rollback
+}
+
+# ------------------------------------------------------------
+# Help
+# ------------------------------------------------------------
+
+show_help() {
+cat <<EOF
+zsync ${VERSION}
+Unified Atomic Update Orchestrator
+
+SYNOPSIS
+  zsync [OPTIONS]
+
+DESCRIPTION
+  zsync updates selected subsystems in a controlled and deterministic manner.
+  By default (no arguments), all update modules are executed.
+
+MODULE SELECTION
+  --all               Run all update modules (default if none specified)
+  --system            Update rpm-ostree
+  --flatpak           Update Flatpak applications
+  --brew              Update Homebrew packages
+  --distrobox         Upgrade all Distrobox containers
+  --podman            Run Podman auto-update and maintenance
+  --firmware          Apply firmware updates via fwupdmgr
+  --rollback          Perform rpm-ostree rollback and exit
+
+MODES
+  --maintain          Perform cleanup operations where supported
+  --dry-run           Print actions without executing them
+  --yes               Non-interactive mode (assume no to prompts)
+  --no-reboot         Do not prompt for reboot
+
+OUTPUT CONTROL
+  --quiet             Minimal console output
+  --verbose           Enable debug-level logging
+
+GENERAL
+  --version           Show version information
+  --help              Show this help message
+
+EXAMPLES
+  zsync
+      Run all modules
+
+  zsync --system --flatpak
+      Update only rpm-ostree and Flatpak
+
+  zsync --all --maintain
+      Update everything and perform cleanup
+
+  zsync --rollback
+      Roll back to previous rpm-ostree deployment
+
+EXIT STATUS
+  0   Success
+  1   Lock acquisition or usage error
+  2   One or more modules failed
+
+EOF
+}
+
+# ------------------------------------------------------------
+# Argument Parsing
+# ------------------------------------------------------------
+
+if [[ $# -eq 0 ]]; then
+    RUN_SYSTEM=true
+    RUN_FLATPAK=true
+    RUN_BREW=true
+    RUN_DISTROBOX=true
+    RUN_PODMAN=true
+    RUN_FIRMWARE=true
+fi
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --all)
+            RUN_SYSTEM=true
+            RUN_FLATPAK=true
+            RUN_BREW=true
+            RUN_DISTROBOX=true
+            RUN_PODMAN=true
+            RUN_FIRMWARE=true
+            ;;
+        --system) RUN_SYSTEM=true ;;
+        --flatpak) RUN_FLATPAK=true ;;
+        --brew) RUN_BREW=true ;;
+        --distrobox) RUN_DISTROBOX=true ;;
+        --podman) RUN_PODMAN=true ;;
+        --firmware) RUN_FIRMWARE=true ;;
+        --maintain) MAINTAIN=true ;;
+        --rollback) ROLLBACK=true ;;
+        --dry-run) DRY_RUN=true ;;
+        --quiet) QUIET=true ;;
+        --verbose) VERBOSE=true ;;
+        --yes) NON_INTERACTIVE=true ;;
+        --no-reboot) PROMPT_REBOOT=false ;;
+        --version) echo "zsync $VERSION"; exit 0 ;;
+        --help) show_help; exit 0 ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+# ------------------------------------------------------------
+# Execution
+# ------------------------------------------------------------
+
+echo "============================================================"
+echo " zsync $VERSION"
+echo "============================================================"
+
+if $ROLLBACK; then
+    mod_rollback
+    exit 0
+fi
+
+$RUN_SYSTEM && run_module "rpm-ostree" mod_system
+$RUN_FLATPAK && run_module "Flatpak" mod_flatpak
+$RUN_BREW && run_module "Homebrew" mod_brew
+$RUN_DISTROBOX && run_module "Distrobox" mod_distrobox
+$RUN_PODMAN && run_module "Podman" mod_podman
+$RUN_FIRMWARE && run_module "Firmware" mod_firmware
+
+# ------------------------------------------------------------
+# Summary
+# ------------------------------------------------------------
+
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+
+echo
+echo "============================================================"
+echo " SUMMARY"
+echo "============================================================"
+echo " Modules Executed : $TOTAL_MODULES"
+echo " Successful       : $SUCCESS_COUNT"
+echo " Failed           : $FAIL_COUNT"
+echo " Reboot Required  : $REBOOT_REQUIRED"
+echo " Duration         : ${DURATION}s"
+echo "============================================================"
+
+if $PROMPT_REBOOT && $REBOOT_REQUIRED; then
+    if confirm "Reboot now?"; then
+        sudo reboot
+    fi
+fi
+
+if [[ $FAIL_COUNT -gt 0 ]]; then
+    exit 2
+fi
+
+exit 0
