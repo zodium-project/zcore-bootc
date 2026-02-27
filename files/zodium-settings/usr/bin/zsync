@@ -213,7 +213,10 @@ mod_brew() {
 
 mod_distrobox() {
     command_exists distrobox || { log "distrobox not found"; return 1; }
-    run_cmd distrobox upgrade --all || return 1
+     if ! run_cmd distrobox upgrade --all; then
+          log "Distrobox returned non-zero (possibly nothing to upgrade)" WARNING
+     fi
+     return 0
 }
 
 mod_podman() {
