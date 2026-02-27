@@ -156,12 +156,12 @@ run_module() {
         local end=$(date +%s)
         local duration=$((end - start))
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-        log "Status: SUCCESS (${duration}s)"
+        log "Module completed in ${duration}s" SUCCESS
     else
         local end=$(date +%s)
         local duration=$((end - start))
         FAIL_COUNT=$((FAIL_COUNT + 1))
-        log "Status: FAILED (${duration}s)"
+        log "Module failed in ${duration}s" FAILED
     fi
 }
 
