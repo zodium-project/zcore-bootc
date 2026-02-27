@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# ── Install Microsoft GPG key ──────────────────────────────────
+# ── Install Microsoft GPG key ───────────────────────────────── #
 
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
-# ── Add Visual Studio Code repository ─────────────────────────
+# ── Add Visual Studio Code repository ───────────────────────── #
 
 sudo tee /etc/yum.repos.d/vscode.repo > /dev/null << 'EOF'
 [code]
