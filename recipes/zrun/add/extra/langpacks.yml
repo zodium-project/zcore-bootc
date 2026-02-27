@@ -8,6 +8,38 @@ modules:
       packages:
        - gawk-all-langpacks
        - glibc-all-langpacks
+       
+       - langpacks-en
+       - langpacks-ja
+       - langpacks-zh_CN
+       - langpacks-zh_TW
+       - langpacks-ko
+       - langpacks-th
+       - langpacks-vi
+       - langpacks-hi
+       - langpacks-ar
+       - langpacks-ru
+       - langpacks-fr
+       - langpacks-de
+       - langpacks-es
+       - langpacks-pt
+       - langpacks-pt_BR
+       - langpacks-bn
+       - langpacks-tr
+       - langpacks-id
+       - langpacks-fa
+       - langpacks-it
+       - langpacks-nl
+       - langpacks-pl
+       - langpacks-uk
+       - langpacks-cs
+       - langpacks-el
+       - langpacks-sv
+       - langpacks-da
+       - langpacks-nb
+       - langpacks-ro
+       - langpacks-hu
+       - langpacks-ms 
 
   - type: dnf
     remove:
