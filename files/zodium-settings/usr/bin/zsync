@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# ============================================================
-# zsync 3.0.0
-# Unified Atomic Update Orchestrator
-# ============================================================
+VERSION="3.1.1"
 
-VERSION="3.0.0"
-LOCKFILE="/run/zsync.lock"
-LOG_FILE="/var/log/zsync.log"
+# ---- Configuration ----
 
-# ------------------------------------------------------------
-# State
-# ------------------------------------------------------------
+LOCKFILE="/tmp/zsync-${UID}.lock"
+
+# User-safe log location
+if [[ -n "${XDG_STATE_HOME:-}" ]]; then
+    LOG_FILE="$XDG_STATE_HOME/zsync.log"
+else
+    LOG_FILE="$HOME/.local/state/zsync.log"
+fi
+
+# ---- State ----
 
 DRY_RUN=false
 QUIET=false
@@ -36,29 +38,19 @@ FAIL_COUNT=0
 
 START_TIME=$(date +%s)
 
-# ------------------------------------------------------------
-# Lock (User-safe)
-# ------------------------------------------------------------
-
-if [[ -n "${XDG_RUNTIME_DIR:-}" && -d "$XDG_RUNTIME_DIR" ]]; then
-    LOCKFILE="$XDG_RUNTIME_DIR/zsync.lock"
-else
-    LOCKFILE="/tmp/zsync-${UID}.lock"
-fi
+# ---- Lock ----
 
 exec 9>"$LOCKFILE" || {
-    echo "zsync: cannot create lockfile at $LOCKFILE"
+    echo "zsync: cannot create lockfile"
     exit 1
 }
 
 if ! flock -n 9; then
-    echo "zsync: another instance is already running."
+    echo "zsync: another instance is already running"
     exit 1
 fi
 
-# ------------------------------------------------------------
-# Logging
-# ------------------------------------------------------------
+# ---- Logging ----
 
 mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
 touch "$LOG_FILE" 2>/dev/null || true
@@ -73,9 +65,29 @@ debug() {
     [[ "$VERBOSE" = true ]] && log "[DEBUG] $1"
 }
 
-# ------------------------------------------------------------
-# Utilities
-# ------------------------------------------------------------
+# ---- UI ----
+
+print_line() {
+    printf '%*s\n' 60 '' | tr ' ' '-'
+}
+
+header() {
+    echo
+    echo "zsync ${VERSION}"
+    print_line
+}
+
+section() {
+    echo
+    echo "$1"
+    print_line
+}
+
+# ---- Utilities ----
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
 
 confirm() {
     $NON_INTERACTIVE && return 1
@@ -91,181 +103,140 @@ run_cmd() {
     "$@"
 }
 
-section() {
-    echo
-    echo "------------------------------------------------------------"
-    echo " $1"
-    echo "------------------------------------------------------------"
-}
-
 run_module() {
     local name="$1"
     shift
-    TOTAL_MODULES=$((TOTAL_MODULES + 1))
 
+    TOTAL_MODULES=$((TOTAL_MODULES + 1))
     section "$name"
 
     local start=$(date +%s)
+
     if "$@"; then
         local end=$(date +%s)
+        local duration=$((end - start))
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-        log "Status: SUCCESS (${end-start}s)"
+        log "Status: SUCCESS (${duration}s)"
     else
         local end=$(date +%s)
+        local duration=$((end - start))
         FAIL_COUNT=$((FAIL_COUNT + 1))
-        log "Status: FAILED (${end-start}s)"
+        log "Status: FAILED (${duration}s)"
     fi
 }
 
-# ------------------------------------------------------------
-# Modules
-# ------------------------------------------------------------
+# ---- Modules ----
 
 mod_system() {
+    command_exists rpm-ostree || { log "rpm-ostree not found"; return 1; }
+
     run_cmd sudo rpm-ostree upgrade || return 1
 
     if rpm-ostree status | grep -q "^\s*●"; then
         REBOOT_REQUIRED=true
     fi
 
-    if $MAINTAIN; then
-        run_cmd sudo rpm-ostree cleanup -m || true
-    fi
+    $MAINTAIN && run_cmd sudo rpm-ostree cleanup -m || true
 }
 
 mod_flatpak() {
-    run_cmd flatpak update -y || return 1
+    command_exists flatpak || { log "flatpak not found"; return 1; }
 
-    if $MAINTAIN; then
-        run_cmd flatpak uninstall --unused -y || true
-    fi
+    run_cmd flatpak update -y || return 1
+    $MAINTAIN && run_cmd flatpak uninstall --unused -y || true
 }
 
 mod_brew() {
+    command_exists brew || { log "brew not found"; return 1; }
+
     run_cmd brew update || return 1
     run_cmd brew upgrade || return 1
 
-    if $MAINTAIN; then
+    $MAINTAIN && {
         run_cmd brew cleanup || true
         run_cmd brew autoremove || true
-    fi
+    }
 }
 
 mod_distrobox() {
+    command_exists distrobox || { log "distrobox not found"; return 1; }
     run_cmd distrobox upgrade --all || return 1
 }
 
 mod_podman() {
+    command_exists podman || { log "podman not found"; return 1; }
+
     run_cmd podman auto-update || true
 
-    if $MAINTAIN; then
+    $MAINTAIN && {
         run_cmd podman image prune -f || true
         run_cmd podman container prune -f || true
         run_cmd podman system prune -f || true
-    fi
+    }
 }
 
 mod_firmware() {
+    command_exists fwupdmgr || { log "fwupdmgr not found"; return 1; }
+
     run_cmd sudo fwupdmgr refresh || return 1
     run_cmd sudo fwupdmgr update || return 1
 
-    if fwupdmgr get-updates | grep -qi "reboot"; then
+    if fwupdmgr get-updates | grep -qi reboot; then
         REBOOT_REQUIRED=true
     fi
 }
 
 mod_rollback() {
+    command_exists rpm-ostree || { echo "rpm-ostree not found"; exit 1; }
     section "rpm-ostree Rollback"
     run_cmd sudo rpm-ostree rollback
 }
 
-# ------------------------------------------------------------
-# Help
-# ------------------------------------------------------------
+# ---- Help ----
 
 show_help() {
 cat <<EOF
 zsync ${VERSION}
 Unified Atomic Update Orchestrator
 
-SYNOPSIS
+USAGE:
   zsync [OPTIONS]
 
-DESCRIPTION
-  zsync updates selected subsystems in a controlled and deterministic manner.
-  If no module options are specified, all update modules are executed.
-  Rollback is always an explicit action and is never run automatically.
+If no module options are specified, all modules are executed.
 
-MODULE SELECTION
-  --all               Run all update modules
-  --system            Update rpm-ostree
-  --flatpak           Update Flatpak applications
-  --brew              Update Homebrew packages
-  --distrobox         Upgrade all Distrobox containers
-  --podman            Run Podman auto-update and maintenance
-  --firmware          Apply firmware updates via fwupdmgr
+MODULE OPTIONS:
+  --all
+  --system
+  --flatpak
+  --brew
+  --distrobox
+  --podman
+  --firmware
 
-SPECIAL ACTIONS
-  --rollback          Perform rpm-ostree rollback and exit immediately
+SPECIAL:
+  --rollback
 
-MODES
-  --maintain          Perform cleanup operations where supported
-  --dry-run           Print actions without executing them
-  --yes               Non-interactive mode (assume no to prompts)
-  --no-reboot         Do not prompt for reboot
+MODES:
+  --maintain
+  --dry-run
+  --yes
+  --no-reboot
 
-OUTPUT CONTROL
-  --quiet             Minimal console output
-  --verbose           Enable debug-level logging
+OUTPUT:
+  --quiet
+  --verbose
 
-GENERAL
-  --version           Show version information
-  --help              Show this help message
-
-EXAMPLES
-  zsync
-      Run all update modules
-
-  zsync --system --flatpak
-      Update only rpm-ostree and Flatpak
-
-  zsync --all --maintain
-      Update everything and perform cleanup
-
-  zsync --rollback
-      Roll back to previous rpm-ostree deployment
-
-EXIT STATUS
-  0   Success
-  1   Lock acquisition or usage error
-  2   One or more modules failed
-
+GENERAL:
+  --version
+  --help
 EOF
 }
 
-# ------------------------------------------------------------
-# Argument Parsing
-# ------------------------------------------------------------
-
-if [[ $# -eq 0 ]]; then
-    RUN_SYSTEM=true
-    RUN_FLATPAK=true
-    RUN_BREW=true
-    RUN_DISTROBOX=true
-    RUN_PODMAN=true
-    RUN_FIRMWARE=true
-fi
+# ---- Argument Parsing ----
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --all)
-            RUN_SYSTEM=true
-            RUN_FLATPAK=true
-            RUN_BREW=true
-            RUN_DISTROBOX=true
-            RUN_PODMAN=true
-            RUN_FIRMWARE=true
-            ;;
+        --all) RUN_SYSTEM=true; RUN_FLATPAK=true; RUN_BREW=true; RUN_DISTROBOX=true; RUN_PODMAN=true; RUN_FIRMWARE=true ;;
         --system) RUN_SYSTEM=true ;;
         --flatpak) RUN_FLATPAK=true ;;
         --brew) RUN_BREW=true ;;
@@ -286,13 +257,23 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# ------------------------------------------------------------
-# Execution
-# ------------------------------------------------------------
+# ---- Default Module Selection ----
 
-echo "============================================================"
-echo " zsync $VERSION"
-echo "============================================================"
+if ! $RUN_SYSTEM && ! $RUN_FLATPAK && ! $RUN_BREW && \
+   ! $RUN_DISTROBOX && ! $RUN_PODMAN && ! $RUN_FIRMWARE && \
+   ! $ROLLBACK; then
+
+    RUN_SYSTEM=true
+    RUN_FLATPAK=true
+    RUN_BREW=true
+    RUN_DISTROBOX=true
+    RUN_PODMAN=true
+    RUN_FIRMWARE=true
+fi
+
+# ---- Execution ----
+
+header
 
 if $ROLLBACK; then
     mod_rollback
@@ -306,23 +287,18 @@ $RUN_DISTROBOX && run_module "Distrobox" mod_distrobox
 $RUN_PODMAN && run_module "Podman" mod_podman
 $RUN_FIRMWARE && run_module "Firmware" mod_firmware
 
-# ------------------------------------------------------------
-# Summary
-# ------------------------------------------------------------
+# ---- Summary ----
 
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 
-echo
-echo "============================================================"
-echo " SUMMARY"
-echo "============================================================"
-echo " Modules Executed : $TOTAL_MODULES"
-echo " Successful       : $SUCCESS_COUNT"
-echo " Failed           : $FAIL_COUNT"
-echo " Reboot Required  : $REBOOT_REQUIRED"
-echo " Duration         : ${DURATION}s"
-echo "============================================================"
+section "SUMMARY"
+
+printf "  %-18s %s\n" "Modules Executed:" "$TOTAL_MODULES"
+printf "  %-18s %s\n" "Successful:" "$SUCCESS_COUNT"
+printf "  %-18s %s\n" "Failed:" "$FAIL_COUNT"
+printf "  %-18s %s\n" "Reboot Required:" "$REBOOT_REQUIRED"
+printf "  %-18s %ss\n" "Duration:" "$DURATION"
 
 if $PROMPT_REBOOT && $REBOOT_REQUIRED; then
     if confirm "Reboot now?"; then
@@ -330,8 +306,5 @@ if $PROMPT_REBOOT && $REBOOT_REQUIRED; then
     fi
 fi
 
-if [[ $FAIL_COUNT -gt 0 ]]; then
-    exit 2
-fi
-
+[[ $FAIL_COUNT -gt 0 ]] && exit 2
 exit 0
