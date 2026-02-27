@@ -21,5 +21,6 @@ to-do :
 18. 
 19. make a new branch ( unstable & rename current one to stable)
 20. 
+21. setup btrfs trim/balance/cleanup serivce & add brtfs assistant.
 
 Current Release : Snapshot 8 (usable but not 100% stable)
