@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-# ---- Exit immediately if a command exits with a non-zero status ----
-set -oue pipefail
+# ── Exit immediately if a command exits with a non-zero status ── #
+set -Eeuo pipefail
 
-# ---- Zodium Project : github.com/zodium-project ----
-# ---- akmod-wl (Broadcom Wi-Fi) build & signing script ----
+# ──────── Zodium Project : github.com/zodium-project ──────────── #
+# ──── akmod-wl (Broadcom Wi-Fi) build & signing script ────────── #
 
-# ---- Make sure /var/tmp exists and is writable by all users ----
+# ── Make sure /var/tmp exists and is writable by all users ────── #
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
-# ---- Variables & Paths ----
+# ──── Variables & Paths ────
 WORKDIR="/tmp/certs"
 REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
@@ -25,7 +25,7 @@ PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 WL_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/wl"
 
-# ---- Disable only Terra repos temporarily ----
+# ──── Disable only Terra repos temporarily ──── #
 dnf repolist --enabled | awk 'NR>1 {print $1}' > "$REPO_SNAPSHOT"
 
 mapfile -t TERRAREPOS < <(
@@ -38,13 +38,13 @@ if (( ${#TERRAREPOS[@]} > 0 )); then
   done
 fi
 
-# ---- Install akmod-wl & build deps ----
+# ──── Install akmod-wl & build deps ──── #
 echo "Installing akmod-wl and dependencies for kernel ${KERNEL_VERSION}"
 dnf --refresh install -y --setopt=install_weak_deps=False \
     "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
-# ---- Monkey-patch akmodsbuild (workaround) ----
+# ──── Monkey-patch akmodsbuild (workaround) ──── #
 cp /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.backup
 sed -i '/if \[\[ -w \/var \]\] ; then/,/fi/d' /usr/sbin/akmodsbuild
 
@@ -53,10 +53,10 @@ dnf install -y --setopt=install_weak_deps=False akmod-wl
 echo "Building wl kernel modules for ${KERNEL_VERSION}"
 akmods --force --kernels "${KERNEL_VERSION}" --kmod wl
 
-# ---- Restore akmodsbuild ----
+# ──── Restore akmodsbuild ──── #
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
 
-# ---- Verify modules ----
+# ──── Verify modules ──── #
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
 [[ -d "$WL_MODULE_DIR" ]] || fail "wl module directory missing"
@@ -73,7 +73,7 @@ done
 
 modinfo "$WL_MODULE_DIR"/*.ko* > /dev/null || fail "modinfo check failed"
 
-# ---- Sign modules ----
+# ──── Sign modules ──── #
 mkdir -p "$WORKDIR"
 chmod 700 "$WORKDIR"
 
@@ -110,10 +110,10 @@ done
 
 echo "== Module signing COMPLETE =="
 
-# ---- Remove akmod-wl & cleanup build deps ----
+# ──── Remove akmod-wl & cleanup build deps ──── #
 dnf remove -y akmod-wl akmods gcc-c++ kernel-devel kernel-headers
 
-# ---- Restore Terra repos ----
+# ──── Restore Terra repos ──── #
 if [[ -f "$REPO_SNAPSHOT" ]]; then
   while read -r repo; do
     dnf config-manager setopt "${repo}.enabled=1" || true
@@ -121,7 +121,7 @@ if [[ -f "$REPO_SNAPSHOT" ]]; then
   rm -f "$REPO_SNAPSHOT"
 fi
 
-# ---- Cleanup ----
+# ──── Cleanup ──── #
 dnf clean all
 dnf autoremove -y
 dnf clean packages

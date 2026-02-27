@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 rm -rf /usr/lib/tuned/profiles/accelerator-performance/
 rm -rf /usr/lib/tuned/profiles/hpc-compute/

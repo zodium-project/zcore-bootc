@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 dnf install \
   https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
@@ -11,4 +11,4 @@ dnf install \
 
 dnf check-upgrade
 
-#### a backup for bling module ###
+# ──── a backup for bling module ──── #

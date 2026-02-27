@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-# ---- Exit immediately if a command exits with a non-zero status ----
-set -oue pipefail
+# ──── Exit immediately if a command exits with a non-zero status ──── #
+set -Eeuo pipefail
 
-# ---- Zodium Project : github.com/zodium-project ----
-# ---- NVIDIA OPEN drivers install script for zcore ----
+# ──── Zodium Project : github.com/zodium-project ──────────────────── #
+# ──── NVIDIA OPEN drivers install script for zcore ────────────────── #
 
-# ---- Make sure /var/tmp exists and is writable by all users ----
+# ──── Make sure /var/tmp exists and is writable by all users ──────── #
 mkdir -p /var/tmp
 chmod 1777 /var/tmp
 
-# ---- Set Variables/Paths for Keys & Packages ----
+# ──── Set Variables/Paths for Keys & Packages ──── #
 
 WORKDIR="/tmp/certs"
 
@@ -28,7 +28,7 @@ PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
 
-# ---- Disable External (Nonfree/Extra) Repos ----
+# ──── Disable External (Nonfree/Extra) Repos ──── #
 dnf repolist --enabled \
   | awk 'NR>1 {print $1}' \
   > "$REPO_SNAPSHOT"
@@ -45,28 +45,28 @@ if (( ${#SANDBOX_REPOS[@]} > 0 )); then
   done
 fi
 
-# ---- Add Negativo17 Nvidia-driver Repo ---
+# ──── Add Negativo17 Nvidia-driver Repo ──── #
 curl -fLsS --retry 5 \
     -o /etc/yum.repos.d/negativo17-fedora-nvidia.repo \
     https://negativo17.org/repos/fedora-nvidia.repo
 
-# ---- Build/Install Nvidia Driver Modules ----
+# ──── Build/Install Nvidia Driver Modules ──── #
 echo "Installing kernel modules for kernel version: ${KERNEL_VERSION}"
 dnf install -y --setopt=install_weak_deps=False \
     "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
-# ---- Workaround Fix (monkey patch 'akmodsbuild') ----
+# ──── Workaround Fix (monkey patch 'akmodsbuild') ────── #
 cp /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.backup
 sed -i '/if \[\[ -w \/var \]\] ; then/,/fi/d' /usr/sbin/akmodsbuild
-# ---- ---- ---- ---- ---- ---- ---- ---- ---- ----  
+# ─────────────────────────────────────────────────────── #
 dnf install -y --setopt=install_weak_deps=False \
     nvidia-kmod-common \
     nvidia-modprobe
 
-# ---- Depricate when upstream fixes it (akmod) ----
+# ──── Depricate when upstream fixes it (akmod) ──── #
 mv /usr/sbin/akmodsbuild.backup /usr/sbin/akmodsbuild
-# ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+# ────────────────────────────────────────────────── #
 
 echo "Installing kmod..."
 akmods --force --kernels "${KERNEL_VERSION}" --kmod nvidia
@@ -76,7 +76,7 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-p
 
 modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz
 
-# ---- Detect if Modules & Keys are avaliable to be Singned ----
+# ──── Detect if Modules & Keys are avaliable to be Singned ──── #
 echo "== NVIDIA module & signing key detection =="
 
 fail() {
@@ -111,7 +111,7 @@ done
 
 echo "== NVIDIA detection PASSED =="
 
-# ---- Sing Nvidia Driver Modules ----
+# ──── Sing Nvidia Driver Modules ──── #
 echo "== NVIDIA module signing =="
 
 fail() { echo "ERROR: $*" >&2; exit 1; }
@@ -164,7 +164,7 @@ done
 
 echo "== NVIDIA module signing COMPLETE =="
 
-# ---- Install Nvidia Driver (userspace) & container-toolkit ----
+# ──── Install Nvidia Driver (userspace) & container-toolkit ──── #
 nvidia_packages_list=( \
     nvidia-driver \
     nvidia-persistenced \
@@ -191,7 +191,7 @@ curl -fLsS \
 
 semodule -i nvidia-container.pp
 
-# ---- Remove Orphans/Useless Deps ----
+# ──── Remove Orphans/Useless Deps ──── #
 dnf remove -y \
     akmod-nvidia \
     akmods \
@@ -199,12 +199,12 @@ dnf remove -y \
     kernel-headers \
     gcc-c++
 
-# ---- Remove Added Negativo & container-toolkit repo ----
+# ──── Remove Added Negativo & container-toolkit repo ──── #
 rm -f nvidia-container.pp
 rm -f /etc/yum.repos.d/nvidia-container-toolkit.repo
 rm -f /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 
-# ---- Restore Repos (Nonfree/Extra) ----
+# ──── Restore Repos (Nonfree/Extra) ──── #
 if [[ -f "$REPO_SNAPSHOT" ]]; then
   while read -r repo; do
     dnf config-manager setopt "${repo}.enabled=1" || true
@@ -213,7 +213,7 @@ if [[ -f "$REPO_SNAPSHOT" ]]; then
   rm -f "$REPO_SNAPSHOT"
 fi
 
-# ---- Dnf Cleanup ---
+# ──── Dnf Cleanup ──── #
 dnf5 clean all
 dnf5 autoremove -y
 dnf5 clean packages
