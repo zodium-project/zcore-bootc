@@ -271,41 +271,50 @@ mod_rollback() {
 # ---- Help ----
 
 show_help() {
-cat <<EOF
-zsync ${VERSION}
-Unified Atomic Update Orchestrator
+    echo -e "${BOLD}${BLUE}zsync ${VERSION}${RESET}"
+    echo -e "${BOLD}Unified Atomic Update Orchestrator${RESET}\n"
 
-USAGE:
-  zsync [OPTIONS]
+    echo -e "${YELLOW}USAGE:${RESET}"
+    echo -e "  zsync [OPTIONS]\n"
 
-If no module options are specified, all modules are executed.
+    echo -e "${YELLOW}MODULE OPTIONS:${RESET}"
+    echo -e "  ${BLUE}--all${RESET}          Run all modules"
+    echo -e "  ${BLUE}--system${RESET}       Update rpm-ostree system"
+    echo -e "  ${BLUE}--flatpak${RESET}      Update Flatpak apps"
+    echo -e "  ${BLUE}--brew${RESET}         Update Homebrew packages"
+    echo -e "  ${BLUE}--distrobox${RESET}    Upgrade all Distrobox containers"
+    echo -e "  ${BLUE}--podman${RESET}       Update Podman containers/images"
+    echo -e "  ${BLUE}--firmware${RESET}     Update firmware via fwupdmgr\n"
 
-MODULE OPTIONS:
-  --all
-  --system
-  --flatpak
-  --brew
-  --distrobox
-  --podman
-  --firmware
+    echo -e "${YELLOW}SPECIAL:${RESET}"
+    echo -e "  ${BLUE}--rollback${RESET}     Rollback rpm-ostree deployment\n"
 
-SPECIAL:
-  --rollback
+    echo -e "${YELLOW}MODES:${RESET}"
+    echo -e "  ${BLUE}--maintain${RESET}     Remove unused packages/images"
+    echo -e "  ${BLUE}--dry-run${RESET}      Show commands without executing"
+    echo -e "  ${BLUE}--yes${RESET}          Assume yes for all prompts"
+    echo -e "  ${BLUE}--no-reboot${RESET}    Skip automatic reboot even if required\n"
 
-MODES:
-  --maintain
-  --dry-run
-  --yes
-  --no-reboot
+    echo -e "${YELLOW}OUTPUT:${RESET}"
+    echo -e "  ${BLUE}--quiet${RESET}        Suppress terminal output"
+    echo -e "  ${BLUE}--verbose${RESET}      Show debug messages\n"
 
-OUTPUT:
-  --quiet
-  --verbose
+    echo -e "${YELLOW}GENERAL:${RESET}"
+    echo -e "  ${BLUE}--version${RESET}      Show version"
+    echo -e "  ${BLUE}--help${RESET}         Show this help\n"
 
-GENERAL:
-  --version
-  --help
-EOF
+    echo -e "${YELLOW}EXAMPLES:${RESET}"
+    echo -e "  ${GREEN}# Upgrade everything interactively${RESET}"
+    echo -e "  zsync --all\n"
+
+    echo -e "  ${GREEN}# Update system and firmware, skip reboot${RESET}"
+    echo -e "  zsync --system --firmware --no-reboot\n"
+
+    echo -e "  ${GREEN}# Dry-run all modules without making changes${RESET}"
+    echo -e "  zsync --all --dry-run\n"
+
+    echo -e "  ${GREEN}# Rollback rpm-ostree deployment${RESET}"
+    echo -e "  zsync --rollback\n"
 }
 
 # ---- Argument Parsing ----
