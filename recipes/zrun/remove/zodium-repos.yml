@@ -11,9 +11,3 @@ modules:
         - rpmfusion-nonfree-release-tainted
         - terra-release
         - terra-gpg-keys
-
-  - type: script
-    snippets:
-      - "dnf5 autoremove -y"
-      - "dnf5 clean all"
-      - "dnf5 clean packages"
