@@ -375,8 +375,10 @@ printf "  %-18s %ss\n" "Duration:" "$DURATION"
 
 if $PROMPT_REBOOT && $REBOOT_REQUIRED; then
     if confirm "Reboot now?"; then
-        run_cmd systemctl reboot
+        run_cmd sudo reboot
     fi
+elif $REBOOT_REQUIRED; then
+    log "Reboot skipped due to --no-reboot; please reboot manually." WARNING
 fi
 
 [[ $FAIL_COUNT -gt 0 ]] && exit 2
