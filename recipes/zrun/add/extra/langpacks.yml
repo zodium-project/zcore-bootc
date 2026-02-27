@@ -6,13 +6,8 @@ modules:
       install-weak-deps: false
       packages:
        - glibc-all-langpacks
-       
        - langpacks-en
-       - langpacks-zh_CN
-       - langpacks-es
-       - langpacks-hi
-       - langpacks-ar
-
+       
   - type: dnf
     remove:
       packages:
