@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+
+  - type: script
+    env:
+      PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-akmod.der
+    secrets:
+      - type: file
+        source: /tmp/certs/akmod-signing-private-key.pem
+        mount:
+          type: file
+          destination: /tmp/certs/kernel_key.pem
+    scripts:
+      - xbox-controller-drivers.sh
+
+  - type: dnf
+    group-install:
+      with-optional: false
+      install-weak-deps: false
+      packages:
+          - development-tools
