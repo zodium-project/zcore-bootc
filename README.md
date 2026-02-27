@@ -9,7 +9,7 @@ to-do :
 6. make custom asus-laptop iso ( asus-linux ?) {low priority}
 7. make apple-silicon iso ? ( asahi like ? ) {very low priority}
 8. fix experimental-tools ( dgpu-run & prime-run )
-9. depricate prime-run ? rework dgpu-run ?
+9. 
 10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase
 11. 
 12. add openrazer akmods ??
@@ -17,7 +17,7 @@ to-do :
 14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
 15. 
 16. 
-17. make a custom copr for existing packages instead of directly placing them /usr/bin .
+17. 
 18. 
 19. make a new branch ( unstable & rename current one to stable)
 20. 
