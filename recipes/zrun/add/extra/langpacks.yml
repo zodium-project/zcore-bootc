@@ -7,7 +7,9 @@ modules:
       packages:
        - glibc-all-langpacks
        - langpacks-en
-       
+       - langpacks-core-en
+       - langpacks-fonts-en
+
   - type: dnf
     remove:
       packages:
