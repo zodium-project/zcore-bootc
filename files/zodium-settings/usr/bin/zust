@@ -1,107 +1,262 @@
 #!/usr/bin/env bash
+# ================================================================
+#  zust 2.0.0 — Script Launcher
+#  Searches /etc/zust-scripts and /usr/lib/zust-scripts
+# ================================================================
+
 set -Eeuo pipefail
 
-VERSION="1.0.0"
+VERSION="2.0.0"
+SCRIPT_NAME=$(basename "$0")
 
-# ---- Colors ----
-if [[ -t 1 ]]; then
-    RED="\033[31m"
-    GREEN="\033[32m"
-    YELLOW="\033[33m"
-    BLUE="\033[34m"
-    CYAN="\033[36m"
-    MAGENTA="\033[35m"
-    WHITE="\033[37m"
-    BOLD="\033[1m"
-    RESET="\033[0m"
+# ── Colors ────────────────────────────────────────────────────
+
+if [[ -t 1 ]] && tput colors &>/dev/null && [[ $(tput colors) -ge 8 ]]; then
+    RED="\033[31m";    GREEN="\033[32m";  YELLOW="\033[33m"
+    BLUE="\033[34m";   MAGENTA="\033[35m"; CYAN="\033[36m"
+    BOLD="\033[1m";    DIM="\033[2m";    RESET="\033[0m"
 else
-    RED="" GREEN="" YELLOW="" BLUE="" CYAN="" MAGENTA="" WHITE="" BOLD="" RESET=""
+    RED="" GREEN="" YELLOW="" BLUE="" MAGENTA="" CYAN="" BOLD="" DIM="" RESET=""
 fi
 
-# ---- Help ----
+# ── Script Directories (priority order) ───────────────────────
+
+SEARCH_DIRS=(/etc/zust-scripts /usr/lib/zust-scripts)
+
+# ── Help ──────────────────────────────────────────────────────
+
 show_help() {
-    printf "%b — Script Launcher\n\n" "${BOLD}zust ${VERSION}${RESET}"
-    printf "Usage:\n"
-    printf "  %b --choose%b         Launch interactive script chooser\n" "${BLUE}" "${RESET}"
-    printf "  %b --list%b           List all available scripts\n" "${BLUE}" "${RESET}"
-    printf "  %b --help%b           Show this help\n\n" "${BLUE}" "${RESET}"
-
-    printf "Flags:\n"
-    printf "  %b--choose%b   Interactive selection with preview\n" "${BLUE}" "${RESET}"
-    printf "  %b--list%b     List scripts (no preview)\n" "${BLUE}" "${RESET}"
-    printf "  %b--help%b     Show this help\n\n" "${BLUE}" "${RESET}"
-
-    printf "Scripts are searched in:\n"
-    printf "  /etc/zust-scripts (preferred)\n"
-    printf "  /usr/lib/zust-scripts\n"
+    printf "\n%bzust %s%b — Script Launcher\n\n" "${BOLD}" "$VERSION" "${RESET}"
+    printf "%bUSAGE:%b\n" "${YELLOW}" "${RESET}"
+    printf "  %s [mode] [options]\n\n" "$SCRIPT_NAME"
+    printf "%bMODES:%b\n" "${YELLOW}" "${RESET}"
+    printf "  %b--choose%b        Interactive picker with preview  %b(default)%b\n" "${CYAN}" "${RESET}" "${DIM}" "${RESET}"
+    printf "  %b--run%b <name>    Run a script directly by name\n" "${CYAN}" "${RESET}"
+    printf "  %b--list%b          List all available scripts\n" "${CYAN}" "${RESET}"
+    printf "  %b--show%b <name>   Print a script's contents\n" "${CYAN}" "${RESET}"
+    printf "  %b--edit%b <name>   Open a script in \$EDITOR\n" "${CYAN}" "${RESET}"
+    printf "  %b--which%b <name>  Print a script's full path\n" "${CYAN}" "${RESET}"
+    printf "  %b--help%b          Show this help\n" "${CYAN}" "${RESET}"
+    printf "  %b--version%b       Print version\n\n" "${CYAN}" "${RESET}"
+    printf "%bOPTIONS:%b\n" "${YELLOW}" "${RESET}"
+    printf "  %b--dry-run%b       Show what would run, don't execute\n" "${CYAN}" "${RESET}"
+    printf "  %b--no-clear%b      Don't clear screen before running\n\n" "${CYAN}" "${RESET}"
+    printf "%bSCRIPT DIRS:%b %b(highest priority first)%b\n" "${YELLOW}" "${RESET}" "${DIM}" "${RESET}"
+    for d in "${SEARCH_DIRS[@]}"; do
+        if [[ -d "$d" ]]; then
+            printf "  %b✔%b  %s\n" "${GREEN}" "${RESET}" "$d"
+        else
+            printf "  %b◌%b  %s %b(not found)%b\n" "${DIM}" "${RESET}" "$d" "${DIM}" "${RESET}"
+        fi
+    done
+    printf "\n"
 }
 
-# ---- Script directories ----
-DIRS=(/etc/zust-scripts /usr/lib/zust-scripts)
+# ── Error / Info helpers ───────────────────────────────────────
 
-# ---- Gather scripts, deduplicate (prefer /etc) ----
-declare -A scripts
-for d in "${DIRS[@]}"; do
-    [[ -d "$d" ]] || continue
-    for f in "$d"/*.sh; do
-        [[ -f "$f" ]] || continue
-        name=$(basename "$f")
-        scripts["$name"]="$f"  # /etc will overwrite /usr/lib automatically
-    done
-done
+die()  { printf "%b[ERROR]%b %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
+info() { printf "%b[INFO]%b  %s\n" "${BLUE}" "${RESET}" "$1"; }
+ok()   { printf "%b[OK]%b    %s\n" "${GREEN}" "${RESET}" "$1"; }
+warn() { printf "%b[WARN]%b  %s\n" "${YELLOW}" "${RESET}" "$1"; }
 
-if [[ ${#scripts[@]} -eq 0 ]]; then
-    echo -e "${RED}[ERROR]${RESET} No zust scripts found in ${DIRS[*]}"
-    exit 1
-fi
+# ── Collect scripts ───────────────────────────────────────────
+# Uses two parallel arrays (names + paths) — no associative arrays,
+# fully portable, no subprocess visibility issues.
 
-# ---- List-only mode ----
-if [[ "${1:-}" == "--list" ]]; then
-    echo "zust ${VERSION}"
-    echo "Available scripts:"
-    for s in "${!scripts[@]}"; do
-        echo "  $s"
-    done | sort
-    exit 0
-fi
-
-# ---- Choose mode ----
-if [[ "${1:-}" != "--choose" ]]; then
-    show_help
-    exit 0
-fi
-
-# ---- Check dependencies ----
-command -v fzf >/dev/null 2>&1 || { echo "fzf not found"; exit 1; }
-
-USE_BAT=false
-if command -v bat >/dev/null 2>&1; then
-    USE_BAT=true
-fi
-
-# ---- Prepare fzf list ----
 SCRIPT_NAMES=()
-for s in "${!scripts[@]}"; do
-    SCRIPT_NAMES+=("$s")
+SCRIPT_PATHS=()
+
+_collect_scripts() {
+    declare -A _seen=()
+    for dir in "${SEARCH_DIRS[@]}"; do
+        [[ -d "$dir" ]] || continue
+        for filepath in "$dir"/*.sh; do
+            [[ -f "$filepath" ]] || continue
+            local name; name=$(basename "$filepath")
+            # First dir wins (highest priority)
+            [[ -v _seen["$name"] ]] && continue
+            _seen["$name"]=1
+            SCRIPT_NAMES+=("$name")
+            SCRIPT_PATHS+=("$filepath")
+        done
+    done
+
+    if [[ ${#SCRIPT_NAMES[@]} -eq 0 ]]; then
+        die "No scripts found in: ${SEARCH_DIRS[*]}"
+    fi
+
+    # Sort both arrays together by name
+    local sorted_indices
+    sorted_indices=$(for i in "${!SCRIPT_NAMES[@]}"; do
+        printf '%s\t%s\n' "${SCRIPT_NAMES[$i]}" "$i"
+    done | sort -t$'\t' -k1 | awk -F'\t' '{print $2}')
+
+    local new_names=() new_paths=()
+    while IFS= read -r idx; do
+        new_names+=("${SCRIPT_NAMES[$idx]}")
+        new_paths+=("${SCRIPT_PATHS[$idx]}")
+    done <<< "$sorted_indices"
+
+    SCRIPT_NAMES=("${new_names[@]}")
+    SCRIPT_PATHS=("${new_paths[@]}")
+}
+
+# ── Lookup by name ────────────────────────────────────────────
+
+_find_script() {
+    local target="$1"
+    # Accept with or without .sh
+    [[ "$target" != *.sh ]] && target="${target}.sh"
+    for i in "${!SCRIPT_NAMES[@]}"; do
+        if [[ "${SCRIPT_NAMES[$i]}" == "$target" ]]; then
+            echo "${SCRIPT_PATHS[$i]}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# ── Run a script ──────────────────────────────────────────────
+
+_run_script() {
+    local path="$1" name="$2"
+    if $DRY_RUN; then
+        info "DRY-RUN: would execute: bash $path"
+        return 0
+    fi
+    $DO_CLEAR && clear
+    printf "%b▶  Running:%b  %s\n" "${GREEN}" "${RESET}" "$name"
+    printf "%b   Path:   %b  %s\n\n" "${DIM}" "${RESET}" "$path"
+    exec bash "$path"
+}
+
+# ── Mode: list ────────────────────────────────────────────────
+
+mode_list() {
+    printf "\n%bzust %s%b — %d script(s) available\n\n" "${BOLD}" "$VERSION" "${RESET}" "${#SCRIPT_NAMES[@]}"
+    for i in "${!SCRIPT_NAMES[@]}"; do
+        local name="${SCRIPT_NAMES[$i]}"
+        local path="${SCRIPT_PATHS[$i]}"
+        # Grab first comment line as description if present
+        local desc
+        desc=$(grep -m1 '^#' "$path" 2>/dev/null | sed 's/^#[[:space:]]*//' || true)
+        [[ "$desc" == *"!"* ]] && desc=""  # skip shebang
+        printf "  %b%-28s%b %b%s%b\n" "${CYAN}" "$name" "${RESET}" "${DIM}" "${path}" "${RESET}"
+        [[ -n "$desc" ]] && printf "  %b  └ %s%b\n" "${DIM}" "$desc" "${RESET}"
+    done
+    printf "\n"
+}
+
+# ── Mode: show ────────────────────────────────────────────────
+
+mode_show() {
+    local name="$1"
+    local path
+    path=$(_find_script "$name") || die "Script not found: $name"
+    printf "\n%b── %s ─────────────────────────────%b\n" "${DIM}" "$path" "${RESET}"
+    cat "$path"
+    printf "\n"
+}
+
+# ── Mode: edit ────────────────────────────────────────────────
+
+mode_edit() {
+    local name="$1"
+    local path
+    path=$(_find_script "$name") || die "Script not found: $name"
+    local editor="${EDITOR:-${VISUAL:-vi}}"
+    command -v "$editor" >/dev/null 2>&1 || die "No editor found. Set \$EDITOR."
+    exec "$editor" "$path"
+}
+
+# ── Mode: which ───────────────────────────────────────────────
+
+mode_which() {
+    local name="$1"
+    local path
+    path=$(_find_script "$name") || die "Script not found: $name"
+    echo "$path"
+}
+
+# ── Mode: run (direct) ────────────────────────────────────────
+
+mode_run() {
+    local name="$1"
+    local path
+    path=$(_find_script "$name") || die "Script not found: $name"
+    _run_script "$path" "$(basename "$path")"
+}
+
+# ── Mode: choose (fzf) ────────────────────────────────────────
+
+mode_choose() {
+    command -v fzf >/dev/null 2>&1 || die "fzf not found. Install with: sudo dnf install fzf"
+
+    # Build a single flat list of absolute paths for fzf.
+    # fzf receives full paths — no array lookups needed in subprocess.
+    # --with-nth strips to basename for display only.
+    local path_list
+    path_list=$(printf '%s\n' "${SCRIPT_PATHS[@]}")
+
+    $DO_CLEAR && clear
+
+    local selected
+    selected=$(printf '%s\n' "${SCRIPT_PATHS[@]}" | fzf \
+        --ansi \
+        --reverse \
+        --no-multi \
+        --prompt="  ❯ " \
+        --header="  zust ${VERSION}  —  $(printf '%d' "${#SCRIPT_NAMES[@]}") scripts  |  enter to run  ctrl-c to quit" \
+        --preview-window="right:55%:wrap" \
+        --preview='
+            filepath={}
+            name=$(basename "$filepath")
+            printf "\033[1m%s\033[0m\n" "$name"
+            printf "\033[2m%s\033[0m\n\n" "$filepath"
+            cat "$filepath"
+        ' \
+        --delimiter=/ \
+        --with-nth=-1 \
+    ) || { printf "\nNo script selected.\n"; exit 0; }
+
+    # selected is a full path — use it directly
+    [[ -f "$selected" ]] || die "Selected path is invalid: $selected"
+    _run_script "$selected" "$(basename "$selected")"
+}
+
+# ── Argument Parsing ──────────────────────────────────────────
+
+DRY_RUN=false
+DO_CLEAR=true
+MODE="choose"
+MODE_ARG=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --choose)   MODE="choose" ;;
+        --list)     MODE="list" ;;
+        --run)      MODE="run";   shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--run requires a script name" ;;
+        --show)     MODE="show";  shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--show requires a script name" ;;
+        --edit)     MODE="edit";  shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--edit requires a script name" ;;
+        --which)    MODE="which"; shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--which requires a script name" ;;
+        --dry-run)  DRY_RUN=true ;;
+        --no-clear) DO_CLEAR=false ;;
+        --version)  printf "zust %s\n" "$VERSION"; exit 0 ;;
+        --help|-h)  show_help; exit 0 ;;
+        *)          die "Unknown option: $1 — run '$SCRIPT_NAME --help' for usage" ;;
+    esac
+    shift
 done
-IFS=$'\n' SORTED_SCRIPTS=($(sort <<<"${SCRIPT_NAMES[*]}"))
-unset IFS
 
-# ---- Launch fzf ----
-clear
-SELECTED=$(printf '%s\n' "${SORTED_SCRIPTS[@]}" | fzf \
-    --ansi \
-    --reverse \
-    --no-multi \
-    --prompt="Select a script (Ctrl-C to quit) > " \
-    --preview-window=right:70%:wrap \
-    --preview="[[ \$USE_BAT == true ]] && bat --style=numbers --color=always {} || cat {}" \
-    --bind "change:reload:scripts[{}]") || exit 0
+# ── Main ──────────────────────────────────────────────────────
 
-SCRIPT_PATH="${scripts[$SELECTED]}"
+_collect_scripts
 
-clear
-echo -e "${GREEN}Running script:${RESET} $SELECTED"
-echo
-
-exec bash "$SCRIPT_PATH"
+case "$MODE" in
+    choose) mode_choose ;;
+    list)   mode_list ;;
+    run)    mode_run   "$MODE_ARG" ;;
+    show)   mode_show  "$MODE_ARG" ;;
+    edit)   mode_edit  "$MODE_ARG" ;;
+    which)  mode_which "$MODE_ARG" ;;
+esac
