@@ -163,16 +163,19 @@ run_module() {
 
     local start=$(date +%s)
 
+    local start end duration
+    start=$(date +%s)
+
     if "$@"; then
-        local end=$(date +%s)
-        local duration=$((end - start))
+        end=$(date +%s)
+        duration=$((end - start))
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
         log "Module completed in ${duration}s" SUCCESS
     else
-        local end=$(date +%s)
-        local duration=$((end - start))
+        end=$(date +%s)
+        duration=$((end - start))
         FAIL_COUNT=$((FAIL_COUNT + 1))
-        log "Module failed in ${duration}s" FAILED
+       log "Module failed in ${duration}s" FAILED
     fi
 }
 
@@ -349,6 +352,8 @@ fi
 header
 
 if $ROLLBACK; then
+    section "rpm-ostree Rollback"
+    log "Performing rpm-ostree rollback" INFO
     mod_rollback
     exit 0
 fi
