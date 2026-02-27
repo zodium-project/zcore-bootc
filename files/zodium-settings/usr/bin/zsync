@@ -176,14 +176,19 @@ mod_system() {
         REBOOT_REQUIRED=true
     fi
 
-    $MAINTAIN && run_cmd sudo rpm-ostree cleanup -m || true
+    if $MAINTAIN; then
+        run_cmd sudo rpm-ostree cleanup -m || true
+    fi
 }
 
 mod_flatpak() {
     command_exists flatpak || { log "flatpak not found"; return 1; }
 
     run_cmd flatpak update -y || return 1
-    $MAINTAIN && run_cmd flatpak uninstall --unused -y || true
+
+    if $MAINTAIN; then
+        run_cmd flatpak uninstall --unused -y || true
+    fi
 }
 
 mod_brew() {
@@ -192,7 +197,7 @@ mod_brew() {
     run_cmd brew update || return 1
 
     if ! run_cmd brew upgrade; then
-        log "brew upgrade returned non-zero (possibly nothing to upgrade)"
+        log "brew upgrade returned non-zero (possibly nothing to upgrade)" WARNING
     fi
 
     if $MAINTAIN; then
