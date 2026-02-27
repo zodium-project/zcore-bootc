@@ -86,8 +86,19 @@ touch "$LOG_FILE" 2>/dev/null || true
 
 log() {
     local msg="$1"
-    [[ "$QUIET" = false ]] && echo "$msg"
-    echo "$(date '+%F %T') | $msg" >> "$LOG_FILE"
+    local level="${2:-INFO}"  # default INFO
+
+    case "$level" in
+        SUCCESS) prefix="$STATUS_SUCCESS" ;;
+        FAILED) prefix="$STATUS_FAILED" ;;
+        INFO) prefix="$STATUS_INFO" ;;
+        WARNING) prefix="$STATUS_WARNING" ;;
+        DEBUG) prefix="$STATUS_DEBUG" ;;
+        *) prefix="" ;;
+    esac
+
+    [[ "$QUIET" = false ]] && echo -e "$prefix $msg"
+    echo "$(date '+%F %T') | $level | $msg" >> "$LOG_FILE"
 }
 
 debug() {
