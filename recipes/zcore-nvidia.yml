@@ -38,12 +38,13 @@ modules:
   - from-file: zrun/add/extra/langpacks.yml
   - from-file: zrun/add/extra/fonts.yml
 #### => Nonfree Packages / Tweaks to install.
-  - from-file: zrun/add/nonfree/repos-nonfree.yml
-  - from-file: zrun/add/nonfree/codecs.yml
-  - from-file: zrun/add/nonfree/pipewire.yml
-  - from-file: zrun/add/nonfree/nvidia.yml
-  - from-file: zrun/add/nonfree/v4l2loopback.yml
-  - from-file: zrun/add/nonfree/broadcom.yml
+  - from-file: zrun/add/third-party/repos-nonfree.yml
+  - from-file: zrun/add/third-party/codecs.yml
+  - from-file: zrun/add/third-party/pipewire.yml
+  - from-file: zrun/add/third-party/nvidia.yml
+  - from-file: zrun/add/third-party/v4l2loopback.yml
+  - from-file: zrun/add/third-party/broadcom.yml
+  - from-file: zrun/add/third-party/xbox-gamepad.yml
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-cli.yml
   - from-file: zrun/remove/rpm-dnf-extra.yml
