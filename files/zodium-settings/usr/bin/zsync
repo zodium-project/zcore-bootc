@@ -21,6 +21,17 @@ else
     RESET=""
 fi
 
+# ---- Extended Colors ----
+CYAN="\033[36m"
+MAGENTA="\033[35m"
+WHITE="\033[37m"
+
+STATUS_SUCCESS="${GREEN}[SUCCESS]${RESET}"
+STATUS_FAILED="${RED}[FAILED]${RESET}"
+STATUS_INFO="${BLUE}[INFO]${RESET}"
+STATUS_WARNING="${YELLOW}[WARNING]${RESET}"
+STATUS_DEBUG="${MAGENTA}[DEBUG]${RESET}"
+
 # ---- Configuration ----
 
 LOCKFILE="/tmp/zsync-${UID}.lock"
