@@ -14,10 +14,3 @@ modules:
           destination: /tmp/certs/kernel_key.pem
     scripts:
       - broadcom-install.sh
-
-  - type: dnf
-    group-install:
-      with-optional: false
-      install-weak-deps: false
-      packages:
-          - development-tools
