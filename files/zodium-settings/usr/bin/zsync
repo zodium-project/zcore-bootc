@@ -242,8 +242,10 @@ mod_firmware() {
         log "fwupdmgr update returned non-zero (possibly no updates)"
     fi
 
-    if fwupdmgr get-updates | grep -qi reboot; then
-        REBOOT_REQUIRED=true
+    if ! $DRY_RUN; then
+        if fwupdmgr get-updates | grep -qi reboot; then
+           REBOOT_REQUIRED=true
+        fi
     fi
 
     return 0
