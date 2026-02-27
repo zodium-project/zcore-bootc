@@ -347,9 +347,9 @@ DURATION=$((END_TIME - START_TIME))
 section "SUMMARY"
 
 printf "  %-18s %s\n" "Modules Executed:" "$TOTAL_MODULES"
-printf "  %-18s %s\n" "Successful:" "$SUCCESS_COUNT"
-printf "  %-18s %s\n" "Failed:" "$FAIL_COUNT"
-printf "  %-18s %s\n" "Reboot Required:" "$REBOOT_REQUIRED"
+printf "  %-18s %b\n" "Successful:" "${GREEN}${SUCCESS_COUNT}${RESET}"
+printf "  %-18s %b\n" "Failed:" "${RED}${FAIL_COUNT}${RESET}"
+printf "  %-18s %b\n" "Reboot Required:" "$([ "$REBOOT_REQUIRED" = true ] && echo "${YELLOW}YES${RESET}" || echo "${GREEN}NO${RESET}")"
 printf "  %-18s %ss\n" "Duration:" "$DURATION"
 
 if $PROMPT_REBOOT && $REBOOT_REQUIRED; then
