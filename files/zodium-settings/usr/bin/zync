@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 VERSION="3.2.1"
 
-# ---- Colors ----
+# ──── Colors ────
 
 if [[ -t 1 ]]; then
     RED="\033[31m"
@@ -27,7 +27,7 @@ else
     RESET=""
 fi
 
-# ---- Extended Colors ----
+# ──── Extended Colors ──── #
 
 STATUS_SUCCESS="${GREEN}[SUCCESS]${RESET}"
 STATUS_FAILED="${RED}[FAILED]${RESET}"
@@ -35,7 +35,7 @@ STATUS_INFO="${BLUE}[INFO]${RESET}"
 STATUS_WARNING="${YELLOW}[WARNING]${RESET}"
 STATUS_DEBUG="${MAGENTA}[DEBUG]${RESET}"
 
-# ---- Configuration ----
+# ──── Configuration ──── #
 
 LOCKFILE="/tmp/zync-${UID}.lock"
 
@@ -46,7 +46,7 @@ else
     LOG_FILE="$HOME/.local/state/zync.log"
 fi
 
-# ---- State ----
+# ──── State ──── #
 
 DRY_RUN=false
 QUIET=false
@@ -70,7 +70,7 @@ FAIL_COUNT=0
 
 START_TIME=$(date +%s)
 
-# ---- Lock ----
+# ──── Lock ──── #
 
 exec 9>"$LOCKFILE" || {
     echo "zync: cannot create lockfile"
@@ -83,12 +83,12 @@ if ! flock -n 9; then
 fi
 
 trap 'rm -f "$LOCKFILE"' EXIT
-# ---- Logging ----
+# ──── Logging ──── #
 
 mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
 touch "$LOG_FILE" 2>/dev/null || true
 
-# ---- ANSI stripping helper ----
+# ──── ANSI stripping helper ──── #
 _strip_ansi() { sed 's/\x1b\[[0-9;]*m//g'; }
 
 log() {
@@ -113,7 +113,7 @@ log() {
 
 debug() { [[ "$VERBOSE" = true ]] && log "$1" DEBUG || true; }
 
-# ---- UI ----
+# ──── UI ──── #
 
 print_line() {
     printf '%*s\n' 60 '' | tr ' ' '-'
@@ -131,7 +131,7 @@ section() {
     print_line
 }
 
-# ---- Utilities ----
+# ──── Utilities ──── #
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -174,7 +174,7 @@ run_module() {
     fi
 }
 
-# ---- Modules ----
+# ──── Modules ──── #
 
 mod_system() {
     command_exists rpm-ostree || { log "rpm-ostree not found"; return 1; }
@@ -271,7 +271,7 @@ mod_rollback() {
     fi
 }
 
-# ---- Help ----
+# ──── Help ──── #
 
 show_help() {
     printf "%b\n" "${BOLD}${BLUE}zync ${VERSION}${RESET}"
@@ -329,7 +329,7 @@ show_help() {
     printf "\n"
 }
 
-# ---- Argument Parsing ----
+# ──── Argument Parsing ──── #
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -354,14 +354,14 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# ---- Handle Flag Conflicts ----
+# ──── Handle Flag Conflicts ──── #
 
 if [[ "$QUIET" = true && "$VERBOSE" = true ]]; then
     log "Both --quiet and --verbose passed; forcing VERBOSE=false" WARNING
     VERBOSE=false
 fi
 
-# ---- Default Module Selection ----
+# ──── Default Module Selection ──── #
 
 if ! $RUN_SYSTEM && ! $RUN_FLATPAK && ! $RUN_BREW && \
    ! $RUN_DISTROBOX && ! $RUN_PODMAN && ! $RUN_FIRMWARE && \
@@ -375,11 +375,11 @@ if ! $RUN_SYSTEM && ! $RUN_FLATPAK && ! $RUN_BREW && \
     RUN_FIRMWARE=true
 fi
 
-# ---- Execution ----
+# ──── Execution ──── #
 
 header
 
-# ---- Guard: rollback exclusive ----
+# ──── Guard: rollback exclusive ──── #
 if $ROLLBACK; then
     TOTAL_MODULES=$((TOTAL_MODULES + 1))
     # Warn if other module flags are also set
@@ -401,7 +401,7 @@ if $ROLLBACK; then
     mod_rollback
 fi
 
-# ---- Run normal modules ----
+# ──── Run normal modules ──── #
 $RUN_SYSTEM && run_module "rpm-ostree" mod_system
 $RUN_FLATPAK && run_module "Flatpak" mod_flatpak
 $RUN_BREW && run_module "Homebrew" mod_brew
@@ -409,7 +409,7 @@ $RUN_DISTROBOX && run_module "Distrobox" mod_distrobox
 $RUN_PODMAN && run_module "Podman" mod_podman
 $RUN_FIRMWARE && run_module "Firmware" mod_firmware
 
-# ---- Summary ----
+# ──── Summary ──── #
 
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
