@@ -2,7 +2,6 @@
 
 # ---- Exit immediately if a command exits with a non-zero status ----
 set -oue pipefail
-set -x
 
 # ---- Zodium Project : github.com/zodium-project ----
 # ---- v4l2loopback akmod build & signing script ----

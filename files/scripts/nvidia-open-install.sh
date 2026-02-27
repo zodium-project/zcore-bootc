@@ -2,8 +2,6 @@
 
 # ---- Exit immediately if a command exits with a non-zero status ----
 set -oue pipefail
-# ---- Enable debug mode ----
-set -x
 
 # ---- Zodium Project : github.com/zodium-project ----
 # ---- NVIDIA OPEN drivers install script for zcore ----
