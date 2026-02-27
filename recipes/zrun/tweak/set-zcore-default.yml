@@ -11,6 +11,7 @@ modules:
       - mitigations=auto
       - split_lock_detect=off
       - split_lock_mitigate=0
+      - modprobe.blacklist=xpad
 
  - type: files
    files:
