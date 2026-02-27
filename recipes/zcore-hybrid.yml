@@ -17,6 +17,8 @@ platforms:
 modules:
 ## Import Modules/Scripts ##
 ### => Installation Modules/Scripts
+#### => Pre-install-setup script.
+  - from-file: zrun/tweak/pre-install-setup.yml
 #### => Core Packages / Tweaks to install.
   - from-file: zrun/add/core/linux-stack.yml
   - from-file: zrun/add/core/firmwares.yml
@@ -48,6 +50,7 @@ modules:
   - from-file: zrun/remove/zodium-repos.yml
 ### => Tweaks Modules/Scripts
   - from-file: zrun/tweak/set-zcore-default.yml
+  - from-file: zrun/tweak/post-install-setup.yml
 #############################
 ### End of System Modules ###
 #############################
