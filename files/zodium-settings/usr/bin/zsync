@@ -98,7 +98,7 @@ log() {
     esac
 
     [[ "$QUIET" = false ]] && echo -e "$prefix $msg"
-    echo "$(date '+%F %T') | $level | $msg" >> "$LOG_FILE"
+    echo "$(date '+%F %T') | $level | ${prefix//[$'\033']} $msg" >> "$LOG_FILE"
 }
 
 debug() {
