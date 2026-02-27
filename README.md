@@ -10,8 +10,8 @@ to-do :
 7. make apple-silicon iso ? ( asahi like ? ) {very low priority}
 8. fix experimental-tools ( dgpu-run & prime-run )
 9. depricate prime-run ? rework dgpu-run ?
-10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase , install-razer-support
-11. add xone ( active developed fork ) & xpad-noone ?
+10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase
+11. 
 12. add openrazer akmods ??
 13. use cachyos kernel & sign it ? or use linux-zen/liqorx and sign it ? or use OGC/Bazzite kernel and sign it ?
 14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
