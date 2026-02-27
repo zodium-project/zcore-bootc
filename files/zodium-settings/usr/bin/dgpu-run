@@ -171,27 +171,38 @@ pci_friendly_name() {
     dd=$(( 16#$did ))
 
     case "$vid" in
-    10DE) # NVIDIA — generation by DID range
-        if   (( dd >= 0x2700 && dd <= 0x29FF )); then printf 'NVIDIA GeForce RTX 40 series'
+    10DE) # NVIDIA — Blackwell/Ada/Ampere/Turing/Pascal by DID range
+        # RTX 50 (Blackwell): desktop ~0x2980-0x29FF, mobile ~0x2900-0x297F
+        # Confirmed: 2980=RTX 5090 (Tom's Hardware/pci-ids leak Oct 2024)
+        # RTX 40 (Ada Lovelace): 0x2700-0x28FF
+        # RTX 30 (Ampere): 0x2200-0x26FF
+        if   (( dd >= 0x2900 && dd <= 0x2FFF )); then printf 'NVIDIA GeForce RTX 50 series'
+        elif (( dd >= 0x2700 && dd <= 0x28FF )); then printf 'NVIDIA GeForce RTX 40 series'
         elif (( dd >= 0x2200 && dd <= 0x26FF )); then printf 'NVIDIA GeForce RTX 30 series'
         elif (( dd >= 0x1E00 && dd <= 0x21FF )); then printf 'NVIDIA GeForce RTX 20 series'
         elif (( dd >= 0x1B00 && dd <= 0x1DFF )); then printf 'NVIDIA GeForce GTX 10 series'
         elif (( dd >= 0x1300 && dd <= 0x13FF )); then printf 'NVIDIA GeForce GTX 9 series'
-        elif (( dd >= 0x0FC0 && dd <= 0x0FFF )); then printf 'NVIDIA GeForce GTX 6 series'
+        elif (( dd >= 0x0FC0 && dd <= 0x0FFF )); then printf 'NVIDIA GeForce GTX 6/7 series'
         else                                          printf 'NVIDIA GeForce'; fi ;;
 
-    1002) # AMD — architecture by DID range
-        if   (( dd >= 0x7440 && dd <= 0x74FF )); then printf 'AMD Radeon RX 7000 series'
+    1002) # AMD — RDNA4/RDNA3/RDNA2/RDNA1/GCN by DID range
+        # RX 9070 XT confirmed 0x7550, RX 9070 confirmed 0x7549 (pci-ids / driver sources 2025)
+        # RDNA4 iGPU (Strix Halo etc): 0x1100-0x113F range
+        if   (( dd >= 0x7540 && dd <= 0x75FF )); then printf 'AMD Radeon RX 9000 series'
+        elif (( dd >= 0x1100 && dd <= 0x113F )); then printf 'AMD Radeon RX 9000 series (iGPU)'
+        elif (( dd >= 0x7440 && dd <= 0x753F )); then printf 'AMD Radeon RX 7000 series'
+        elif (( dd >= 0x1580 && dd <= 0x15BF )); then printf 'AMD Radeon RX 7000 series (iGPU)'
         elif (( dd >= 0x73A0 && dd <= 0x743F )); then printf 'AMD Radeon RX 6000 series'
+        elif (( dd >= 0x1630 && dd <= 0x16BF )); then printf 'AMD Radeon Graphics (iGPU)'
+        elif (( dd >= 0x1900 && dd <= 0x19FF )); then printf 'AMD Radeon 800M series (iGPU)'
         elif (( dd >= 0x6860 && dd <= 0x687F )); then printf 'AMD Radeon RX Vega series'
         elif (( dd >= 0x67C0 && dd <= 0x67FF )); then printf 'AMD Radeon RX 400/500 series'
-        elif (( dd >= 0x1630 && dd <= 0x16BF )); then printf 'AMD Radeon Graphics (iGPU)'
         elif (( dd >= 0x15D8 && dd <= 0x15DF )); then printf 'AMD Radeon Vega (iGPU)'
-        elif (( dd >= 0x1900 && dd <= 0x19FF )); then printf 'AMD Radeon 800M series (iGPU)'
         else                                          printf 'AMD Radeon'; fi ;;
 
-    8086) # Intel — generation by DID range
-        if   (( dd >= 0x56A0 && dd <= 0x56BF )); then printf 'Intel Arc A series'
+    8086) # Intel — Arc Battlemage/Alchemist/Xe/UHD/HD by DID range
+        if   (( dd >= 0xE200 && dd <= 0xE2FF )); then printf 'Intel Arc B series'
+        elif (( dd >= 0x56A0 && dd <= 0x56BF )); then printf 'Intel Arc A series'
         elif (( dd >= 0x5690 && dd <= 0x569F )); then printf 'Intel Arc A series (Mobile)'
         elif (( dd >= 0xA780 && dd <= 0xA7BF )); then printf 'Intel Iris Xe (Raptor Lake)'
         elif (( dd >= 0x46A0 && dd <= 0x46CF )); then printf 'Intel Iris Xe (Alder Lake)'
@@ -207,12 +218,6 @@ pci_friendly_name() {
     esac
 }
 
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# GPU DISCOVERY
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-declare -a cards=()
-declare -A c_pci c_drv c_bootvga c_edp c_busnum c_model c_vid c_did c_class c_vram c_temp
 
 for card_path in /sys/class/drm/card*; do
     cname=$(basename "$card_path")
@@ -517,3 +522,4 @@ case "$run_drv" in
 esac
 
 exec "${cmd_args[@]}"
+# ---- END OF FILE ----
