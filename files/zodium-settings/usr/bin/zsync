@@ -130,7 +130,7 @@ command_exists() {
 }
 
 confirm() {
-    $NON_INTERACTIVE && return 1
+    $NON_INTERACTIVE && return 0
     read -r -p "$1 [y/N]: " ans
     [[ "$ans" =~ ^[Yy]$ ]]
 }
