@@ -22,4 +22,4 @@ to-do :
 19. make a new branch ( unstable & rename current one to stable)
 20. 
 
-Current Release : Snapshot 7 (usable but not 100% stable)
+Current Release : Snapshot 8 (usable but not 100% stable)
