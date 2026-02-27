@@ -7,7 +7,7 @@ to-do :
 4. add framework laptop support ( use bazzite implementation as reference )
 5. add MS-surface laptops support ( linux-surface ?) {low priority}
 6. make custom asus-laptop iso ( asus-linux ?) {low priority}
-7. make apple-silicon iso ? ( asahi like ? ) {very low priority}
+7. 
 8. fix experimental-tools ( dgpu-run & prime-run )
 9. 
 10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase
