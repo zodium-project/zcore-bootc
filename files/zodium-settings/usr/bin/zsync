@@ -10,6 +10,9 @@ if [[ -t 1 ]]; then
     GREEN="\033[32m"
     YELLOW="\033[33m"
     BLUE="\033[34m"
+    CYAN="\033[36m"
+    MAGENTA="\033[35m"
+    WHITE="\033[37m"
     BOLD="\033[1m"
     RESET="\033[0m"
 else
@@ -17,14 +20,14 @@ else
     GREEN=""
     YELLOW=""
     BLUE=""
+    CYAN=""
+    MAGENTA=""
+    WHITE=""
     BOLD=""
     RESET=""
 fi
 
 # ---- Extended Colors ----
-CYAN="\033[36m"
-MAGENTA="\033[35m"
-WHITE="\033[37m"
 
 STATUS_SUCCESS="${GREEN}[SUCCESS]${RESET}"
 STATUS_FAILED="${RED}[FAILED]${RESET}"
