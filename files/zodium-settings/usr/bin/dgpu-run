@@ -256,13 +256,17 @@ gpu_count=${#cards[@]}
 [[ "$gpu_count" -gt 0 ]] || die "No DRM GPUs found under /sys/class/drm/"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# USER-DEFINED GPU OVERRIDE
+# USER-DEFINED GPU OVERRIDE OR HEURISTIC ROLE CLASSIFICATION
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+declare -A c_role c_score
+igpu="" dgpu="" confidence=0 reason=""
+
 USER_DEFINED_FILE="$HOME/.config/dgpu-run/defined"
 
 if [[ -r "$USER_DEFINED_FILE" ]]; then
-    # Expect lines like: weak_gpu_igpu=card0
-    #                   powerful_gpu_dgpu=card1
+    # Ensure associative array exists
+    [[ -v c_role ]] || declare -A c_role
+
     while IFS='=' read -r key val; do
         key="${key// /}"   # strip spaces
         val="${val// /}"   # strip spaces
@@ -283,71 +287,58 @@ if [[ -r "$USER_DEFINED_FILE" ]]; then
         else c_role["$c"]="unknown"; fi
     done
 
-    say "  ${C_CYN}[dgpu-run]${R} Using user-defined GPU mapping from $USER_DEFINED_FILE"
-fi
+    confidence=100
+    reason="user-defined mapping"
+    say "  ${C_CYN}[dgpu-run]${R} Using user-defined GPU mapping"
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ROLE CLASSIFICATION — multi-signal scoring
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-declare -A c_role c_score
-igpu="" dgpu="" confidence=0 reason=""
-
-for c in "${cards[@]}"; do
-    score=0
-
-    # PCI class 030200 = 3D controller → always dGPU
-    [[ "${c_class[$c]}" == "030200" ]] && (( score -= 50 ))
-
-    # PCI class 030000 = VGA compatible → likely iGPU
-    [[ "${c_class[$c]}" == "030000" ]] && (( score += 20 ))
-
-    # eDP: real signal unless it's NVIDIA on Optimus (mirror)
-    if [[ "${c_edp[$c]}" -eq 1 ]]; then
-        if [[ "${c_drv[$c]}" == "nvidia" ]]; then
-            (( score -= 10 ))   # Optimus mirror — not the real panel owner
-        else
-            (( score += 30 ))
-        fi
-    fi
-
-    # boot_vga
-    [[ "${c_bootvga[$c]}" == "1" ]] && (( score += 20 ))
-
-    # PCI bus proximity to root
-    bus_n=${c_busnum[$c]}
-    (( bus_n == 0 )) && (( score += 10 ))
-    (( bus_n > 0 && bus_n <= 2 )) && (( score += 5 ))
-
-    # Driver signals
-    [[ "${c_drv[$c]}" =~ ^(i915|xe)$    ]] && (( score += 25 ))
-    [[ "${c_drv[$c]}" == "nvidia"        ]] && (( score -= 25 ))
-    [[ "${c_drv[$c]}" =~ ^(amdgpu|radeon)$ ]] && (( score += 5 ))
-
-    c_score["$c"]=$score
-done
-
-best_score=-99999
-worst_score=99999
-for c in "${cards[@]}"; do
-    (( c_score[$c] > best_score ))  && { best_score=${c_score[$c]};  igpu="$c"; }
-    (( c_score[$c] < worst_score )) && { worst_score=${c_score[$c]}; dgpu="$c"; }
-done
-
-igpu_score=${c_score[$igpu]}
-if   (( igpu_score >= 50 )); then confidence=95; reason="eDP + driver signals"
-elif (( igpu_score >= 35 )); then confidence=90; reason="strong driver/eDP match"
-elif (( igpu_score >= 20 )); then confidence=80; reason="boot_vga + PCI class"
-elif (( igpu_score >= 10 )); then confidence=65; reason="PCI bus position"
-else                               confidence=50; reason="heuristic only"; fi
-
-if [[ "$gpu_count" -eq 1 ]]; then
-    c_role["${cards[0]}"]="sole"
-    igpu="${cards[0]}"; dgpu=""
 else
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # ROLE CLASSIFICATION — heuristic scoring
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     for c in "${cards[@]}"; do
-        if [[ "$c" == "$igpu" ]]; then c_role["$c"]="iGPU"
-        else                           c_role["$c"]="dGPU"; fi
+        score=0
+
+        [[ "${c_class[$c]}" == "030200" ]] && (( score -= 50 ))
+        [[ "${c_class[$c]}" == "030000" ]] && (( score += 20 ))
+
+        if [[ "${c_edp[$c]}" -eq 1 ]]; then
+            [[ "${c_drv[$c]}" == "nvidia" ]] && (( score -= 10 )) || (( score += 30 ))
+        fi
+
+        [[ "${c_bootvga[$c]}" == "1" ]] && (( score += 20 ))
+        bus_n=${c_busnum[$c]}
+        (( bus_n == 0 )) && (( score += 10 ))
+        (( bus_n > 0 && bus_n <= 2 )) && (( score += 5 ))
+
+        [[ "${c_drv[$c]}" =~ ^(i915|xe)$ ]] && (( score += 25 ))
+        [[ "${c_drv[$c]}" == "nvidia" ]] && (( score -= 25 ))
+        [[ "${c_drv[$c]}" =~ ^(amdgpu|radeon)$ ]] && (( score += 5 ))
+
+        c_score["$c"]=$score
     done
+
+    best_score=-99999; worst_score=99999
+    for c in "${cards[@]}"; do
+        (( c_score[$c] > best_score ))  && { best_score=${c_score[$c]};  igpu="$c"; }
+        (( c_score[$c] < worst_score )) && { worst_score=${c_score[$c]}; dgpu="$c"; }
+    done
+
+    igpu_score=${c_score[$igpu]}
+    if   (( igpu_score >= 50 )); then confidence=95; reason="eDP + driver signals"
+    elif (( igpu_score >= 35 )); then confidence=90; reason="strong driver/eDP match"
+    elif (( igpu_score >= 20 )); then confidence=80; reason="boot_vga + PCI class"
+    elif (( igpu_score >= 10 )); then confidence=65; reason="PCI bus position"
+    else                               confidence=50; reason="heuristic only"; fi
+
+    if [[ "$gpu_count" -eq 1 ]]; then
+        c_role["${cards[0]}"]="sole"
+        igpu="${cards[0]}"; dgpu=""
+    else
+        for c in "${cards[@]}"; do
+            if [[ "$c" == "$igpu" ]]; then c_role["$c"]="iGPU"
+            else                           c_role["$c"]="dGPU"; fi
+        done
+    fi
 fi
 
 dri_idx() { printf '%s' "${1#card}"; }
