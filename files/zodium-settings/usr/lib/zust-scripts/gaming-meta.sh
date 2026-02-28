@@ -44,7 +44,7 @@ flatpak install -y flathub \
     com.heroicgameslauncher.hgl \
     net.lutris.Lutris \
     com.vysp3r.ProtonPlus \
-    org.freedesktop.Platform.VulkanLayer.MangoHud \
+    io.github.radiolamp.mangojuice \
     || warn "Some installs may have failed."
 
 # ── Done ───────────────────────────────────────────────────── #
