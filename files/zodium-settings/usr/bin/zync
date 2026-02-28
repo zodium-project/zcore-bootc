@@ -440,6 +440,8 @@ fi
 exit 0
 
 # to-do :
-# .1 fix reboot requires even if nothing updated.
-# .2 fix reboot needed logic ( rpm-ostree & fwupd).
+# .1 fix reboot requires even if nothing updated. ( caused by mod_system)
+# .2 fix reboot needed logic ( rpm-ostree).
 # .3 simplify the script a bit.
+# .4 add bootc Module 
+# .5 phase out rpm-ostree ( wait for bootc to be fixed )
