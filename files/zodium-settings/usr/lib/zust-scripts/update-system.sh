@@ -26,7 +26,7 @@ echo
 
 # ── Run zync update ─────────────────────────────────────────── #
 info "Running system update using zync..."
-if ! sudo /usr/bin/zync --system --flatpak --firmware; then
+if ! /usr/bin/zync --system --flatpak --firmware --brew ; then
     die "zync update failed."
 fi
 ok "System update completed successfully."
