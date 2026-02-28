@@ -1,123 +1,112 @@
 #!/usr/bin/env bash
-# =============================================================================
-# TPM2 Auto-Unlock for LUKS2 root
-# by Zodium Project
-# Works on Fedora Classic, Silverblue, Atomic
-# =============================================================================
 set -euo pipefail
 
-# ── Colors ─────────────────────────────────────────────
+# ── Styling ───────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
+CYAN='\033[0;36m'; MAGENTA='\033[0;35m'; BOLD='\033[1m'; NC='\033[0m'
 
-info()    { echo -e "${CYAN}[INFO]${NC}  $*"; }
-success() { echo -e "${GREEN}[OK]${NC}    $*"; }
-warn()    { echo -e "${YELLOW}[WARN]${NC}  $*"; }
-error()   { echo -e "${RED}[ERR]${NC}   $*" >&2; exit 1; }
+ICON_INFO="⮕"       # Info / arrow
+ICON_OK="✔"         # Success
+ICON_WARN="⚠"       # Warning
+ICON_ERR="✖"        # Error
+ICON_LOCK="🔒"       # Lock
 
-# ── Root check ─────────────────────────────────────────
+info()  { echo -e "${CYAN}${ICON_INFO}${NC}  $*"; }
+ok()    { echo -e "${GREEN}${ICON_OK}${NC}    $*"; }
+warn()  { echo -e "${YELLOW}${ICON_WARN}${NC}  $*"; }
+fail()  { echo -e "${RED}${ICON_ERR}${NC}   $*" >&2; exit 1; }
+
+# ── Root Check ────────────────────────────────────────
 if [[ $EUID -ne 0 ]]; then
     echo -e "${YELLOW}This script must be run as root.${NC}"
-    read -rp "Do you want to re-run it with sudo? [y/N]: " SUDO_ASK
-    if [[ "${SUDO_ASK,,}" == "y" ]]; then
+    read -rp "Re-run with sudo? [y/N]: " yn
+    if [[ "${yn,,}" == "y" ]]; then
         exec sudo bash "$0" "$@"
     else
-        error "Run the script as root to proceed."
+        fail "Run the script as root to continue."
     fi
 fi
 
-# ── Check TPM2 device ──────────────────────────────────
+# ── TPM Check ─────────────────────────────────────────
 if [[ -f /sys/class/tpm/tpm0/device/description ]]; then
-    TPM_DESC=$(< /sys/class/tpm/tpm0/device/description)
-    info "TPM device detected: $TPM_DESC"
+    info "TPM device detected: $(< /sys/class/tpm/tpm0/device/description)"
 else
-    error "No TPM2 device found at /sys/class/tpm/tpm0. Cannot configure TPM2 auto-unlock."
+    fail "No TPM2 device detected."
 fi
 
-# ── Check systemd TPM2 support ───────────────────────
 if ! systemd-analyze has-tpm2 &>/dev/null; then
-    error "Systemd does not detect TPM2 support. Cannot configure TPM2 auto-unlock."
+    fail "Systemd TPM2 support not available."
 fi
-success "Systemd TPM2 support detected"
+ok "Systemd TPM2 support detected"
 
-# ── Detect LUKS2 root device via kernel cmdline ──────
-# Detect LUKS2 root device safely
-info "Detecting the LUKS2 root device from kernel parameters..."
+# ── Detect Root Device (Aurora Logic) ────────────────
+info "Detecting LUKS2 root device from kernel parameters..."
 
-RD_LUKS_UUID=$(grep -oP 'rd.luks.uuid=\K[^\s]+' /proc/cmdline || true)
+RD_LUKS_UUID="$(xargs -n1 -a /proc/cmdline \
+    | grep -F 'rd.luks.uuid=' \
+    | cut -d= -f2 \
+    | sed 's/^luks-//')"
 
-if [[ -z "$RD_LUKS_UUID" ]]; then
-    warn "No LUKS2 root detected (no 'rd.luks.uuid' in /proc/cmdline)."
-    echo "Your system root is not LUKS2-encrypted."
-    echo "TPM2 auto-unlock cannot be configured on this system."
+if [[ -z "${RD_LUKS_UUID:-}" ]]; then
+    warn "No LUKS root detected in kernel parameters."
+    echo "Your root filesystem does not appear to be LUKS-encrypted."
     exit 1
 fi
 
-ROOT_DEV="/dev/disk/by-uuid/${RD_LUKS_UUID}"
+CRYPT_DISK="$(realpath "/dev/disk/by-uuid/${RD_LUKS_UUID}")"
 
-if [[ ! -b "$ROOT_DEV" ]]; then
-    warn "Detected device '$ROOT_DEV' is not a block device."
-    error "Cannot enroll TPM2: the detected root device is invalid."
+if ! find /dev -iname "${RD_LUKS_UUID:-INVALID}" \
+    | grep -F "${RD_LUKS_UUID}" &>/dev/null; then
+    fail "Could not find LUKS device used to boot system."
 fi
 
-success "Detected boot LUKS2 device: $ROOT_DEV"
+ok "Detected root device: ${BOLD}${CRYPT_DISK}${NC}"
 
-# ── Check LUKS version ────────────────────────────────
-if ! cryptsetup luksDump "$ROOT_DEV" &>/dev/null; then
-    warn "Device '$ROOT_DEV' is not a valid LUKS device."
-    error "Cannot enroll TPM2: the detected root device is not LUKS."
-fi
+# ── Enable / Disable ──────────────────────────────────
+echo ""
+read -rp "Enable TPM2 auto-unlock? [y/N]: " ENABLE
 
-LUKS_VER=$(cryptsetup luksDump "$ROOT_DEV" | awk '/^Version:/{print $2}')
-info "Detected LUKS version: $LUKS_VER"
-
-[[ "$LUKS_VER" == "2" ]] || error "TPM2 auto-unlock requires LUKS2 (found LUKS$LUKS_VER)."
-success "Confirmed LUKS2 root device: $ROOT_DEV"
-
-# ── Enable or disable TPM2 auto-unlock ───────────────
-read -rp "Enable TPM2 auto-unlock on this root device? [y/N]: " ENABLE
 if [[ "${ENABLE,,}" == "n" || -z "$ENABLE" ]]; then
     info "Disabling TPM2 auto-unlock (wiping TPM2 slot)..."
-    systemd-cryptenroll --wipe-slot=tpm2 "$ROOT_DEV"
-    success "TPM2 auto-unlock disabled"
+    systemd-cryptenroll --wipe-slot=tpm2 "${CRYPT_DISK}"
+    ok "TPM2 auto-unlock disabled"
     exit 0
 fi
 
-# ── Optional PIN ─────────────────────────────────────
+# ── Optional PIN ──────────────────────────────────────
+echo ""
 read -rp "Would you like to set up a TPM2 PIN? [y/N]: " USE_PIN
 SET_PIN_ARG=""
+
 if [[ "${USE_PIN,,}" == "y" ]]; then
     SET_PIN_ARG="--tpm2-with-pin=yes"
 fi
 
-# ── Ask for PCRs ──────────────────────────────────────
+# ── PCR Selection ─────────────────────────────────────
 read -rp "Enter PCRs to bind TPM2 key [default: 7]: " PCR_INPUT
 PCRS="${PCR_INPUT:-7}"
 
-# ── Enroll TPM2 key ───────────────────────────────────
+# ── Enroll ────────────────────────────────────────────
+echo ""
 info "Enrolling TPM2 key..."
-systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto --tpm2-pcrs="$PCRS" $SET_PIN_ARG "$ROOT_DEV"
-success "TPM2 auto-unlock configured for next reboot."
+systemd-cryptenroll \
+    --wipe-slot=tpm2 \
+    --tpm2-device=auto \
+    --tpm2-pcrs="${PCRS}" \
+    ${SET_PIN_ARG} \
+    "${CRYPT_DISK}"
 
-# ── Enable systemd unlock service ────────────────────
-info "Enabling systemd unlock service..."
-systemctl enable --now systemd-cryptsetup@$(basename "$ROOT_DEV").service 2>/dev/null || \
-    warn "Unlock service may already be enabled or not required"
-success "Systemd unlock service configured."
+ok "TPM2 auto-unlock configured for next reboot."
 
-# ── Summary ─────────────────────────────────────────
+# ── Summary ───────────────────────────────────────────
 echo ""
-echo -e "${GREEN}${BOLD}════════════════════════════════════════════${NC}"
-echo -e "${GREEN}${BOLD}  TPM2 Auto-Unlock Setup Complete!${NC}"
-echo -e "${GREEN}${BOLD}════════════════════════════════════════════${NC}"
+echo -e "${MAGENTA}${BOLD}╔════════════════════════════════════════════╗${NC}"
+echo -e "${MAGENTA}${BOLD}║        TPM2 Auto-Unlock Successfully Set   ║${NC}"
+echo -e "${MAGENTA}${BOLD}╚════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "  Root device: ${BOLD}$ROOT_DEV${NC}"
-echo -e "  PCRs used : ${BOLD}$PCRS${NC}"
-echo -e "  PIN set   : ${BOLD}${SET_PIN_ARG:+Yes}${NC}"
+echo -e "  Root device : ${BOLD}${CRYPT_DISK}${NC}"
+echo -e "  PCRs used   : ${BOLD}${PCRS}${NC}"
+echo -e "  PIN enabled : ${BOLD}${SET_PIN_ARG:+Yes}${NC}"
 echo ""
-echo -e "${YELLOW}Next steps:${NC}"
-echo "  1. Reboot the system"
-echo "  2. The root disk should unlock automatically via TPM2"
-echo "  3. Your original passphrase remains as fallback"
-echo ""
-echo -e "Verify binding anytime: systemd-cryptenroll status $ROOT_DEV"
+echo "Reboot to verify automatic unlock."
+echo "Fallback passphrase remains available."
