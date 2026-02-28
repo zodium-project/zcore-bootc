@@ -448,33 +448,74 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
     say "  ${BD}${C_CYN}Define iGPU/dGPU mapping${R}"
     SEP
 
-    declare -A map_idx; idx=1
-    for c in "${cards[@]}"; do
-        printf '%b' "  ${BD}${C_YLW}[${idx}]${R}  "
-        card_header "$c" | sed 's/^  //'
-        map_idx[$idx]="$c"
-        (( idx++ ))
+    # --- show all cards ---
+    while :; do
+        say ""
+        say "  Available GPUs:"
+        idx=1
+        declare -A map_idx
+        for c in "${cards[@]}"; do
+            printf '%b' "  ${BD}${C_YLW}[${idx}]${R}  "
+            card_header "$c" | sed 's/^  //'
+            map_idx[$idx]="$c"
+            (( idx++ ))
+        done
+        say ""
+
+        # --- iGPU selection ---
+        read -rp "  Select iGPU [1-$((idx-1))]: " choice
+        [[ -n "${map_idx[${choice:-}]:-}" ]] || { say "  Invalid selection. Try again."; continue; }
+        igpu="${map_idx[$choice]}"
+        break
     done
+
+    # --- determine remaining cards ---
+    remaining=()
+    for i in "${!map_idx[@]}"; do
+        [[ $i -eq $choice ]] && continue
+        remaining+=("${map_idx[$i]}")
+    done
+
+    if [[ ${#remaining[@]} -eq 1 ]]; then
+        # Only one remaining → auto-assign as dGPU
+        dgpu="${remaining[0]}"
+        say ""
+        say "  Only one remaining card, auto-assigned as dGPU: $dgpu"
+    else
+        # Multiple remaining → prompt for dGPU
+        while :; do
+            say ""
+            say "  Remaining cards for dGPU:"
+            declare -A d_map_idx
+            idx=1
+            for c in "${remaining[@]}"; do
+                printf '%b' "  ${BD}${C_YLW}[${idx}]${R}  "
+                card_header "$c" | sed 's/^  //'
+                d_map_idx[$idx]="$c"
+                (( idx++ ))
+            done
+            say ""
+
+            read -rp "  Select dGPU [1-$((idx-1))]: " choice
+            [[ -n "${d_map_idx[${choice:-}]:-}" ]] || { say "  Invalid selection. Try again."; continue; }
+            dgpu="${d_map_idx[$choice]}"
+            break
+        done
+    fi
+
+    # --- save mapping ---
+    mkdir -p "$(dirname "$USER_DEFINED_FILE")"
+    {
+        echo "weak_gpu_igpu=$igpu"
+        echo "powerful_gpu_dgpu=$dgpu"
+    } > "$USER_DEFINED_FILE"
 
     say ""
-    read -rp "  Select iGPU [1-$((idx-1))]: " choice
-    [[ -n "${map_idx[${choice:-}]:-}" ]] || die "Invalid selection."
-    igpu="${map_idx[$choice]}"
+    say "  ${C_GRN}Mapping saved to ${USER_DEFINED_FILE}${R}"
+    exit 0
+fi
 
-    # show only remaining cards for dGPU selection
-    unset map_idx[$choice]; idx=1
-    declare -A d_map_idx
-    for c in "${cards[@]}"; do
-        [[ "$c" == "$igpu" ]] && continue
-        d_map_idx[$idx]="$c"
-        (( idx++ ))
-    done
-
-    read -rp "  Select dGPU [1-$((idx-1))]: " choice
-    [[ -n "${d_map_idx[${choice:-}]:-}" ]] || die "Invalid selection."
-    dgpu="${d_map_idx[$choice]}"
-
-    # write mapping to user-defined file
+    # --- save mapping ---
     mkdir -p "$(dirname "$USER_DEFINED_FILE")"
     {
         echo "weak_gpu_igpu=$igpu"
