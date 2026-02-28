@@ -77,6 +77,9 @@ show_help() {
     say "    dgpu-run ${C_YLW}--use-device${R} nvidia glxinfo  ${C_GRY}# force NVIDIA${R}"
     say "    dgpu-run ${C_YLW}--interactive-choose${R} blender ${C_GRY}# pick GPU${R}"
     say "    dgpu-run vkcube                        ${C_GRY}# auto dGPU${R}"
+    say "  ${BD}${C_WHT}Advice / Hint${R}"
+    say "    Automatic Detection is Good but not flawless , So its recommended to "
+    say "    use dgpu-run --define once to set primary and secondary gpus , "
     say ""
 }
 
