@@ -45,7 +45,7 @@ info "Detecting LUKS2 root device from kernel parameters..."
 RD_LUKS_UUID="$(xargs -n1 -a /proc/cmdline \
     | grep -F 'rd.luks.uuid=' \
     | cut -d= -f2 \
-    | sed 's/^luks-//')"
+    | sed 's/^luks-//' || true)"
 
 if [[ -z "${RD_LUKS_UUID:-}" ]]; then
     warn "No LUKS root detected in kernel parameters."
