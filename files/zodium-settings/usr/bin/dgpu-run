@@ -177,37 +177,48 @@ pci_friendly_name() {
     dd=$(( 16#$did ))
 
     case "$vid" in
-    10DE) # NVIDIA — generation by DID range : to-do ; add nvidia RTX 5000 series
-        if   (( dd >= 0x2700 && dd <= 0x29FF )); then printf 'NVIDIA GeForce RTX 4000 series'
-        elif (( dd >= 0x2200 && dd <= 0x26FF )); then printf 'NVIDIA GeForce RTX 3000 series'
+    10DE) # NVIDIA — ranges verified against pci.ids (pciutils/pciids) 2026
+          # But still these are just approximates , there can be edge cases & i dont wanna make this script 2k+ lines by defining each gpu.
+        if   (( dd >= 0x2B00 && dd <= 0x2FFF )); then printf 'NVIDIA GeForce RTX 5000 series'
+        elif (( dd >= 0x2600 && dd <= 0x28FF )); then printf 'NVIDIA GeForce RTX 4000 series'
+        elif (( dd >= 0x2200 && dd <= 0x25FF )); then printf 'NVIDIA GeForce RTX 3000 series'
         elif (( dd >= 0x1E00 && dd <= 0x21FF )); then printf 'NVIDIA GeForce RTX 2000 series'
         elif (( dd >= 0x1B00 && dd <= 0x1DFF )); then printf 'NVIDIA GeForce GTX 1000 series'
-        elif (( dd >= 0x1300 && dd <= 0x13FF )); then printf 'NVIDIA GeForce GTX 900 series'
-        elif (( dd >= 0x0FC0 && dd <= 0x0FFF )); then printf 'NVIDIA GeForce GTX 600 series'
-        else                                          printf 'NVIDIA GeForce (generic name)'; fi ;;
+        elif (( dd >= 0x1300 && dd <= 0x17FF )); then printf 'NVIDIA GeForce GTX 900 series'
+        elif (( dd >= 0x0FC0 && dd <= 0x12FF )); then printf 'NVIDIA GeForce GTX 600/700 series'
+        else                                          printf 'NVIDIA GeForce (Generic)'; fi ;;
 
-    1002) # AMD — architecture by DID range : to-do ; add AMD RX 9000 series
-        if   (( dd >= 0x7440 && dd <= 0x74FF )); then printf 'AMD Radeon RX 7000 series'
+    1002) # AMD — ranges verified against pci.ids + /usr/share/libdrm/amdgpu.ids
+          # But still these are just approximates , there can be edge cases & i dont wanna make this script 2k+ lines by defining each gpu.
+        if   (( dd >= 0x7550 && dd <= 0x7590 )); then printf 'AMD Radeon RX 9000 series'
+        elif (( dd >= 0x7440 && dd <= 0x749F )); then printf 'AMD Radeon RX 7000 series'
         elif (( dd >= 0x73A0 && dd <= 0x743F )); then printf 'AMD Radeon RX 6000 series'
+        elif (( dd >= 0x7310 && dd <= 0x736F )); then printf 'AMD Radeon RX 5000 series'
         elif (( dd >= 0x6860 && dd <= 0x687F )); then printf 'AMD Radeon RX Vega series'
+        elif (( dd >= 0x66A0 && dd <= 0x66AF )); then printf 'AMD Radeon RX Vega series'
         elif (( dd >= 0x67C0 && dd <= 0x67FF )); then printf 'AMD Radeon RX 400/500 series'
+        elif (( dd >= 0x6980 && dd <= 0x699F )); then printf 'AMD Radeon RX 400/500 series'
+        elif (( dd >= 0x1900 && dd <= 0x1901 )); then printf 'AMD Radeon 700M/800M (iGPU)'
         elif (( dd >= 0x1630 && dd <= 0x16BF )); then printf 'AMD Radeon Graphics (iGPU)'
-        elif (( dd >= 0x15D8 && dd <= 0x15DF )); then printf 'AMD Radeon Vega (iGPU)'
-        elif (( dd >= 0x1900 && dd <= 0x19FF )); then printf 'AMD Radeon 800M series (iGPU)'
-        else                                          printf 'AMD Radeon (generic name)'; fi ;;
+        elif (( dd >= 0x15D8 && dd <= 0x15DD )); then printf 'AMD Radeon Vega (iGPU)'
+        elif (( dd == 0x150E || dd == 0x1586 || dd == 0x15BF || dd == 0x15C8 )); then
+                                                      printf 'AMD Radeon 700M/800M (iGPU)'
+        else                                          printf 'AMD Radeon (Generic)'; fi ;;
 
-    8086) # Intel — generation by DID range : to-do ; add Intel ARC B series
-        if   (( dd >= 0x56A0 && dd <= 0x56BF )); then printf 'Intel Arc A series'
-        elif (( dd >= 0x5690 && dd <= 0x569F )); then printf 'Intel Arc A series (Mobile)'
-        elif (( dd >= 0xA780 && dd <= 0xA7BF )); then printf 'Intel Iris Xe (Raptor Lake)'
+    8086) # Intel — ranges verified against dgpu-docs.intel.com + pci.ids
+          # But still these are just approximates , there can be edge cases & i dont wanna make this script 2k+ lines by defining each gpu.
+        if   (( dd >= 0xE200 && dd <= 0xE21F )); then printf 'Intel Arc B series'
+        elif (( dd >= 0x5690 && dd <= 0x56CF )); then printf 'Intel Arc A series'
+        elif (( dd >= 0xA780 && dd <= 0xA7BF )); then printf 'Intel Iris Xe / UHD (Raptor Lake)'
+        elif (( dd >= 0x7D40 && dd <= 0x7DD5 )); then printf 'Intel Graphics Xe-LPG (Meteor/Arrow Lake)'
         elif (( dd >= 0x46A0 && dd <= 0x46CF )); then printf 'Intel Iris Xe (Alder Lake)'
         elif (( dd >= 0x4680 && dd <= 0x469F )); then printf 'Intel UHD (Alder Lake)'
         elif (( dd >= 0x9A40 && dd <= 0x9A7F )); then printf 'Intel Iris Xe (Tiger Lake)'
         elif (( dd >= 0x8A50 && dd <= 0x8A7F )); then printf 'Intel Iris Plus (Ice Lake)'
         elif (( dd >= 0x9BC0 && dd <= 0x9BFF )); then printf 'Intel UHD (Comet Lake)'
         elif (( dd >= 0x3E00 && dd <= 0x3EFF )); then printf 'Intel UHD (Coffee Lake)'
-        elif (( dd >= 0x5900 && dd <= 0x59FF )); then printf 'Intel HD (Kaby Lake)'
-        else                                          printf 'Intel Graphics (generic name)'; fi ;;
+        elif (( dd >= 0x5900 && dd <= 0x59FF )); then printf 'Intel HD Graphics (Kaby Lake)'
+        else                                          printf 'Intel Graphics (Generic)'; fi ;;
 
     *) printf 'GPU [%s:%s]' "$vid" "$did" ;;
     esac
