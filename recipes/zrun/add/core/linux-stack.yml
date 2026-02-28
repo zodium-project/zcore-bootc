@@ -30,3 +30,4 @@ modules:
       - vulkan-tools
       - tpm2-tools
       - fuse
+      - freerdp
