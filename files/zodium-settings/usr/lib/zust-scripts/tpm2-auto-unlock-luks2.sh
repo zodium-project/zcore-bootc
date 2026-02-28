@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# TPM2 Auto-Unlock Setup for LUKS2 Root
+# TPM2 Auto-Unlock for LUKS2 root
 # by Zodium Project
 # Works on Fedora Classic, Silverblue, Atomic
 # =============================================================================
@@ -41,25 +41,28 @@ fi
 success "Systemd TPM2 support detected"
 
 # ── Detect LUKS2 root device via kernel cmdline ──────
+# Detect LUKS2 root device safely
 info "Detecting the LUKS2 root device from kernel parameters..."
-RD_LUKS_UUID="$(xargs -n1 -a /proc/cmdline | grep -F "rd.luks.uuid" | cut -d= -f2 | sed 's/^luks-//')"
+
+RD_LUKS_UUID=$(grep -oP 'rd.luks.uuid=\K[^\s]+' /proc/cmdline || true)
 
 if [[ -z "$RD_LUKS_UUID" ]]; then
-    warn "No LUKS2 root detected (no 'rd.luks.uuid' found in /proc/cmdline)."
+    warn "No LUKS2 root detected (no 'rd.luks.uuid' in /proc/cmdline)."
     echo "Your system root is not LUKS2-encrypted."
     echo "TPM2 auto-unlock cannot be configured on this system."
     exit 1
 fi
 
-ROOT_DEV="$(realpath "/dev/disk/by-uuid/${RD_LUKS_UUID}")"
-info "Detected boot LUKS2 device: $ROOT_DEV"
+ROOT_DEV="/dev/disk/by-uuid/${RD_LUKS_UUID}"
 
 if [[ ! -b "$ROOT_DEV" ]]; then
     warn "Detected device '$ROOT_DEV' is not a block device."
     error "Cannot enroll TPM2: the detected root device is invalid."
 fi
 
-# Check LUKS version
+success "Detected boot LUKS2 device: $ROOT_DEV"
+
+# ── Check LUKS version ────────────────────────────────
 if ! cryptsetup luksDump "$ROOT_DEV" &>/dev/null; then
     warn "Device '$ROOT_DEV' is not a valid LUKS device."
     error "Cannot enroll TPM2: the detected root device is not LUKS."
@@ -80,7 +83,7 @@ if [[ "${ENABLE,,}" == "n" || -z "$ENABLE" ]]; then
     exit 0
 fi
 
-# ── Ask for optional PIN ─────────────────────────────
+# ── Optional PIN ─────────────────────────────────────
 read -rp "Would you like to set up a TPM2 PIN? [y/N]: " USE_PIN
 SET_PIN_ARG=""
 if [[ "${USE_PIN,,}" == "y" ]]; then
