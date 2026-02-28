@@ -15,7 +15,7 @@ to-do :
 12. add openrazer akmods ??
 13. use cachyos kernel & sign it ? or use linux-zen/liqorx and sign it ? or use OGC/Bazzite kernel and sign it ?
 14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
-15. 
+15. better zodium-update service ? or disable automatic updates OOTB ?
 16. 
 17. 
 18. 
