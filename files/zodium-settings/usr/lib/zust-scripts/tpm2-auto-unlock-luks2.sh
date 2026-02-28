@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# ================================================================
+#  tpm2-auto-unlock-luks2 — Setup Tpm2 auto decryption for luks2 drives/partitions.
+#  Interactive , shoud work on fedora , fedora atomic , ublue images 
+#  made for Zodium Project
+# ================================================================
+
 set -Eeuo pipefail
 
 # ── Styling ───────────────────────────────────────────
