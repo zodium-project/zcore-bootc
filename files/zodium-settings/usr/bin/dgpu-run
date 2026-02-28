@@ -256,6 +256,37 @@ gpu_count=${#cards[@]}
 [[ "$gpu_count" -gt 0 ]] || die "No DRM GPUs found under /sys/class/drm/"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# USER-DEFINED GPU OVERRIDE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+USER_DEFINED_FILE="$HOME/.config/dgpu-run/defined"
+
+if [[ -r "$USER_DEFINED_FILE" ]]; then
+    # Expect lines like: weak_gpu_igpu=card0
+    #                   powerful_gpu_dgpu=card1
+    while IFS='=' read -r key val; do
+        key="${key// /}"   # strip spaces
+        val="${val// /}"   # strip spaces
+        case "$key" in
+            weak_gpu_igpu) igpu="$val" ;;
+            powerful_gpu_dgpu) dgpu="$val" ;;
+        esac
+    done < "$USER_DEFINED_FILE"
+
+    # Validate the cards exist
+    [[ -n "$igpu" && " ${cards[*]} " =~ " ${igpu} " ]] || die "Invalid igpu in $USER_DEFINED_FILE"
+    [[ -n "$dgpu" && " ${cards[*]} " =~ " ${dgpu} " ]] || die "Invalid dgpu in $USER_DEFINED_FILE"
+
+    # Assign roles explicitly
+    for c in "${cards[@]}"; do
+        if [[ "$c" == "$igpu" ]]; then c_role["$c"]="iGPU"
+        elif [[ "$c" == "$dgpu" ]]; then c_role["$c"]="dGPU"
+        else c_role["$c"]="unknown"; fi
+    done
+
+    say "  ${C_CYN}[dgpu-run]${R} Using user-defined GPU mapping from $USER_DEFINED_FILE"
+fi
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ROLE CLASSIFICATION — multi-signal scoring
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 declare -A c_role c_score
