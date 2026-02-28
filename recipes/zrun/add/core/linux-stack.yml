@@ -28,3 +28,6 @@ modules:
       - mangohud
       - dnf5-plugins
       - vulkan-tools
+      - clevis
+      - clevis-luks
+      - tpm2-tools
