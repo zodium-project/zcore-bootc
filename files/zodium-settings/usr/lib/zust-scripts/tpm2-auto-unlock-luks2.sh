@@ -45,13 +45,36 @@ fi
 success "Systemd TPM2 support detected"
 
 # ── Detect root LUKS device via kernel cmdline ────────
+echo ""
+info "Detecting the LUKS2 root device from kernel parameters..."
 RD_LUKS_UUID="$(xargs -n1 -a /proc/cmdline | grep -F "rd.luks.uuid" | cut -d= -f2 | sed 's/^luks-//')"
-[[ -n "$RD_LUKS_UUID" ]] || error "Could not find rd.luks.uuid kernel parameter (not LUKS2 root?)"
+
+if [[ -z "$RD_LUKS_UUID" ]]; then
+    warn "No 'rd.luks.uuid' kernel parameter found."
+    echo "This usually means your root filesystem is not LUKS2-encrypted."
+    error "Cannot proceed with TPM2 auto-unlock enrollment."
+fi
 
 ROOT_DEV="$(realpath "/dev/disk/by-uuid/${RD_LUKS_UUID}")"
-[[ -b "$ROOT_DEV" ]] || error "Cannot find LUKS2 root device at $ROOT_DEV"
+info "Found boot LUKS2 device: $ROOT_DEV"
 
-success "Detected root LUKS2 device: $ROOT_DEV"
+# Check if device exists
+if [[ ! -b "$ROOT_DEV" ]]; then
+    warn "Detected device '$ROOT_DEV' does not exist as a block device."
+    error "Cannot enroll TPM2: the detected root device is invalid."
+fi
+
+# Check LUKS version
+if ! cryptsetup luksDump "$ROOT_DEV" &>/dev/null; then
+    warn "Device '$ROOT_DEV' does not appear to be a valid LUKS device."
+    error "Cannot enroll TPM2: the detected root device is not LUKS."
+fi
+
+LUKS_VER=$(cryptsetup luksDump "$ROOT_DEV" | awk '/^Version:/{print $2}')
+info "Detected LUKS version: $LUKS_VER"
+[[ "$LUKS_VER" == "2" ]] || error "TPM2 auto-unlock requires LUKS2 (found LUKS$LUKS_VER)."
+
+success "Confirmed LUKS2 root device: $ROOT_DEV"
 
 # ── Enable or disable TPM2 auto-unlock ───────────────
 read -rp "Enable TPM2 auto-unlock on this root device? [y/N]: " ENABLE
