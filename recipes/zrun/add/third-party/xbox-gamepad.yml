@@ -14,10 +14,3 @@ modules:
           destination: /tmp/certs/kernel_key.pem
     scripts:
       - xbox-controller-drivers.sh
-
-modules:
-  - type: dnf
-    install:
-       install-weak-deps: false
-       packages:
-         - steam-devices
