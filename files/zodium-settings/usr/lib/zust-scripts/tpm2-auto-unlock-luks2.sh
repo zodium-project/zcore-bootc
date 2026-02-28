@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 # ── Styling ───────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; MAGENTA='\033[0;35m'; BOLD='\033[1m'; NC='\033[0m'
 
-ICON_INFO="⮕"       # Info / arrow
-ICON_OK="✔"         # Success
-ICON_WARN="⚠"       # Warning
-ICON_ERR="✖"        # Error
-ICON_LOCK="🔒"       # Lock
+ICON_INFO="[i]"
+ICON_OK="[✔]"
+ICON_WARN="[!]"
+ICON_ERR="[X]"
+ICON_LOCK="[L]"
 
 info()  { echo -e "${CYAN}${ICON_INFO}${NC}  $*"; }
 ok()    { echo -e "${GREEN}${ICON_OK}${NC}    $*"; }
@@ -49,8 +49,8 @@ RD_LUKS_UUID="$(xargs -n1 -a /proc/cmdline \
 
 if [[ -z "${RD_LUKS_UUID:-}" ]]; then
     warn "No LUKS root detected in kernel parameters."
-    echo "Your root filesystem does not appear to be LUKS-encrypted."
-    exit 1
+    warn "Your root filesystem does not appear to be LUKS-encrypted."
+    fail "Cannot enroll TPM2 auto-unlock without a LUKS2 root device."
 fi
 
 CRYPT_DISK="$(realpath "/dev/disk/by-uuid/${RD_LUKS_UUID}")"

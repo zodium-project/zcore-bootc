@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ================================================================
-#  zust 2.0.0 — Script Launcher
+#  zust — Bash Script Launcher
 #  Searches /etc/zust-scripts and /usr/lib/zust-scripts
 # ================================================================
 
 set -Eeuo pipefail
 
-VERSION="2.0.0"
+VERSION="2.0.1"
 SCRIPT_NAME=$(basename "$0")
 
 # ── Colors ──────────────────────────────────────────────────── #

@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# ================================================================
+#  zync — Unified Atomic Update Orchestrator
+#  Utility that handles rollback , updates , upgrades on zodium project images 
+#  This should also work on fedora atomic images & ublue images
+# ================================================================
+
 set -Eeuo pipefail
 
 VERSION="3.2.1"
