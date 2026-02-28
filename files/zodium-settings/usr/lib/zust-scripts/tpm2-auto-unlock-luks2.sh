@@ -17,7 +17,7 @@ error()   { echo -e "${RED}[ERR]${NC}   $*" >&2; exit 1; }
 # ── Root check ───────────────────────────────────────────────────────────── #
 if [[ $EUID -ne 0 ]]; then
     echo -e "${YELLOW}This script must be run as root.${NC}"
-    read -rp "Do you want to re-run it with sudo? [y/N]: " SUDO_ASK
+    read -rp "Do you want to re-run it with sudo? [Y/n]: " SUDO_ASK
     if [[ "${SUDO_ASK,,}" == "y" ]]; then
         exec sudo bash "$0" "$@"
     else
