@@ -31,7 +31,7 @@ if [[ -f /sys/class/tpm/tpm0/device/description ]]; then
     TPM_DESC=$(< /sys/class/tpm/tpm0/device/description)
     info "TPM device detected: $TPM_DESC"
 else
-    error "No TPM device found at /sys/class/tpm/tpm0. Cannot configure TPM2 auto-unlock."
+    error "No TPM2 device found at /sys/class/tpm/tpm0. Cannot configure TPM2 auto-unlock."
 fi
 
 # ── Check systemd TPM2 support ───────────────────────
@@ -45,7 +45,7 @@ info "Detecting the LUKS2 root device from kernel parameters..."
 RD_LUKS_UUID="$(xargs -n1 -a /proc/cmdline | grep -F "rd.luks.uuid" | cut -d= -f2 | sed 's/^luks-//')"
 
 if [[ -z "$RD_LUKS_UUID" ]]; then
-    warn "No LUKS2 root detected (no 'rd.luks.uuid' in /proc/cmdline)."
+    warn "No LUKS2 root detected (no 'rd.luks.uuid' found in /proc/cmdline)."
     echo "Your system root is not LUKS2-encrypted."
     echo "TPM2 auto-unlock cannot be configured on this system."
     exit 1
