@@ -63,6 +63,7 @@ show_help() {
     say "      ${C_GRY}nvidia | amd | intel${R}        by driver"
     say "    ${C_YLW}--interactive-choose${R}           Pick GPU from a menu"
     say "    ${C_YLW}--list-devices${R}                 List all detected GPUs"
+    say "    ${C_YLW}--define${R}                       Define iGPU/dGPU mapping interactively"
     say "    ${C_YLW}-h${R}, ${C_YLW}--help${R}                  Show this help"
     say ""
     say "  ${BD}${C_WHT}Behaviour${R}"
@@ -92,6 +93,7 @@ while [[ $# -gt 0 ]]; do
                               selected_device="$2"; shift 2 ;;
         --interactive-choose) interactive=1; shift ;;
         --list-devices)       list_devices=1; shift ;;
+        --define)             define_mode=1; shift ;;
         -h|--help)            show_help; exit 0 ;;
         --)                   shift; cmd_args+=("$@"); break ;;
         -*)                   die "Unknown option: $1" ;;
@@ -421,6 +423,54 @@ card_header() {
     vcol=$(vendor_col "${c_vid[$c]}")
     printf '%b' "  ${vcol}${BD}${c}${R}  $(role_badge "$c")  ${BD}${C_WHT}${c_model[$c]}${R}\n"
 }
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# --define
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+if [[ "${define_mode:-0}" -eq 1 ]]; then
+    [[ -t 0 ]] || die "--define requires a TTY"
+
+    say ""
+    say "  ${BD}${C_CYN}Define iGPU/dGPU mapping${R}"
+    SEP
+
+    declare -A map_idx; idx=1
+    for c in "${cards[@]}"; do
+        printf '%b' "  ${BD}${C_YLW}[${idx}]${R}  "
+        card_header "$c" | sed 's/^  //'
+        map_idx[$idx]="$c"
+        (( idx++ ))
+    done
+
+    say ""
+    read -rp "  Select iGPU [1-$((idx-1))]: " choice
+    [[ -n "${map_idx[${choice:-}]:-}" ]] || die "Invalid selection."
+    igpu="${map_idx[$choice]}"
+
+    # show only remaining cards for dGPU selection
+    unset map_idx[$choice]; idx=1
+    declare -A d_map_idx
+    for c in "${cards[@]}"; do
+        [[ "$c" == "$igpu" ]] && continue
+        d_map_idx[$idx]="$c"
+        (( idx++ ))
+    done
+
+    read -rp "  Select dGPU [1-$((idx-1))]: " choice
+    [[ -n "${d_map_idx[${choice:-}]:-}" ]] || die "Invalid selection."
+    dgpu="${d_map_idx[$choice]}"
+
+    # write mapping to user-defined file
+    mkdir -p "$(dirname "$USER_DEFINED_FILE")"
+    {
+        echo "weak_gpu_igpu=$igpu"
+        echo "powerful_gpu_dgpu=$dgpu"
+    } > "$USER_DEFINED_FILE"
+
+    say ""
+    say "  ${C_GRN}Mapping saved to ${USER_DEFINED_FILE}${R}"
+    exit 0
+fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # --use-device RESOLUTION
