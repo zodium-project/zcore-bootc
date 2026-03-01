@@ -31,3 +31,4 @@ modules:
       - tpm2-tools
       - fuse
       - freerdp
+      - pciutils

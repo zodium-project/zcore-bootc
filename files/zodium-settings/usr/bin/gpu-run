@@ -11,7 +11,7 @@ shopt -s nullglob
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Version
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-VERSION="2.0.3"
+VERSION="2.2.0"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # COLOUR PALETTE  (bright, vivid — only when stdout is a TTY)
@@ -178,18 +178,33 @@ gpu_temp() {
 # HUMAN-FRIENDLY GPU NAMES / Generic List Of Names
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 pci_friendly_name() {
-    local dev="$1" label vid did dd
+    local dev="$1" label vid did pci_addr name
 
     label=$(sysfs_read "$dev/label")
     [[ -n "$label" ]] && { printf '%s' "$label"; return; }
 
+    pci_addr=$(basename "$dev")
+
+    # Try lspci first — most accurate
+    if command -v lspci &>/dev/null; then
+        name=$(lspci -vmm -s "$pci_addr" 2>/dev/null | awk -F'\t' '/^Device:/{print $2; exit}')
+        # lspci -vmm gives us vendor + device separately, grab both for a nicer label
+        local lvendor ldevice
+        lvendor=$(lspci -vmm -s "$pci_addr" 2>/dev/null | awk -F'\t' '/^Vendor:/{print $2; exit}')
+        ldevice=$(lspci -vmm -s "$pci_addr" 2>/dev/null | awk -F'\t' '/^Device:/{print $2; exit}')
+        if [[ -n "$lvendor" && -n "$ldevice" ]]; then
+            printf '%s %s' "$lvendor" "$ldevice"; return
+        fi
+        [[ -n "$name" ]] && { printf '%s' "$name"; return; }
+    fi
+
+    # Fallback — range-based guessing from VID:DID
     vid=$(sysfs_read "$dev/vendor" "0x0000"); vid=${vid#0x}; vid=${vid^^}
     did=$(sysfs_read "$dev/device" "0x0000"); did=${did#0x}; did=${did^^}
-    dd=$(( 16#$did ))
+    local dd=$(( 16#$did ))
 
     case "$vid" in
-    10DE) # NVIDIA — ranges verified against pci.ids (pciutils/pciids) 2026
-          # But still these are just approximates , there can be edge cases & i dont wanna make this script 2k+ lines by defining each gpu.
+    10DE)
         if   (( dd >= 0x2B00 && dd <= 0x2FFF )); then printf 'NVIDIA GeForce RTX 5000 series'
         elif (( dd >= 0x2600 && dd <= 0x28FF )); then printf 'NVIDIA GeForce RTX 4000 series'
         elif (( dd >= 0x2200 && dd <= 0x25FF )); then printf 'NVIDIA GeForce RTX 3000 series'
@@ -198,9 +213,7 @@ pci_friendly_name() {
         elif (( dd >= 0x1300 && dd <= 0x17FF )); then printf 'NVIDIA GeForce GTX 900 series'
         elif (( dd >= 0x0FC0 && dd <= 0x12FF )); then printf 'NVIDIA GeForce GTX 600/700 series'
         else                                          printf 'NVIDIA GeForce (Generic)'; fi ;;
-
-    1002) # AMD — ranges verified against pci.ids + /usr/share/libdrm/amdgpu.ids
-          # But still these are just approximates , there can be edge cases & i dont wanna make this script 2k+ lines by defining each gpu.
+    1002)
         if   (( dd >= 0x7550 && dd <= 0x7590 )); then printf 'AMD Radeon RX 9000 series'
         elif (( dd >= 0x7440 && dd <= 0x749F )); then printf 'AMD Radeon RX 7000 series'
         elif (( dd >= 0x73A0 && dd <= 0x743F )); then printf 'AMD Radeon RX 6000 series'
@@ -215,9 +228,7 @@ pci_friendly_name() {
         elif (( dd == 0x150E || dd == 0x1586 || dd == 0x15BF || dd == 0x15C8 )); then
                                                       printf 'AMD Radeon 700M/800M (iGPU)'
         else                                          printf 'AMD Radeon (Generic)'; fi ;;
-
-    8086) # Intel — ranges verified against dgpu-docs.intel.com + pci.ids
-          # But still these are just approximates , there can be edge cases & i dont wanna make this script 2k+ lines by defining each gpu.
+    8086)
         if   (( dd >= 0xE200 && dd <= 0xE21F )); then printf 'Intel Arc B series'
         elif (( dd >= 0x5690 && dd <= 0x56CF )); then printf 'Intel Arc A series'
         elif (( dd >= 0xA780 && dd <= 0xA7BF )); then printf 'Intel Iris Xe / UHD (Raptor Lake)'
@@ -230,7 +241,6 @@ pci_friendly_name() {
         elif (( dd >= 0x3E00 && dd <= 0x3EFF )); then printf 'Intel UHD (Coffee Lake)'
         elif (( dd >= 0x5900 && dd <= 0x59FF )); then printf 'Intel HD Graphics (Kaby Lake)'
         else                                          printf 'Intel Graphics (Generic)'; fi ;;
-
     *) printf 'GPU [%s:%s]' "$vid" "$did" ;;
     esac
 }
@@ -278,6 +288,8 @@ done
 
 gpu_count=${#cards[@]}
 [[ "$gpu_count" -gt 0 ]] || die "No DRM GPUs found under /sys/class/drm/"
+
+[[ "${version_flag:-0}" -eq 1 ]] && { say "${BD}gpu-run${R} version ${C_CYN}${VERSION}${R}"; exit 0; }
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # USER-DEFINED GPU OVERRIDE OR HEURISTIC ROLE CLASSIFICATION

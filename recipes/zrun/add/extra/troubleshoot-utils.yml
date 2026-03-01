@@ -8,5 +8,4 @@ modules:
      packages:
       - usbutils
       - libinput-utils
-      - pciutils
       - pipewire-utils
