@@ -30,5 +30,7 @@ modules:
       - vulkan-tools
       - tpm2-tools
       - fuse
+      - fuse-libs
       - freerdp
       - pciutils
+      - usbutils
