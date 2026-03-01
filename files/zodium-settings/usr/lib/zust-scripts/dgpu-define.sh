@@ -6,4 +6,4 @@
 set -euo pipefail
 shopt -s nullglob
 
-/usr/bin/dgpu-run --define
+/usr/bin/gpu-run --define
