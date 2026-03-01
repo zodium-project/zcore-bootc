@@ -14,7 +14,7 @@ shopt -s nullglob
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Version
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-VERSION="2.3.4"
+VERSION="2.3.5"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # COLOUR PALETTE  (bright, vivid — only when stdout is a TTY)
@@ -73,6 +73,7 @@ show_help() {
     say "    ${C_YLW}--list-devices${R}                        List all detected GPUs"
     say "    ${C_YLW}--define${R}                              Define iGPU/dGPU mapping interactively"
     say "    ${C_YLW}--version${R}                             Print installed version"
+    say "    ${C_YLW}--no-lspci${R}                            Skip lspci (faster but less accurate)"
     say "    ${C_YLW}-h${R}, ${C_YLW}--help${R}                            Show this help"
     say ""
     say "  ${BD}${C_WHT}Behaviour:${R}"
@@ -96,12 +97,13 @@ show_help() {
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ARGUMENT PARSING
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-verbose=0 selected_device="" interactive=0 list_devices=0
+verbose=0 no_lspci=0 selected_device="" interactive=0 list_devices=0
 cmd_args=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -v|--verbose)         verbose=1; shift ;;
+        --no-lspci) no_lspci=1; shift ;;
         --use-device)         [[ -n "${2-}" ]] || die "--use-device requires an argument"
                               selected_device="$2"; shift 2 ;;
         --interactive-choose) interactive=1; shift ;;
@@ -191,12 +193,13 @@ pci_friendly_name() {
     pci_addr=$(basename "$dev")
 
     # Try lspci first — most accurate
-    if command -v lspci &>/dev/null; then
+    if [[ "$no_lspci" -eq 0 ]] && command -v lspci &>/dev/null; then
         local lspci_out lvendor ldevice
         lspci_out=$(lspci -vmm -s "$pci_addr" 2>/dev/null)
-        lvendor=$(awk -F'\t' '/^Vendor:/{print $2; exit}' <<< "$lspci_out")
-        ldevice=$(awk -F'\t' '/^Device:/{print $2; exit}' <<< "$lspci_out")
+        lvendor=$(awk -F': *' '/^Vendor:/{print $2; exit}' <<< "$lspci_out")
+        ldevice=$(awk -F': *' '/^Device:/{print $2; exit}' <<< "$lspci_out")
         if [[ -n "$lvendor" && -n "$ldevice" ]]; then
+            lvendor=$(echo "$lvendor" | sed 's/[[:space:]]*\(Corporation\|Corp\.\|Inc\.\|Inc\|Co\.\|Ltd\.\|Ltd\|GmbH\|S\.A\.\)[[:space:]]*//' | xargs)
             printf '%s %s' "$lvendor" "$ldevice"; return
         fi
     fi
