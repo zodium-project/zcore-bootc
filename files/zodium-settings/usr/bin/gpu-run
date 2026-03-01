@@ -6,12 +6,15 @@
 # ================================================================
 
 set -o pipefail
+# Note: errexit (-e) intentionally omitted — arithmetic expressions like
+# (( score += 0 )) return exit code 1 when the result is zero, which
+# would cause false exits during heuristic scoring.
 shopt -s nullglob
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Version
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-VERSION="2.2.0"
+VERSION="2.3.4"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # COLOUR PALETTE  (bright, vivid — only when stdout is a TTY)
@@ -55,39 +58,39 @@ warn() { printf '%b\n' "  ${WARN_COL}warning:${R} $*" >&2; }
 # HELP
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 show_help() {
-    echo
-    echo -e "${BD}${C_CYN}gpu-run${R} — GPU selection & PRIME offload launcher"
-    echo
-    echo -e "${BD}${C_WHT}Usage:${R}"
-    echo -e "  gpu-run [options] [command [args...]]"
-    echo
-    echo -e "${BD}${C_WHT}Options:${R}"
-    echo -e "  ${C_YLW}-v${R}, ${C_YLW}--verbose${R}                         Show detailed GPU info"
-    echo -e "  ${C_YLW}--use-device <id>${R}                     Target a specific GPU"
-    echo -e "      card0, card1 (by DRM node)"
-    echo -e "      nvidia | intel (by driver)"
-    echo -e "  ${C_YLW}--interactive-choose${R}                  Pick GPU from a menu"
-    echo -e "  ${C_YLW}--list-devices${R}                        List all detected GPUs"
-    echo -e "  ${C_YLW}--define${R}                              Define iGPU/dGPU mapping interactively"
-    echo -e "  ${C_YLW}--version${R}                             prints installed version"
-    echo -e "  ${C_YLW}-h${R}, ${C_YLW}--help${R}                            Show this help"
-    echo
-    echo -e "${BD}${C_WHT}Behaviour:${R}"
-    echo -e "  No command → print detection summary"
-    echo -e "  Command   → run on dGPU (or forced/chosen GPU)"
-    echo
-    echo -e "${BD}${C_WHT}Examples:${R}"
-    echo -e "  ${C_CYN}gpu-run${R}                                 detection summary"
-    echo -e "  ${C_CYN}gpu-run -v${R}                              verbose info"
-    echo -e "  ${C_CYN}gpu-run --list-devices${R}                  enumerate GPUs"
-    echo -e "  ${C_CYN}gpu-run --use-device nvidia glxinfo${R}     force NVIDIA"
-    echo -e "  ${C_CYN}gpu-run --interactive-choose blender${R}    pick GPU"
-    echo -e "  ${C_CYN}gpu-run vkcube${R}                          auto dGPU"
-    echo
-    echo -e "${BD}${C_WHT}Advice / Hint:${R}"
-    echo -e "  Automatic detection is good but not flawless."
-    echo -e "  It's recommended to use ${C_YLW}gpu-run --define${R} once to set primary and secondary GPUs."
-    echo
+    say ""
+    say "  ${BD}${C_CYN}gpu-run${R} — GPU selection & PRIME offload launcher"
+    say ""
+    say "  ${BD}${C_WHT}Usage:${R}"
+    say "    gpu-run [options] [command [args...]]"
+    say ""
+    say "  ${BD}${C_WHT}Options:${R}"
+    say "    ${C_YLW}-v${R}, ${C_YLW}--verbose${R}                         Show detailed GPU info"
+    say "    ${C_YLW}--use-device <id>${R}                     Target a specific GPU"
+    say "        card0, card1 (by DRM node)"
+    say "        nvidia | amd | intel (by driver)"
+    say "    ${C_YLW}--interactive-choose${R}                  Pick GPU from a menu"
+    say "    ${C_YLW}--list-devices${R}                        List all detected GPUs"
+    say "    ${C_YLW}--define${R}                              Define iGPU/dGPU mapping interactively"
+    say "    ${C_YLW}--version${R}                             Print installed version"
+    say "    ${C_YLW}-h${R}, ${C_YLW}--help${R}                            Show this help"
+    say ""
+    say "  ${BD}${C_WHT}Behaviour:${R}"
+    say "    No command → print detection summary"
+    say "    Command   → run on dGPU (or forced/chosen GPU)"
+    say ""
+    say "  ${BD}${C_WHT}Examples:${R}"
+    say "    ${C_CYN}gpu-run${R}                                 detection summary"
+    say "    ${C_CYN}gpu-run -v${R}                              verbose info"
+    say "    ${C_CYN}gpu-run --list-devices${R}                  enumerate GPUs"
+    say "    ${C_CYN}gpu-run --use-device nvidia glxinfo${R}     force NVIDIA"
+    say "    ${C_CYN}gpu-run --interactive-choose blender${R}    pick GPU"
+    say "    ${C_CYN}gpu-run vkcube${R}                          auto dGPU"
+    say ""
+    say "  ${BD}${C_WHT}Advice:${R}"
+    say "    Automatic detection is good but not flawless."
+    say "    Run ${C_YLW}gpu-run --define${R} once to set primary and secondary GPUs."
+    say ""
 }
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -111,6 +114,10 @@ while [[ $# -gt 0 ]]; do
         *)                    cmd_args+=("$@"); break ;;
     esac
 done
+
+[[ "${version_flag:-0}" -eq 1 ]] && { say "${BD}gpu-run${R} version ${C_CYN}${VERSION}${R}"; exit 0; }
+
+USER_DEFINED_FILE="$HOME/.config/gpu-run/defined"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # SYSFS HELPERS  (all inside functions — no bare `local`)
@@ -137,11 +144,9 @@ pci_class() {
 }
 
 card_has_edp() {
-    local cname="$1" entry bname status
+    local cname="$1" entry status
     for entry in /sys/class/drm/"${cname}"-eDP-*; do
         [[ -d "$entry" ]] || continue
-        bname=$(basename "$entry")
-        [[ "$bname" == "${cname}-eDP-"* ]] || continue
         status=$(sysfs_read "$entry/status" "unknown")
         [[ "$status" == "disconnected" ]] && continue
         return 0
@@ -178,7 +183,7 @@ gpu_temp() {
 # HUMAN-FRIENDLY GPU NAMES / Generic List Of Names
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 pci_friendly_name() {
-    local dev="$1" label vid did pci_addr name
+    local dev="$1" label vid did pci_addr
 
     label=$(sysfs_read "$dev/label")
     [[ -n "$label" ]] && { printf '%s' "$label"; return; }
@@ -187,21 +192,20 @@ pci_friendly_name() {
 
     # Try lspci first — most accurate
     if command -v lspci &>/dev/null; then
-        name=$(lspci -vmm -s "$pci_addr" 2>/dev/null | awk -F'\t' '/^Device:/{print $2; exit}')
-        # lspci -vmm gives us vendor + device separately, grab both for a nicer label
-        local lvendor ldevice
-        lvendor=$(lspci -vmm -s "$pci_addr" 2>/dev/null | awk -F'\t' '/^Vendor:/{print $2; exit}')
-        ldevice=$(lspci -vmm -s "$pci_addr" 2>/dev/null | awk -F'\t' '/^Device:/{print $2; exit}')
+        local lspci_out lvendor ldevice
+        lspci_out=$(lspci -vmm -s "$pci_addr" 2>/dev/null)
+        lvendor=$(awk -F'\t' '/^Vendor:/{print $2; exit}' <<< "$lspci_out")
+        ldevice=$(awk -F'\t' '/^Device:/{print $2; exit}' <<< "$lspci_out")
         if [[ -n "$lvendor" && -n "$ldevice" ]]; then
             printf '%s %s' "$lvendor" "$ldevice"; return
         fi
-        [[ -n "$name" ]] && { printf '%s' "$name"; return; }
     fi
 
     # Fallback — range-based guessing from VID:DID
     vid=$(sysfs_read "$dev/vendor" "0x0000"); vid=${vid#0x}; vid=${vid^^}
     did=$(sysfs_read "$dev/device" "0x0000"); did=${did#0x}; did=${did^^}
-    local dd=$(( 16#$did ))
+    local dd
+    dd=$(( 16#$did ))
 
     case "$vid" in
     10DE)
@@ -244,7 +248,6 @@ pci_friendly_name() {
     *) printf 'GPU [%s:%s]' "$vid" "$did" ;;
     esac
 }
-
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # GPU DISCOVERY
@@ -289,20 +292,13 @@ done
 gpu_count=${#cards[@]}
 [[ "$gpu_count" -gt 0 ]] || die "No DRM GPUs found under /sys/class/drm/"
 
-[[ "${version_flag:-0}" -eq 1 ]] && { say "${BD}gpu-run${R} version ${C_CYN}${VERSION}${R}"; exit 0; }
-
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # USER-DEFINED GPU OVERRIDE OR HEURISTIC ROLE CLASSIFICATION
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 declare -A c_role c_score
 igpu="" dgpu="" confidence=0 reason=""
 
-USER_DEFINED_FILE="$HOME/.config/gpu-run/defined"
-
 if [[ -r "$USER_DEFINED_FILE" ]]; then
-    # Ensure associative array exists
-    [[ -v c_role ]] || declare -A c_role
-
     while IFS='=' read -r key val; do
         key="${key// /}"   # strip spaces
         val="${val// /}"   # strip spaces
@@ -325,7 +321,8 @@ if [[ -r "$USER_DEFINED_FILE" ]]; then
 
     confidence=100
     reason="user-defined mapping"
-    say "  ${C_CYN}[gpu-run]${R} Using user-defined GPU mapping"
+    say "" >&2
+    say "  ${C_CYN}[gpu-run]${R} Using user-defined GPU mapping" >&2
 
 else
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -358,6 +355,8 @@ else
         (( c_score[$c] > best_score ))  && { best_score=${c_score[$c]};  igpu="$c"; }
         (( c_score[$c] < worst_score )) && { worst_score=${c_score[$c]}; dgpu="$c"; }
     done
+    # Tie-break: if scores are equal and both vars point to same card, assign dgpu to last card
+    [[ "$igpu" == "$dgpu" && "$gpu_count" -gt 1 ]] && dgpu="${cards[-1]}"
 
     igpu_score=${c_score[$igpu]}
     if   (( igpu_score >= 50 )); then confidence=95; reason="eDP + driver signals"
@@ -371,29 +370,36 @@ else
         igpu="${cards[0]}"; dgpu=""
     else
         for c in "${cards[@]}"; do
-            if [[ "$c" == "$igpu" ]]; then c_role["$c"]="iGPU"
-            else                           c_role["$c"]="dGPU"; fi
+            if   [[ "$c" == "$igpu" ]]; then c_role["$c"]="iGPU"
+            elif [[ "$c" == "$dgpu" ]]; then c_role["$c"]="dGPU"
+            else                             c_role["$c"]="dGPU2"; fi
         done
     fi
 fi
 
-dri_idx() { printf '%s' "${1#card}"; }
-
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # DISPLAY HELPERS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+dri_idx() { printf '%s' "${1#card}"; }
+
 role_col() {
     case "${c_role[$1]}" in
-        iGPU) printf '%s' "$IGPU_COL" ;;
-        dGPU) printf '%s' "$DGPU_COL" ;;
-        sole) printf '%s' "$SOLE_COL" ;;
-        *)    printf '%s' "$C_GRY"    ;;
+        iGPU)  printf '%s' "$IGPU_COL" ;;
+        dGPU)  printf '%s' "$DGPU_COL" ;;
+        dGPU2) printf '%s' "$C_MAG"    ;;
+        sole)  printf '%s' "$SOLE_COL" ;;
+        *)     printf '%s' "$C_GRY"    ;;
     esac
 }
 
 role_badge() {
-    local col; col=$(role_col "$1")
-    printf '%b' "${col}${BD}${c_role[$1]}${R}"
+    local col label
+    col=$(role_col "$1")
+    case "${c_role[$1]}" in
+        unknown) label="other"         ;;
+        *)       label="${c_role[$1]}" ;;
+    esac
+    printf '%b' "${col}${BD}${label}${R}"
 }
 
 drv_col() {
@@ -469,11 +475,12 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
     SEP
 
     # --- show all cards ---
+    declare -A map_idx
     while :; do
         say ""
         say "  Available GPUs:"
         idx=1
-        declare -A map_idx
+        map_idx=()
         for c in "${cards[@]}"; do
             printf '%b' "  ${BD}${C_YLW}[${idx}]${R}  "
             card_header "$c" | sed 's/^  //'
@@ -491,7 +498,7 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
 
     # --- determine remaining cards ---
     remaining=()
-    for i in "${!map_idx[@]}"; do
+    for (( i=1; i<idx; i++ )); do
         [[ $i -eq $choice ]] && continue
         remaining+=("${map_idx[$i]}")
     done
@@ -500,13 +507,14 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
         # Only one remaining → auto-assign as dGPU
         dgpu="${remaining[0]}"
         say ""
-        say "  Only one remaining card, auto-assigned as dGPU: $dgpu"
+        say "  Only one remaining card, auto-assigned as dGPU: ${BD}${dgpu}${R}"
     else
         # Multiple remaining → prompt for dGPU
+        declare -A d_map_idx
         while :; do
             say ""
             say "  Remaining cards for dGPU:"
-            declare -A d_map_idx
+            d_map_idx=()
             idx=1
             for c in "${remaining[@]}"; do
                 printf '%b' "  ${BD}${C_YLW}[${idx}]${R}  "
@@ -525,6 +533,12 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
 
     # --- save mapping ---
     mkdir -p "$(dirname "$USER_DEFINED_FILE")"
+
+    if [[ -f "$USER_DEFINED_FILE" ]]; then
+        say ""
+        say "  ${WARN_COL}warning:${R} Overwriting existing mapping in ${USER_DEFINED_FILE}"
+    fi
+
     {
         echo "weak_gpu_igpu=$igpu"
         echo "powerful_gpu_dgpu=$dgpu"
@@ -532,6 +546,12 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
 
     say ""
     say "  ${C_GRN}Mapping saved to ${USER_DEFINED_FILE}${R}"
+    say "  ${DM}igpu → ${igpu}   dgpu → ${dgpu}${R}"
+
+    for c in "${cards[@]}"; do
+        [[ "$c" == "$igpu" || "$c" == "$dgpu" ]] && continue
+        say "  ${WARN_COL}note:${R} ${c} (${c_model[$c]}) is unmapped — use ${C_YLW}--use-device ${c}${R} to target it manually"
+    done
     exit 0
 fi
 
@@ -602,10 +622,26 @@ if [[ "${#cmd_args[@]}" -eq 0 ]]; then
         printf '%b' "  ${DM}gpu${R}          "; card_header "$c" | sed 's/^  //'
         printf '%b' "  ${DM}driver${R}       $(drv_fmt "${c_drv[$c]}")\n"
     else
-        i_vcol=$(vendor_col "${c_vid[$igpu]}")
-        d_vcol=$(vendor_col "${c_vid[$dgpu]}")
-        printf '%b' "  ${DM}igpu${R}         ${i_vcol}${BD}${igpu}${R}  ${C_WHT}${c_model[$igpu]}${R}\n"
-        printf '%b' "  ${DM}dgpu${R}         ${d_vcol}${BD}${dgpu}${R}  ${C_WHT}${c_model[$dgpu]}${R}\n"
+        if [[ -n "$igpu" ]]; then
+            i_vcol=$(vendor_col "${c_vid[$igpu]}")
+            printf '%b' "  ${DM}igpu${R}         ${i_vcol}${BD}${igpu}${R}  ${C_WHT}${c_model[$igpu]}${R}\n"
+        fi
+        if [[ -n "$dgpu" ]]; then
+            d_vcol=$(vendor_col "${c_vid[$dgpu]}")
+            printf '%b' "  ${DM}dgpu${R}         ${d_vcol}${BD}${dgpu}${R}  ${C_WHT}${c_model[$dgpu]}${R}\n"
+        fi
+        for c in "${cards[@]}"; do
+            case "${c_role[$c]}" in
+                dGPU2)
+                    sec_vcol=$(vendor_col "${c_vid[$c]}")
+                    printf '%b' "  ${DM}dgpu2${R}        ${sec_vcol}${BD}${c}${R}  ${C_WHT}${c_model[$c]}${R}  ${C_MAG}${DM}(secondary, use --use-device ${c} to target)${R}\n"
+                    ;;
+                unknown)
+                    sec_vcol=$(vendor_col "${c_vid[$c]}")
+                    printf '%b' "  ${DM}other${R}        ${sec_vcol}${BD}${c}${R}  ${C_WHT}${c_model[$c]}${R}  ${C_GRY}${DM}(unmapped, use --use-device ${c} to target)${R}\n"
+                    ;;
+            esac
+        done
     fi
     printf '%b' "  ${DM}confidence${R}   $(conf_fmt "$confidence")  ${C_GRY}${reason}${R}\n"
 
