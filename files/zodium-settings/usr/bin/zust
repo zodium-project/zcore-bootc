@@ -6,7 +6,7 @@
 
 set -Eeuo pipefail
 
-VERSION="2.0.1"
+VERSION="2.0.2"
 SCRIPT_NAME=$(basename "$0")
 
 # ── Colors ──────────────────────────────────────────────────── #
@@ -191,12 +191,6 @@ mode_run() {
 
 mode_choose() {
     command -v fzf >/dev/null 2>&1 || die "fzf not found. Install with: sudo dnf install fzf"
-
-    # Build a single flat list of absolute paths for fzf.
-    # fzf receives full paths — no array lookups needed in subprocess.
-    # --with-nth strips to basename for display only.
-    local path_list
-    path_list=$(printf '%s\n' "${SCRIPT_PATHS[@]}")
 
     $DO_CLEAR && clear
 
