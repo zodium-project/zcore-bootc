@@ -66,7 +66,10 @@ case "$choice" in
         ok "LazyVim installed"
         ;;
     3)
-        ok "Using default Neovim configuration. No preconfig installed."
+        SETUP_NAME="Default"
+        info "Removing existing Neovim configuration..."
+        rm -rf ~/.config/nvim ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim
+        ok "Neovim config cleared. Using default configuration."
         ;;
     *)
         fail "Invalid choice. Exiting."
@@ -80,15 +83,12 @@ echo -e "${MAGENTA}${BOLD}║          Neovim Setup Completed            ║${NC
 echo -e "${MAGENTA}${BOLD}╚════════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${CYAN}Installed Setup :${NC} ${BOLD}${SETUP_NAME}${NC}"
-echo -e "${CYAN}Next Steps      :${NC} Run 'nvim' to complete setup and install plugins."
+if [[ "$SETUP_NAME" == "Default" ]]; then
+    echo -e "${CYAN}Next Steps      :${NC} Run 'nvim' to get started."
+else
+    echo -e "${CYAN}Next Steps      :${NC} Run 'nvim' to complete setup and install plugins."
+fi
 echo ""
 echo -e "${MAGENTA}╭──────────────────────────────────────────╮${NC}"
 echo -e "${MAGENTA}│        Happy Coding with Neovim!         │${NC}"
 echo -e "${MAGENTA}╰──────────────────────────────────────────╯${NC}"
-
-# to-do :
-# 1. add nvchad etc.....
-# 2. make default reset configs ?
-# 3. change colors ?
-# 4. use more unicode then ascii ?
-# 5. add alternate ways to install neovim if brew is not shipped ?
