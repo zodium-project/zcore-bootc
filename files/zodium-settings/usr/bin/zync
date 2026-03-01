@@ -509,10 +509,56 @@ mod_auto_updates() {
 
 mod_rollback() {
     command_exists rpm-ostree || { log "rpm-ostree not found" WARNING; return 1; }
+    command_exists jq         || { log "jq not found (required for rollback check)" WARNING; return 1; }
+
+    local ostree_status deployment_count
+
+    if ! ostree_status=$(rpm-ostree status --json 2>/dev/null); then
+        log "Failed to query rpm-ostree status" WARNING
+        return 1
+    fi
+
+    deployment_count=$(echo "$ostree_status" | jq '.deployments | length')
+
+    if [[ "$deployment_count" -lt 2 ]]; then
+        log "No previous deployment available to roll back to" WARNING
+        return 1
+    fi
+
+    # Identify booted deployment index
+    local booted_index
+    booted_index=$(echo "$ostree_status" | jq -r '
+        .deployments
+        | to_entries[]
+        | select(.value.booted == true)
+        | .key
+    ')
+
+    # Determine rollback target index
+    local target_index
+    if [[ "$booted_index" -eq 0 ]]; then
+        target_index=1
+    else
+        target_index=0
+    fi
+
+    local current_version previous_version
+    current_version=$(echo "$ostree_status" | jq -r ".deployments[$booted_index].version // \"unknown\"")
+    previous_version=$(echo "$ostree_status" | jq -r ".deployments[$target_index].version // \"unknown\"")
+
+    log "Rolling back: $current_version → $previous_version" INFO
+
+    if ! $NON_INTERACTIVE; then
+        if ! confirm "Proceed with rollback?"; then
+            log "Rollback cancelled" INFO
+            return 0
+        fi
+    fi
 
     run_cmd sudo rpm-ostree rollback || return 1
 
     REBOOT_REQUIRED=true
+    log "Rollback staged successfully" SUCCESS
     log "Reboot required to boot into previous deployment" INFO
 }
 
