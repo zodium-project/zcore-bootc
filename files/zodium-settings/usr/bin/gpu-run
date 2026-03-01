@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 # ================================================================
-#  dgpu-run — Prime-run alternative for zodium project 
+#  gpu-run — Prime-run alternative for zodium project 
 #  should work on fedora , fedora atomic & ublue images too.
 #  sets PRIME variables/env-vars for apps to launch. (generic tool)
 # ================================================================
 
 set -o pipefail
 shopt -s nullglob
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Version
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VERSION="2.0.3"
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # COLOUR PALETTE  (bright, vivid — only when stdout is a TTY)
@@ -50,37 +55,39 @@ warn() { printf '%b\n' "  ${WARN_COL}warning:${R} $*" >&2; }
 # HELP
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 show_help() {
-    say ""
-    say "  ${BD}${C_CYN}dgpu-run${R}  ${C_GRY}─  GPU selection & PRIME offload launcher${R}"
-    say ""
-    say "  ${BD}${C_WHT}Usage${R}"
-    say "    dgpu-run ${C_GRY}[options]${R} ${C_GRY}[command [args...]]${R}"
-    say ""
-    say "  ${BD}${C_WHT}Options${R}"
-    say "    ${C_YLW}-v${R}, ${C_YLW}--verbose${R}              Show detailed GPU info"
-    say "    ${C_YLW}--use-device ${C_GRY}<id>${R}          Target a specific GPU"
-    say "      ${C_GRY}card0, card1 …${R}             by DRM node name"
-    say "      ${C_GRY}nvidia | amd | intel${R}        by driver"
-    say "    ${C_YLW}--interactive-choose${R}           Pick GPU from a menu"
-    say "    ${C_YLW}--list-devices${R}                 List all detected GPUs"
-    say "    ${C_YLW}--define${R}                       Define iGPU/dGPU mapping interactively"
-    say "    ${C_YLW}-h${R}, ${C_YLW}--help${R}                  Show this help"
-    say ""
-    say "  ${BD}${C_WHT}Behaviour${R}"
-    say "    ${C_GRY}no command${R}  →  print detection summary"
-    say "    ${C_GRY}command${R}     →  run on dGPU ${C_GRY}(or forced/chosen GPU)${R}"
-    say ""
-    say "  ${BD}${C_WHT}Examples${R}"
-    say "    dgpu-run                               ${C_GRY}# detection summary${R}"
-    say "    dgpu-run ${C_YLW}-v${R}                           ${C_GRY}# verbose info${R}"
-    say "    dgpu-run ${C_YLW}--list-devices${R}               ${C_GRY}# enumerate GPUs${R}"
-    say "    dgpu-run ${C_YLW}--use-device${R} nvidia glxinfo  ${C_GRY}# force NVIDIA${R}"
-    say "    dgpu-run ${C_YLW}--interactive-choose${R} blender ${C_GRY}# pick GPU${R}"
-    say "    dgpu-run vkcube                        ${C_GRY}# auto dGPU${R}"
-    say "  ${BD}${C_WHT}Advice / Hint${R}"
-    say "    Automatic Detection is Good but not flawless , So its recommended to "
-    say "    use dgpu-run --define once to set primary and secondary gpus , "
-    say ""
+    echo
+    echo -e "${BD}${C_CYN}gpu-run${R} — GPU selection & PRIME offload launcher"
+    echo
+    echo -e "${BD}${C_WHT}Usage:${R}"
+    echo -e "  gpu-run [options] [command [args...]]"
+    echo
+    echo -e "${BD}${C_WHT}Options:${R}"
+    echo -e "  ${C_YLW}-v${R}, ${C_YLW}--verbose${R}                         Show detailed GPU info"
+    echo -e "  ${C_YLW}--use-device <id>${R}                     Target a specific GPU"
+    echo -e "      card0, card1 (by DRM node)"
+    echo -e "      nvidia | intel (by driver)"
+    echo -e "  ${C_YLW}--interactive-choose${R}                  Pick GPU from a menu"
+    echo -e "  ${C_YLW}--list-devices${R}                        List all detected GPUs"
+    echo -e "  ${C_YLW}--define${R}                              Define iGPU/dGPU mapping interactively"
+    echo -e "  ${C_YLW}--version${R}                             prints installed version"
+    echo -e "  ${C_YLW}-h${R}, ${C_YLW}--help${R}                            Show this help"
+    echo
+    echo -e "${BD}${C_WHT}Behaviour:${R}"
+    echo -e "  No command → print detection summary"
+    echo -e "  Command   → run on dGPU (or forced/chosen GPU)"
+    echo
+    echo -e "${BD}${C_WHT}Examples:${R}"
+    echo -e "  ${C_CYN}gpu-run${R}                                 detection summary"
+    echo -e "  ${C_CYN}gpu-run -v${R}                              verbose info"
+    echo -e "  ${C_CYN}gpu-run --list-devices${R}                  enumerate GPUs"
+    echo -e "  ${C_CYN}gpu-run --use-device nvidia glxinfo${R}     force NVIDIA"
+    echo -e "  ${C_CYN}gpu-run --interactive-choose blender${R}    pick GPU"
+    echo -e "  ${C_CYN}gpu-run vkcube${R}                          auto dGPU"
+    echo
+    echo -e "${BD}${C_WHT}Advice / Hint:${R}"
+    echo -e "  Automatic detection is good but not flawless."
+    echo -e "  It's recommended to use ${C_YLW}gpu-run --define${R} once to set primary and secondary GPUs."
+    echo
 }
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -97,6 +104,7 @@ while [[ $# -gt 0 ]]; do
         --interactive-choose) interactive=1; shift ;;
         --list-devices)       list_devices=1; shift ;;
         --define)             define_mode=1; shift ;;
+        --version)            version_flag=1; shift ;;
         -h|--help)            show_help; exit 0 ;;
         --)                   shift; cmd_args+=("$@"); break ;;
         -*)                   die "Unknown option: $1" ;;
@@ -277,7 +285,7 @@ gpu_count=${#cards[@]}
 declare -A c_role c_score
 igpu="" dgpu="" confidence=0 reason=""
 
-USER_DEFINED_FILE="$HOME/.config/dgpu-run/defined"
+USER_DEFINED_FILE="$HOME/.config/gpu-run/defined"
 
 if [[ -r "$USER_DEFINED_FILE" ]]; then
     # Ensure associative array exists
@@ -305,7 +313,7 @@ if [[ -r "$USER_DEFINED_FILE" ]]; then
 
     confidence=100
     reason="user-defined mapping"
-    say "  ${C_CYN}[dgpu-run]${R} Using user-defined GPU mapping"
+    say "  ${C_CYN}[gpu-run]${R} Using user-defined GPU mapping"
 
 else
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -622,7 +630,7 @@ else                          run="${cards[0]}"; fi
 [[ -n "$run" ]] || die "No suitable GPU could be selected."
 
 if [[ "$verbose" -eq 1 ]]; then
-    printf '%b' "  ${C_GRY}[dgpu-run]${R}  ${BD}${run}${R}  $(drv_fmt "${c_drv[$run]}")  $(role_badge "$run")  ${DM}${c_model[$run]}${R}\n" >&2
+    printf '%b' "  ${C_GRY}[gpu-run]${R}  ${BD}${run}${R}  $(drv_fmt "${c_drv[$run]}")  $(role_badge "$run")  ${DM}${c_model[$run]}${R}\n" >&2
 fi
 
 run_drv="${c_drv[$run]}"
