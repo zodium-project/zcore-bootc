@@ -253,10 +253,6 @@ mod_bootc() {
             log "Already up to date; no new image staged" INFO
         fi
     fi
-
-    if $MAINTAIN; then
-        run_cmd sudo podman image prune -f || true
-    fi
 }
 
 mod_rpm_ostree() {
