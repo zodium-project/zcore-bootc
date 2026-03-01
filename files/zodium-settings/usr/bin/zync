@@ -68,6 +68,7 @@ RUN_BREW=false
 RUN_DISTROBOX=false
 RUN_PODMAN=false
 RUN_FIRMWARE=false
+RUN_BOOTC=false
 
 REBOOT_REQUIRED=false
 TOTAL_MODULES=0
@@ -182,6 +183,39 @@ run_module() {
 
 # ──── Modules ──── #
 
+mod_bootc() {
+    command_exists bootc || { log "bootc not found"; return 1; }
+    command_exists jq   || { log "jq not found (required for bootc status parsing)"; return 1; }
+
+    log "Checking for bootc image upgrade..." INFO
+    run_cmd sudo bootc upgrade || return 1
+
+    if ! $DRY_RUN; then
+        local bootc_status
+        if ! bootc_status=$(sudo bootc status --json 2>/dev/null); then
+            log "Failed to query bootc status" WARNING
+            return 1
+        fi
+
+        local staged_version
+        staged_version=$(echo "$bootc_status" | jq -r '.status.staged.image.version // empty')
+
+        if [[ -n "$staged_version" ]]; then
+            local booted_version
+            booted_version=$(echo "$bootc_status" | jq -r '.status.booted.image.version // empty')
+            REBOOT_REQUIRED=true
+            log "Upgrade staged: $booted_version → $staged_version" INFO
+            log "Reboot required to apply new image" INFO
+        else
+            log "Already up to date; no new image staged" INFO
+        fi
+    fi
+
+    if $MAINTAIN; then
+        run_cmd sudo podman image prune -f || true
+    fi
+}
+
 mod_rpm_ostree() {
     command_exists rpm-ostree || { log "rpm-ostree not found"; return 1; }
 
@@ -294,6 +328,7 @@ show_help() {
     printf "%b\n" "  ${BLUE}--distrobox${RESET}    Upgrade all Distrobox containers"
     printf "%b\n" "  ${BLUE}--podman${RESET}       Update Podman containers/images"
     printf "%b\n" "  ${BLUE}--firmware${RESET}     Update firmware via fwupdmgr"
+    printf "%b\n" "  ${BLUE}--bootc${RESET}        Update system via bootc (rpm-ostree successor)"
     printf "\n"
 
     printf "%b\n" "${YELLOW}SPECIAL:${RESET}"
@@ -339,13 +374,14 @@ show_help() {
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --all) RUN_RPM_OSTREE=true; RUN_FLATPAK=true; RUN_BREW=true; RUN_DISTROBOX=true; RUN_PODMAN=true; RUN_FIRMWARE=true ;;
+        --all) RUN_RPM_OSTREE=true; RUN_FLATPAK=true; RUN_BREW=true; RUN_DISTROBOX=true; RUN_PODMAN=true; RUN_FIRMWARE=true; RUN_BOOTC=false ;;
         --rpm-ostree) RUN_RPM_OSTREE=true ;;
         --flatpak) RUN_FLATPAK=true ;;
         --brew) RUN_BREW=true ;;
         --distrobox) RUN_DISTROBOX=true ;;
         --podman) RUN_PODMAN=true ;;
         --firmware) RUN_FIRMWARE=true ;;
+        --bootc) RUN_BOOTC=true ;;
         --maintain) MAINTAIN=true ;;
         --rollback) ROLLBACK=true ;;
         --dry-run) DRY_RUN=true ;;
@@ -371,7 +407,7 @@ fi
 
 if ! $RUN_RPM_OSTREE && ! $RUN_FLATPAK && ! $RUN_BREW && \
    ! $RUN_DISTROBOX && ! $RUN_PODMAN && ! $RUN_FIRMWARE && \
-   ! $ROLLBACK; then
+   ! $RUN_BOOTC && ! $ROLLBACK; then
 
     RUN_RPM_OSTREE=true
     RUN_FLATPAK=true
@@ -379,6 +415,7 @@ if ! $RUN_RPM_OSTREE && ! $RUN_FLATPAK && ! $RUN_BREW && \
     RUN_DISTROBOX=true
     RUN_PODMAN=true
     RUN_FIRMWARE=true
+    RUN_BOOTC=flase
 fi
 
 # ──── Execution ──── #
@@ -389,7 +426,7 @@ header
 if $ROLLBACK; then
     TOTAL_MODULES=$((TOTAL_MODULES + 1))
     # Warn if other module flags are also set
-    if $RUN_RPM_OSTREE || $RUN_FLATPAK || $RUN_BREW || $RUN_DISTROBOX || $RUN_PODMAN || $RUN_FIRMWARE; then
+    if $RUN_RPM_OSTREE || $RUN_FLATPAK || $RUN_BREW || $RUN_DISTROBOX || $RUN_PODMAN || $RUN_FIRMWARE || $RUN_BOOTC; then
         log "Warning: --rollback ignores all other module flags" WARNING
     fi
 
@@ -400,6 +437,7 @@ if $ROLLBACK; then
     RUN_DISTROBOX=false
     RUN_PODMAN=false
     RUN_FIRMWARE=false
+    RUN_BOOTC=false
 
     # Run rollback only
     section "rpm-ostree Rollback"
@@ -408,12 +446,13 @@ if $ROLLBACK; then
 fi
 
 # ──── Run normal modules ──── #
-$RUN_RPM_OSTREE && run_module "rpm-ostree" mod_rpm_ostree
+$RUN_RPM_OSTREE && run_module "Rpm-ostree" mod_rpm_ostree
 $RUN_FLATPAK && run_module "Flatpak" mod_flatpak
 $RUN_BREW && run_module "Homebrew" mod_brew
 $RUN_DISTROBOX && run_module "Distrobox" mod_distrobox
 $RUN_PODMAN && run_module "Podman" mod_podman
 $RUN_FIRMWARE && run_module "Firmware" mod_firmware
+$RUN_BOOTC && run_module "Bootc" mod_bootc
 
 # ──── Summary ──── #
 
@@ -443,5 +482,5 @@ exit 0
 # .1 fix reboot requires even if nothing updated. ( caused by mod_rpm_ostree)
 # .2 fix reboot needed logic ( rpm-ostree).
 # .3 simplify the script a bit.
-# .4 add bootc Module 
+# .4 add bootc Module ✓ [done]
 # .5 phase out rpm-ostree ( wait for bootc to be fixed )
