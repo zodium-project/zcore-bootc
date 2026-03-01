@@ -7,7 +7,7 @@
 
 set -Eeuo pipefail
 
-VERSION="3.3.3"
+VERSION="3.3.4"
 
 # ──── Colors ────
 
@@ -341,7 +341,7 @@ mod_podman() {
 mod_firmware() {
     command_exists fwupdmgr || { log "fwupdmgr not found" WARNING; return 1; }
 
-    run_cmd sudo fwupdmgr refresh || true
+    run_cmd sudo fwupdmgr refresh --force || true
 
     if ! run_cmd sudo fwupdmgr update; then
         log "fwupdmgr update returned non-zero (possibly no updates)" WARNING
@@ -364,8 +364,8 @@ mod_auto_updates() {
         local current_interval current_cmd next_run friendly
         current_interval=$(grep -m1 "OnCalendar=" "$ZYNC_TIMER_FILE" 2>/dev/null | cut -d= -f2 || echo "unknown")
         current_cmd=$(grep -m1 "ExecStart=" "$ZYNC_SERVICE_FILE" 2>/dev/null | cut -d= -f2- || echo "unknown")
-        next_run=$(systemctl list-timers zync-auto-update.timer --no-legend 2>/dev/null \
-            | awk '{print $1, $2}' || echo "unknown")
+        next_run=$(systemctl show zync-auto-update.timer -p NextElapseUSecRealtime 2>/dev/null \
+            | cut -d= -f2 || echo "unknown")
         [[ -z "$next_run" ]] && next_run="unknown"
 
         case "$current_interval" in
@@ -422,7 +422,7 @@ mod_auto_updates() {
                 read -r -p "  New command [leave blank to keep]: " new_cmd
                 new_cmd="${new_cmd:-$current_cmd}"
 
-                if [[ "$new_cmd" =~ [;\&\|] ]]; then
+                if [[ "$new_cmd" =~ [\;\&\|\$\`] ]]; then
                    log "Shell operators not allowed in command" WARNING
                    return 1
                 fi
@@ -481,7 +481,7 @@ mod_auto_updates() {
         read -r -p "  Command to run [leave blank for default]: " new_cmd
         new_cmd="${new_cmd:-$ZYNC_DEFAULT_CMD}"
 
-        if [[ "$new_cmd" =~ [;\&\|] ]]; then
+        if [[ "$new_cmd" =~ [\;\&\|\$\`] ]]; then
             log "Shell operators not allowed in command" WARNING
             return 1
         fi
