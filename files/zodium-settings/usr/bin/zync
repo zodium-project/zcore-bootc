@@ -7,7 +7,7 @@
 
 set -Eeuo pipefail
 
-VERSION="3.3.0"
+VERSION="3.3.1"
 
 # ──── Colors ────
 
@@ -519,7 +519,6 @@ show_help() {
     printf "%b\n" "${YELLOW}MODES:${RESET}"
     printf "%b\n" "  ${BLUE}--maintain${RESET}     Remove unused packages/images"
     printf "%b\n" "  ${BLUE}--dry-run${RESET}      Show commands without executing"
-    printf "%b\n" "  ${BLUE}--yes${RESET}          Assume yes for all prompts"
     printf "%b\n" "  ${BLUE}--no-reboot${RESET}    Skip automatic reboot even if required"
     printf "\n"
 
@@ -569,7 +568,6 @@ while [[ $# -gt 0 ]]; do
         --dry-run) DRY_RUN=true ;;
         --quiet) QUIET=true ;;
         --verbose) VERBOSE=true ;;
-        --yes) NON_INTERACTIVE=true ;;
         --no-reboot) PROMPT_REBOOT=false ;;
         --version) echo "zync $VERSION"; exit 0 ;;
         --help) show_help; exit 0 ;;
@@ -670,10 +668,3 @@ fi
 
 [[ $FAIL_COUNT -gt 0 ]] && exit 2
 exit 0
-
-# to-do :
-# .1 fix reboot requires even if nothing updated. ( caused by mod_rpm_ostree) ✓ [done]
-# .2 fix reboot needed logic ( rpm-ostree). ✓ [done]
-# .3 simplify the script a bit. ✓ [done]
-# .4 add bootc Module ✓ [done]
-# .5 phase out rpm-ostree ( wait for bootc to be fixed )
