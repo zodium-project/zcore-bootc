@@ -7,7 +7,7 @@
 
 set -Eeuo pipefail
 
-VERSION="3.2.1"
+VERSION="3.2.2"
 
 # ──── Colors ────
 
@@ -499,8 +499,8 @@ fi
 exit 0
 
 # to-do :
-# .1 fix reboot requires even if nothing updated. ( caused by mod_rpm_ostree)
-# .2 fix reboot needed logic ( rpm-ostree).
-# .3 simplify the script a bit.
+# .1 fix reboot requires even if nothing updated. ( caused by mod_rpm_ostree) ✓ [done]
+# .2 fix reboot needed logic ( rpm-ostree). ✓ [done]
+# .3 simplify the script a bit. ✓ [done]
 # .4 add bootc Module ✓ [done]
 # .5 phase out rpm-ostree ( wait for bootc to be fixed )
