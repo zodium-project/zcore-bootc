@@ -6,7 +6,7 @@
 
 set -Eeuo pipefail
 
-VERSION="2.0.2"
+VERSION="2.1.0"
 SCRIPT_NAME=$(basename "$0")
 
 # ── Colors ──────────────────────────────────────────────────── #
@@ -56,8 +56,7 @@ show_help() {
 
 die()  { printf "%b[ERROR]%b %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
 info() { printf "%b[INFO]%b  %s\n" "${BLUE}" "${RESET}" "$1"; }
-ok()   { printf "%b[OK]%b    %s\n" "${GREEN}" "${RESET}" "$1"; }
-warn() { printf "%b[WARN]%b  %s\n" "${YELLOW}" "${RESET}" "$1"; }
+warn() { printf "%b[WARN]%b  %s\n" "${YELLOW}" "${RESET}" "$1" >&2; }
 
 # ── Collect scripts ─────────────────────────────────────────── #
 # Uses two parallel arrays (names + paths) — no associative arrays,
@@ -71,7 +70,7 @@ _collect_scripts() {
     for dir in "${SEARCH_DIRS[@]}"; do
         [[ -d "$dir" ]] || continue
         for filepath in "$dir"/*.sh; do
-            [[ -f "$filepath" ]] || continue
+            [[ -f "$filepath" && -r "$filepath" ]] || continue
             local name; name=$(basename "$filepath")
             # First dir wins (highest priority)
             [[ -v _seen["$name"] ]] && continue
@@ -139,8 +138,7 @@ mode_list() {
         local path="${SCRIPT_PATHS[$i]}"
         # Grab first comment line as description if present
         local desc
-        desc=$(grep -m1 '^#' "$path" 2>/dev/null | sed 's/^#[[:space:]]*//' || true)
-        [[ "$desc" == *"!"* ]] && desc=""  # skip shebang
+        desc=$(grep -m1 '^#[^!]' "$path" 2>/dev/null | sed 's/^#[[:space:]]*//' || true)
         printf "  %b%-28s%b %b%s%b\n" "${CYAN}" "$name" "${RESET}" "${DIM}" "${path}" "${RESET}"
         [[ -n "$desc" ]] && printf "  %b  └ %s%b\n" "${DIM}" "$desc" "${RESET}"
     done
@@ -229,10 +227,10 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --choose)   MODE="choose" ;;
         --list)     MODE="list" ;;
-        --run)      MODE="run";   shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--run requires a script name" ;;
-        --show)     MODE="show";  shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--show requires a script name" ;;
-        --edit)     MODE="edit";  shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--edit requires a script name" ;;
-        --which)    MODE="which"; shift; MODE_ARG="${1:-}"; [[ -n "$MODE_ARG" ]] || die "--which requires a script name" ;;
+        --run)      MODE="run";   [[ -n "${2:-}" ]] || die "--run requires a script name";   MODE_ARG="$2"; shift ;;
+        --show)     MODE="show";  [[ -n "${2:-}" ]] || die "--show requires a script name";  MODE_ARG="$2"; shift ;;
+        --edit)     MODE="edit";  [[ -n "${2:-}" ]] || die "--edit requires a script name";  MODE_ARG="$2"; shift ;;
+        --which)    MODE="which"; [[ -n "${2:-}" ]] || die "--which requires a script name"; MODE_ARG="$2"; shift ;;
         --dry-run)  DRY_RUN=true ;;
         --no-clear) DO_CLEAR=false ;;
         --version)  printf "zust %s\n" "$VERSION"; exit 0 ;;
