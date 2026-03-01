@@ -4,4 +4,4 @@
 # ================================================================
 set -euo pipefail
 
-/usr/bin/zync --brew --rpm-ostree --flatpak --maintain
+/usr/bin/zync --brew --rpm-ostree --flatpak --no-reboot --maintain
