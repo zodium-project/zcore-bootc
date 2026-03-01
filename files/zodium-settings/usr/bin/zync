@@ -217,12 +217,32 @@ mod_bootc() {
 }
 
 mod_rpm_ostree() {
-    command_exists rpm-ostree || { log "rpm-ostree not found"; return 1; }
+    command_exists rpm-ostree || { log "rpm-ostree not found" WARNING; return 1; }
+    command_exists jq         || { log "jq not found (required for rpm-ostree status parsing)" WARNING; return 1; }
 
+    log "Checking for rpm-ostree upgrade..." INFO
     run_cmd sudo rpm-ostree upgrade || return 1
 
-    if rpm-ostree status | grep -q "^\s*●"; then
-        REBOOT_REQUIRED=true
+    if ! $DRY_RUN; then
+        local ostree_status
+        if ! ostree_status=$(rpm-ostree status --json 2>/dev/null); then
+            log "Failed to query rpm-ostree status" WARNING
+            return 1
+        fi
+
+        local staged
+        staged=$(echo "$ostree_status" | jq '[.deployments[] | select(.staged == true)] | length')
+
+        if [[ "$staged" -gt 0 ]]; then
+            local booted_version staged_version
+            booted_version=$(echo "$ostree_status" | jq -r '.deployments[] | select(.booted == true) | .version // empty')
+            staged_version=$(echo "$ostree_status"  | jq -r '.deployments[] | select(.staged == true) | .version // empty')
+            REBOOT_REQUIRED=true
+            log "Upgrade staged: $booted_version → $staged_version" INFO
+            log "Reboot required to apply new deployment" INFO
+        else
+            log "Already up to date; no new deployment staged" INFO
+        fi
     fi
 
     if $MAINTAIN; then
