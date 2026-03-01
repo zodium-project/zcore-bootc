@@ -7,7 +7,7 @@
 
 set -Eeuo pipefail
 
-VERSION="3.3.1"
+VERSION="3.3.3"
 
 # ──── Colors ────
 
@@ -203,12 +203,16 @@ Type=oneshot
 ExecStart=$cmd
 StandardOutput=journal
 StandardError=journal
+Nice=10
+IOSchedulingClass=best-effort
+TimeoutStartSec=2h
 EOF
 
     run_cmd sudo tee "$ZYNC_TIMER_FILE" > /dev/null <<EOF
 [Unit]
 Description=zync Automatic Update Timer
 After=network-online.target
+ConditionACPower=true
 
 [Timer]
 OnCalendar=$interval
@@ -223,8 +227,8 @@ EOF
 # ──── Modules ──── #
 
 mod_bootc() {
-    command_exists bootc || { log "bootc not found"; return 1; }
-    command_exists jq   || { log "jq not found (required for bootc status parsing)"; return 1; }
+    command_exists bootc || { log "bootc not found" WARNING; return 1; }
+    command_exists jq   || { log "jq not found (required for bootc status parsing)" WARNING; return 1; }
 
     log "Checking for bootc image upgrade..." INFO
     run_cmd sudo bootc upgrade || return 1
@@ -290,7 +294,7 @@ mod_rpm_ostree() {
 }
 
 mod_flatpak() {
-    command_exists flatpak || { log "flatpak not found"; return 1; }
+    command_exists flatpak || { log "flatpak not found" WARNING; return 1; }
 
     run_cmd flatpak update -y || return 1
 
@@ -300,7 +304,7 @@ mod_flatpak() {
 }
 
 mod_brew() {
-    command_exists brew || { log "brew not found"; return 1; }
+    command_exists brew || { log "brew not found" WARNING; return 1; }
 
     run_cmd brew update || return 1
 
@@ -317,7 +321,7 @@ mod_brew() {
 }
 
 mod_distrobox() {
-    command_exists distrobox || { log "distrobox not found"; return 1; }
+    command_exists distrobox || { log "distrobox not found" WARNING; return 1; }
     if ! run_cmd distrobox upgrade --all; then
         log "Distrobox returned non-zero (possibly nothing to upgrade)" WARNING
     fi
@@ -325,7 +329,7 @@ mod_distrobox() {
 }
 
 mod_podman() {
-    command_exists podman || { log "podman not found"; return 1; }
+    command_exists podman || { log "podman not found" WARNING; return 1; }
 
     run_cmd podman auto-update || true
 
@@ -339,12 +343,12 @@ mod_podman() {
 }
 
 mod_firmware() {
-    command_exists fwupdmgr || { log "fwupdmgr not found"; return 1; }
+    command_exists fwupdmgr || { log "fwupdmgr not found" WARNING; return 1; }
 
     run_cmd sudo fwupdmgr refresh || true
 
     if ! run_cmd sudo fwupdmgr update; then
-        log "fwupdmgr update returned non-zero (possibly no updates)"
+        log "fwupdmgr update returned non-zero (possibly no updates)" WARNING
     fi
 
     if ! $DRY_RUN; then
@@ -364,13 +368,14 @@ mod_auto_updates() {
         local current_interval current_cmd next_run friendly
         current_interval=$(grep -m1 "OnCalendar=" "$ZYNC_TIMER_FILE" 2>/dev/null | cut -d= -f2 || echo "unknown")
         current_cmd=$(grep -m1 "ExecStart=" "$ZYNC_SERVICE_FILE" 2>/dev/null | cut -d= -f2- || echo "unknown")
-        next_run=$(systemctl status zync-auto-update.timer 2>/dev/null \
-            | grep "Trigger:" | sed 's/.*Trigger: //' | xargs || echo "unknown")
+        next_run=$(systemctl list-timers zync-auto-update.timer --no-legend 2>/dev/null \
+            | awk '{print $1, $2}' || echo "unknown")
+        [[ -z "$next_run" ]] && next_run="unknown"
 
         case "$current_interval" in
             daily)    friendly="Daily" ;;
             weekly)   friendly="Weekly" ;;
-            *-*-1/14) friendly="Fortnightly" ;;
+            *01,15*) friendly="Fortnightly" ;;
             *)        friendly="$current_interval" ;;
         esac
 
@@ -407,14 +412,29 @@ mod_auto_updates() {
                 case "$interval_choice" in
                     1) new_interval="daily" ;;
                     2) new_interval="weekly" ;;
-                    3) new_interval="*-*-1/14" ;;
+                    3) new_interval="*-*-01,15 00:00:00" ;;
                     *) new_interval="$current_interval" ;;
                 esac
+
+                if ! systemd-analyze calendar "$new_interval" >/dev/null 2>&1; then
+                    log "Invalid schedule: $new_interval" WARNING
+                    return 1
+                fi
 
                 echo
                 echo -e "  Current command: ${CYAN}$current_cmd${RESET}"
                 read -r -p "  New command [leave blank to keep]: " new_cmd
                 new_cmd="${new_cmd:-$current_cmd}"
+
+                if [[ "$new_cmd" =~ [;\&\|] ]]; then
+                   log "Shell operators not allowed in command" WARNING
+                   return 1
+                fi
+
+                if ! command -v "${new_cmd%% *}" >/dev/null 2>&1; then
+                    log "Command not found: ${new_cmd%% *}" WARNING
+                    return 1
+                fi
 
                 write_units "$new_cmd" "$new_interval" || return 1
                 run_cmd sudo systemctl daemon-reload
@@ -423,7 +443,7 @@ mod_auto_updates() {
                 case "$new_interval" in
                     daily)    friendly="Daily" ;;
                     weekly)   friendly="Weekly" ;;
-                    *-*-1/14) friendly="Fortnightly" ;;
+                    *01,15*) friendly="Fortnightly" ;;
                 esac
                 log "Automatic updates updated" SUCCESS
                 log "Schedule: $friendly" INFO
@@ -451,14 +471,30 @@ mod_auto_updates() {
         read -r -p "  Choose [1/2/3, default: 2]: " interval_choice
         case "$interval_choice" in
             1) new_interval="daily" ;;
-            3) new_interval="*-*-1/14" ;;
+            3) new_interval="*-*-01,15 00:00:00" ;;
             *) new_interval="weekly" ;;
         esac
+
+        if ! systemd-analyze calendar "$new_interval" >/dev/null 2>&1; then
+            log "Invalid schedule: $new_interval" WARNING
+            return 1
+        fi
 
         echo
         echo -e "  Default command: ${CYAN}$ZYNC_DEFAULT_CMD${RESET}"
         read -r -p "  Command to run [leave blank for default]: " new_cmd
         new_cmd="${new_cmd:-$ZYNC_DEFAULT_CMD}"
+
+        if [[ "$new_cmd" =~ [;\&\|] ]]; then
+            log "Shell operators not allowed in command" WARNING
+            return 1
+        fi
+
+
+        if ! command -v "${new_cmd%% *}" >/dev/null 2>&1; then
+            log "Command not found: ${new_cmd%% *}" WARNING
+            return 1
+        fi
 
         write_units "$new_cmd" "$new_interval" || return 1
         run_cmd sudo systemctl daemon-reload
@@ -467,7 +503,7 @@ mod_auto_updates() {
         case "$new_interval" in
             daily)    friendly="Daily" ;;
             weekly)   friendly="Weekly" ;;
-            *-*-1/14) friendly="Fortnightly" ;;
+            *01,15*) friendly="Fortnightly" ;;
         esac
         log "Automatic updates enabled" SUCCESS
         log "Schedule: $friendly" INFO
@@ -476,20 +512,13 @@ mod_auto_updates() {
 }
 
 mod_rollback() {
-    command_exists rpm-ostree || { echo "rpm-ostree not found"; exit 1; }
-    
-    if run_cmd sudo rpm-ostree rollback; then
-        REBOOT_REQUIRED=true
-        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-        log "Rollback completed successfully; reboot required" SUCCESS
-    else
-        FAIL_COUNT=$((FAIL_COUNT + 1))
-        log "Rollback failed" FAILED
-        return 1
-    fi
+    command_exists rpm-ostree || { log "rpm-ostree not found" WARNING; return 1; }
+
+    run_cmd sudo rpm-ostree rollback || return 1
+
+    REBOOT_REQUIRED=true
+    log "Reboot required to boot into previous deployment" INFO
 }
-
-
 
 # ──── Help ──── #
 
@@ -502,7 +531,7 @@ show_help() {
 
     printf "%b\n" "${YELLOW}MODULE OPTIONS:${RESET}"
     printf "%b\n" "  ${BLUE}--all${RESET}          Run all modules"
-    printf "%b\n" "  ${BLUE}--rpm-ostree${RESET}       Update rpm-ostree system"
+    printf "%b\n" "  ${BLUE}--rpm-ostree${RESET}   Update rpm-ostree system"
     printf "%b\n" "  ${BLUE}--flatpak${RESET}      Update Flatpak apps"
     printf "%b\n" "  ${BLUE}--brew${RESET}         Update Homebrew packages"
     printf "%b\n" "  ${BLUE}--distrobox${RESET}    Upgrade all Distrobox containers"
@@ -554,7 +583,7 @@ show_help() {
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --all) RUN_RPM_OSTREE=true; RUN_FLATPAK=true; RUN_BREW=true; RUN_DISTROBOX=true; RUN_PODMAN=true; RUN_FIRMWARE=true; RUN_BOOTC=false ;;
+        --all) RUN_RPM_OSTREE=true; RUN_FLATPAK=true; RUN_BREW=true; RUN_DISTROBOX=true; RUN_PODMAN=true; RUN_FIRMWARE=true ;;
         --rpm-ostree) RUN_RPM_OSTREE=true ;;
         --flatpak) RUN_FLATPAK=true ;;
         --brew) RUN_BREW=true ;;
@@ -595,7 +624,6 @@ if ! $RUN_RPM_OSTREE && ! $RUN_FLATPAK && ! $RUN_BREW && \
     RUN_DISTROBOX=true
     RUN_PODMAN=true
     RUN_FIRMWARE=true
-    RUN_BOOTC=false
 fi
 
 # ──── Execution ──── #
@@ -615,25 +643,15 @@ fi
 
 # ──── Guard: rollback exclusive ──── #
 if $ROLLBACK; then
-    TOTAL_MODULES=$((TOTAL_MODULES + 1))
-    # Warn if other module flags are also set
-    if $RUN_RPM_OSTREE || $RUN_FLATPAK || $RUN_BREW || $RUN_DISTROBOX || $RUN_PODMAN || $RUN_FIRMWARE || $RUN_BOOTC; then
-        log "Warning: --rollback ignores all other module flags" WARNING
+    if $RUN_RPM_OSTREE || $RUN_FLATPAK || $RUN_BREW || $RUN_DISTROBOX || \
+       $RUN_PODMAN || $RUN_FIRMWARE || $RUN_BOOTC; then
+        log "--rollback ignores all other module flags" WARNING
     fi
-
-    # Disable all other modules
-    RUN_RPM_OSTREE=false
-    RUN_FLATPAK=false
-    RUN_BREW=false
-    RUN_DISTROBOX=false
-    RUN_PODMAN=false
-    RUN_FIRMWARE=false
+    RUN_RPM_OSTREE=false; RUN_FLATPAK=false; RUN_BREW=false
+    RUN_DISTROBOX=false;  RUN_PODMAN=false;  RUN_FIRMWARE=false
     RUN_BOOTC=false
 
-    # Run rollback only
-    section "rpm-ostree Rollback"
-    log "Performing rpm-ostree rollback" INFO
-    mod_rollback
+    run_module "rpm-ostree Rollback" mod_rollback
 fi
 
 # ──── Run normal modules ──── #
