@@ -35,4 +35,3 @@ modules:
  - type: script
    snippets:
       - "systemctl enable zodium-set-hostname.service"
-      - "systemctl enable zodium-update.timer"

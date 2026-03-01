@@ -1,6 +1,0 @@
-[Unit]
-Description=Bidirectional sync between tuned and firmware
-
-[Service]
-Type=oneshot
-ExecStart=/usr/libexec/zodium-tuned-sync.sh
