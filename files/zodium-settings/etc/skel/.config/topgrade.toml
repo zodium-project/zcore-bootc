@@ -1,4 +1,0 @@
-## Include Default zcore topgrade config ##
-[include]
-paths = ["/usr/lib/zcore-topgrade.toml"]
-# remove/comment it if you wanna use your custom config.

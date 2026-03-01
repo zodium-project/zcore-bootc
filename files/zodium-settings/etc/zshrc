@@ -1,6 +1,9 @@
 # Lines configured by Zodium Project
 # Do not edit — use ~/.zshrc to override or disable via env vars
 
+# ---- Load user overrides ----
+[[ -f "/etc/zsh-zodium-overrides" ]] && source "/etc/zsh-zodium-overrides"
+
 # ---- Zsh plugins ----
 
 if [[ -r /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] &&
@@ -51,8 +54,10 @@ fi
 
 if command -v zoxide >/dev/null 2>&1 &&
    [[ -z "$DISABLE_ZODIUM_ALIASES" ]]; then
-  alias zupd='topgrade'
-  alias zbrew='bbrew'
+  alias lns='ln -s'
+  alias zjust='zust'
+  alias topgrade='zync --all'
+  alias prime-run='gpu-run'
 fi
 
 # ---- Homebrew ----

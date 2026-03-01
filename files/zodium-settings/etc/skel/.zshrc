@@ -13,18 +13,4 @@ setopt CORRECT
 autoload -Uz compinit
 compinit -C
 
-## to override system default plugins/alias use ENV-variables ##
-# export DISABLE_ZSH_SYNTAX_HIGHLIGHTING=1
-# export DISABLE_STARSHIP=1
-# export DISABLE_ZOXIDE=1
-# export DISABLE_EZA_ALIASES=1
-# export DISABLE_ZOXIDE_CD=1
-# export DISABLE_FD_ALIAS=1
-# export DISABLE_ZODIUM_ALIASES=1
-# export DISABLE_MODERN_CLI_SUGGESTIONS=1
-# export DISABLE_ZSH_AUTOSUGGESTIONS=1
-# export DISABLE_HOMEBREW=1
-
-# Don't remove/edit this part of file !!!
-# Load Zodium core
-[[ -r /usr/lib/zcore-zshrc ]] && source /usr/lib/zcore-zshrc
+# this is basic zsh-shell configuration with zodium tweaks/extras
