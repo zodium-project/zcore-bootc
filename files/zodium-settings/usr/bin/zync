@@ -7,7 +7,7 @@
 
 set -Eeuo pipefail
 
-VERSION="3.2.2"
+VERSION="3.3.0"
 
 # ──── Colors ────
 
@@ -52,6 +52,12 @@ else
     LOG_FILE="$HOME/.local/state/zync.log"
 fi
 
+ZYNC_UNIT_DIR="/etc/systemd/system"
+ZYNC_SERVICE_FILE="$ZYNC_UNIT_DIR/zync-auto-update.service"
+ZYNC_TIMER_FILE="$ZYNC_UNIT_DIR/zync-auto-update.timer"
+ZYNC_DEFAULT_CMD="/usr/bin/zync --rpm-ostree --no-reboot"
+ZYNC_DEFAULT_INTERVAL="weekly"
+
 # ──── State ──── #
 
 DRY_RUN=false
@@ -69,6 +75,7 @@ RUN_DISTROBOX=false
 RUN_PODMAN=false
 RUN_FIRMWARE=false
 RUN_BOOTC=false
+RUN_AUTO_UPDATES=false
 
 REBOOT_REQUIRED=false
 TOTAL_MODULES=0
@@ -179,6 +186,38 @@ run_module() {
         FAIL_COUNT=$((FAIL_COUNT + 1))
        log "Module failed in ${duration}s" FAILED
     fi
+}
+
+write_units() {
+    local cmd="$1"
+    local interval="$2"
+
+    run_cmd sudo tee "$ZYNC_SERVICE_FILE" > /dev/null <<EOF
+[Unit]
+Description=zync Automatic Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=$cmd
+StandardOutput=journal
+StandardError=journal
+EOF
+
+    run_cmd sudo tee "$ZYNC_TIMER_FILE" > /dev/null <<EOF
+[Unit]
+Description=zync Automatic Update Timer
+After=network-online.target
+
+[Timer]
+OnCalendar=$interval
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target
+EOF
 }
 
 # ──── Modules ──── #
@@ -317,6 +356,125 @@ mod_firmware() {
     return 0
 }
 
+mod_auto_updates() {
+    local is_enabled=false
+    systemctl is-enabled zync-auto-update.timer &>/dev/null && is_enabled=true
+
+    if $is_enabled; then
+        local current_interval current_cmd next_run friendly
+        current_interval=$(grep -m1 "OnCalendar=" "$ZYNC_TIMER_FILE" 2>/dev/null | cut -d= -f2 || echo "unknown")
+        current_cmd=$(grep -m1 "ExecStart=" "$ZYNC_SERVICE_FILE" 2>/dev/null | cut -d= -f2- || echo "unknown")
+        next_run=$(systemctl status zync-auto-update.timer 2>/dev/null \
+            | grep "Trigger:" | sed 's/.*Trigger: //' | xargs || echo "unknown")
+
+        case "$current_interval" in
+            daily)    friendly="Daily" ;;
+            weekly)   friendly="Weekly" ;;
+            *-*-1/14) friendly="Fortnightly" ;;
+            *)        friendly="$current_interval" ;;
+        esac
+
+        printf "  %-20s %b\n" "Status:"   "${GREEN}enabled${RESET}"
+        printf "  %-20s %s\n" "Schedule:" "$friendly"
+        printf "  %-20s %s\n" "Command:"  "$current_cmd"
+        printf "  %-20s %s\n" "Next run:" "$next_run"
+        echo
+
+        echo -e "  ${YELLOW}[1]${RESET} Disable automatic updates"
+        echo -e "  ${YELLOW}[2]${RESET} Edit automatic updates"
+        echo -e "  ${YELLOW}[3]${RESET} Cancel"
+        echo
+        read -r -p "  Choose [1/2/3]: " choice
+
+        case "$choice" in
+            1)
+                run_cmd sudo systemctl disable --now zync-auto-update.timer 2>/dev/null || true
+                run_cmd sudo systemctl stop zync-auto-update.service 2>/dev/null || true
+                run_cmd sudo rm -f "$ZYNC_SERVICE_FILE" "$ZYNC_TIMER_FILE"
+                run_cmd sudo systemctl daemon-reload
+                log "Automatic updates disabled and unit files removed" SUCCESS
+                ;;
+            2)
+                echo
+                echo -e "  Current schedule: ${CYAN}$friendly${RESET}"
+                echo
+                echo -e "  How often should automatic updates run?"
+                echo -e "    ${CYAN}[1]${RESET} Daily       — every day"
+                echo -e "    ${CYAN}[2]${RESET} Weekly      — every week"
+                echo -e "    ${CYAN}[3]${RESET} Fortnightly — every 14 days"
+                echo
+                read -r -p "  Choose [1/2/3, default: keep current]: " interval_choice
+                case "$interval_choice" in
+                    1) new_interval="daily" ;;
+                    2) new_interval="weekly" ;;
+                    3) new_interval="*-*-1/14" ;;
+                    *) new_interval="$current_interval" ;;
+                esac
+
+                echo
+                echo -e "  Current command: ${CYAN}$current_cmd${RESET}"
+                read -r -p "  New command [leave blank to keep]: " new_cmd
+                new_cmd="${new_cmd:-$current_cmd}"
+
+                write_units "$new_cmd" "$new_interval" || return 1
+                run_cmd sudo systemctl daemon-reload
+                run_cmd sudo systemctl restart zync-auto-update.timer || return 1
+
+                case "$new_interval" in
+                    daily)    friendly="Daily" ;;
+                    weekly)   friendly="Weekly" ;;
+                    *-*-1/14) friendly="Fortnightly" ;;
+                esac
+                log "Automatic updates updated" SUCCESS
+                log "Schedule: $friendly" INFO
+                log "Command:  $new_cmd" INFO
+                ;;
+            *)
+                log "Cancelled" INFO
+                return 0
+                ;;
+        esac
+
+    else
+        printf "  %-20s %b\n" "Status:" "${RED}disabled${RESET}"
+        echo
+
+        read -r -p "  Enable automatic updates? [y/N]: " ans
+        [[ "$ans" =~ ^[Yy]$ ]] || { log "Cancelled" INFO; return 0; }
+
+        echo
+        echo -e "  How often should automatic updates run?"
+        echo -e "    ${CYAN}[1]${RESET} Daily       — every day"
+        echo -e "    ${CYAN}[2]${RESET} Weekly      — every week"
+        echo -e "    ${CYAN}[3]${RESET} Fortnightly — every 14 days"
+        echo
+        read -r -p "  Choose [1/2/3, default: 2]: " interval_choice
+        case "$interval_choice" in
+            1) new_interval="daily" ;;
+            3) new_interval="*-*-1/14" ;;
+            *) new_interval="weekly" ;;
+        esac
+
+        echo
+        echo -e "  Default command: ${CYAN}$ZYNC_DEFAULT_CMD${RESET}"
+        read -r -p "  Command to run [leave blank for default]: " new_cmd
+        new_cmd="${new_cmd:-$ZYNC_DEFAULT_CMD}"
+
+        write_units "$new_cmd" "$new_interval" || return 1
+        run_cmd sudo systemctl daemon-reload
+        run_cmd sudo systemctl enable --now zync-auto-update.timer || return 1
+
+        case "$new_interval" in
+            daily)    friendly="Daily" ;;
+            weekly)   friendly="Weekly" ;;
+            *-*-1/14) friendly="Fortnightly" ;;
+        esac
+        log "Automatic updates enabled" SUCCESS
+        log "Schedule: $friendly" INFO
+        log "Command:  $new_cmd" INFO
+    fi
+}
+
 mod_rollback() {
     command_exists rpm-ostree || { echo "rpm-ostree not found"; exit 1; }
     
@@ -330,6 +488,8 @@ mod_rollback() {
         return 1
     fi
 }
+
+
 
 # ──── Help ──── #
 
@@ -353,6 +513,7 @@ show_help() {
 
     printf "%b\n" "${YELLOW}SPECIAL:${RESET}"
     printf "%b\n" "  ${BLUE}--rollback${RESET}     Rollback rpm-ostree deployment"
+    printf "%b\n" "  ${BLUE}--auto-updates${RESET} Interactively manage automatic updates"
     printf "\n"
 
     printf "%b\n" "${YELLOW}MODES:${RESET}"
@@ -402,6 +563,7 @@ while [[ $# -gt 0 ]]; do
         --podman) RUN_PODMAN=true ;;
         --firmware) RUN_FIRMWARE=true ;;
         --bootc) RUN_BOOTC=true ;;
+        --auto-updates) RUN_AUTO_UPDATES=true ;;
         --maintain) MAINTAIN=true ;;
         --rollback) ROLLBACK=true ;;
         --dry-run) DRY_RUN=true ;;
@@ -427,7 +589,7 @@ fi
 
 if ! $RUN_RPM_OSTREE && ! $RUN_FLATPAK && ! $RUN_BREW && \
    ! $RUN_DISTROBOX && ! $RUN_PODMAN && ! $RUN_FIRMWARE && \
-   ! $RUN_BOOTC && ! $ROLLBACK; then
+   ! $RUN_BOOTC && ! $ROLLBACK && ! $RUN_AUTO_UPDATES; then
 
     RUN_RPM_OSTREE=true
     RUN_FLATPAK=true
@@ -435,12 +597,23 @@ if ! $RUN_RPM_OSTREE && ! $RUN_FLATPAK && ! $RUN_BREW && \
     RUN_DISTROBOX=true
     RUN_PODMAN=true
     RUN_FIRMWARE=true
-    RUN_BOOTC=flase
+    RUN_BOOTC=false
 fi
 
 # ──── Execution ──── #
 
 header
+
+# ──── Guard: auto-updates exclusive ──── #
+if $RUN_AUTO_UPDATES; then
+    if $RUN_RPM_OSTREE || $RUN_BOOTC || $RUN_FLATPAK || $RUN_BREW || \
+       $RUN_DISTROBOX  || $RUN_PODMAN || $RUN_FIRMWARE || $ROLLBACK; then
+        log "--auto-updates cannot be combined with other flags" WARNING
+        exit 1
+    fi
+    run_module "Automatic Updates" mod_auto_updates
+    exit $([[ $FAIL_COUNT -gt 0 ]] && echo 2 || echo 0)
+fi
 
 # ──── Guard: rollback exclusive ──── #
 if $ROLLBACK; then
