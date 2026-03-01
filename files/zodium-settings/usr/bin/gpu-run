@@ -523,18 +523,6 @@ if [[ "${define_mode:-0}" -eq 1 ]]; then
     exit 0
 fi
 
-    # --- save mapping ---
-    mkdir -p "$(dirname "$USER_DEFINED_FILE")"
-    {
-        echo "weak_gpu_igpu=$igpu"
-        echo "powerful_gpu_dgpu=$dgpu"
-    } > "$USER_DEFINED_FILE"
-
-    say ""
-    say "  ${C_GRN}Mapping saved to ${USER_DEFINED_FILE}${R}"
-    exit 0
-fi
-
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # --use-device RESOLUTION
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
