@@ -7,11 +7,10 @@ modules:
      install-weak-deps: false
      packages:
        - wpa_supplicant
-       - iwd
-       - dhcp-client
        - NetworkManager-wwan
        - NetworkManager-wifi
        - NetworkManager-bluetooth
        - NetworkManager
        - NetworkManager-config-connectivity-fedora
        - iw
+       - iwd
