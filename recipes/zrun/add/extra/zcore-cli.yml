@@ -12,6 +12,5 @@ modules:
          - eza
          - ripgrep
          - trash-cli
-         - fastfetch
          - starship
          - zoxide
