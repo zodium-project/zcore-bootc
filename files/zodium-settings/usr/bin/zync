@@ -7,7 +7,7 @@
 
 set -Eeuo pipefail
 
-VERSION="3.3.4"
+VERSION="3.3.5"
 
 # ──── Colors ────
 
@@ -35,11 +35,11 @@ fi
 
 # ──── Extended Colors ──── #
 
-STATUS_SUCCESS="${GREEN}[SUCCESS]${RESET}"
-STATUS_FAILED="${RED}[FAILED]${RESET}"
-STATUS_INFO="${BLUE}[INFO]${RESET}"
-STATUS_WARNING="${YELLOW}[WARNING]${RESET}"
-STATUS_DEBUG="${MAGENTA}[DEBUG]${RESET}"
+STATUS_SUCCESS="${GREEN}◆${RESET}"
+STATUS_FAILED="${RED}⦻${RESET}"
+STATUS_INFO="${CYAN}◈${RESET}"
+STATUS_WARNING="${YELLOW}◇${RESET}"
+STATUS_DEBUG="${MAGENTA}◉${RESET}"
 
 # ──── Configuration ──── #
 
@@ -141,7 +141,7 @@ header() {
 
 section() {
     echo
-    echo -e "${BLUE}$1${RESET}"
+    echo -e "${CYAN}$1${RESET}"
     print_line
 }
 
@@ -565,42 +565,42 @@ mod_rollback() {
 # ──── Help ──── #
 
 show_help() {
-    printf "%b\n" "${BOLD}${BLUE}zync ${VERSION}${RESET}"
+    printf "%b\n" "${BOLD}${CYAN}zync ${VERSION}${RESET}"
     printf "%b\n\n" "${BOLD}Unified Atomic Update Orchestrator${RESET}"
 
     printf "%b\n" "${YELLOW}USAGE:${RESET}"
     printf "%b\n\n" "  zync [OPTIONS]"
 
     printf "%b\n" "${YELLOW}MODULE OPTIONS:${RESET}"
-    printf "%b\n" "  ${BLUE}--all${RESET}          Run all modules"
-    printf "%b\n" "  ${BLUE}--rpm-ostree${RESET}   Update rpm-ostree system"
-    printf "%b\n" "  ${BLUE}--flatpak${RESET}      Update Flatpak apps"
-    printf "%b\n" "  ${BLUE}--brew${RESET}         Update Homebrew packages"
-    printf "%b\n" "  ${BLUE}--distrobox${RESET}    Upgrade all Distrobox containers"
-    printf "%b\n" "  ${BLUE}--podman${RESET}       Update Podman containers/images"
-    printf "%b\n" "  ${BLUE}--firmware${RESET}     Update firmware via fwupdmgr"
-    printf "%b\n" "  ${BLUE}--bootc${RESET}        Update system via bootc (rpm-ostree successor)"
+    printf "%b\n" "  ${CYAN}--all${RESET}          Run all modules"
+    printf "%b\n" "  ${CYAN}--rpm-ostree${RESET}   Update rpm-ostree system"
+    printf "%b\n" "  ${CYAN}--flatpak${RESET}      Update Flatpak apps"
+    printf "%b\n" "  ${CYAN}--brew${RESET}         Update Homebrew packages"
+    printf "%b\n" "  ${CYAN}--distrobox${RESET}    Upgrade all Distrobox containers"
+    printf "%b\n" "  ${CYAN}--podman${RESET}       Update Podman containers/images"
+    printf "%b\n" "  ${CYAN}--firmware${RESET}     Update firmware via fwupdmgr"
+    printf "%b\n" "  ${CYAN}--bootc${RESET}        Update system via bootc (rpm-ostree successor)"
     printf "\n"
 
     printf "%b\n" "${YELLOW}SPECIAL:${RESET}"
-    printf "%b\n" "  ${BLUE}--rollback${RESET}     Rollback rpm-ostree deployment"
-    printf "%b\n" "  ${BLUE}--auto-updates${RESET} Interactively manage automatic updates"
+    printf "%b\n" "  ${CYAN}--rollback${RESET}     Rollback rpm-ostree deployment"
+    printf "%b\n" "  ${CYAN}--auto-updates${RESET} Interactively manage automatic updates"
     printf "\n"
 
     printf "%b\n" "${YELLOW}MODES:${RESET}"
-    printf "%b\n" "  ${BLUE}--maintain${RESET}     Remove unused packages/images"
-    printf "%b\n" "  ${BLUE}--dry-run${RESET}      Show commands without executing"
-    printf "%b\n" "  ${BLUE}--no-reboot${RESET}    Skip automatic reboot even if required"
+    printf "%b\n" "  ${CYAN}--maintain${RESET}     Remove unused packages/images"
+    printf "%b\n" "  ${CYAN}--dry-run${RESET}      Show commands without executing"
+    printf "%b\n" "  ${CYAN}--no-reboot${RESET}    Skip automatic reboot even if required"
     printf "\n"
 
     printf "%b\n" "${YELLOW}OUTPUT:${RESET}"
-    printf "%b\n" "  ${BLUE}--quiet${RESET}        Suppress terminal output"
-    printf "%b\n" "  ${BLUE}--verbose${RESET}      Show debug messages"
+    printf "%b\n" "  ${CYAN}--quiet${RESET}        Suppress terminal output"
+    printf "%b\n" "  ${CYAN}--verbose${RESET}      Show debug messages"
     printf "\n"
 
     printf "%b\n" "${YELLOW}GENERAL:${RESET}"
-    printf "%b\n" "  ${BLUE}--version${RESET}      Show version"
-    printf "%b\n" "  ${BLUE}--help${RESET}         Show this help"
+    printf "%b\n" "  ${CYAN}--version${RESET}      Show version"
+    printf "%b\n" "  ${CYAN}--help${RESET}         Show this help"
     printf "\n"
 
     printf "%b\n" "${YELLOW}EXAMPLES:${RESET}"
@@ -642,7 +642,7 @@ while [[ $# -gt 0 ]]; do
         --no-reboot) PROMPT_REBOOT=false ;;
         --version) echo "zync $VERSION"; exit 0 ;;
         --help) show_help; exit 0 ;;
-        *) echo "Unknown option: $1"; exit 1 ;;
+        *) log "Unknown option: $1" WARNING; exit 1 ;;
     esac
     shift
 done

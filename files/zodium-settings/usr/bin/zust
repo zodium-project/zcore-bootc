@@ -6,7 +6,7 @@
 
 set -Eeuo pipefail
 
-VERSION="2.1.0"
+VERSION="2.1.1"
 SCRIPT_NAME=$(basename "$0")
 
 # ── Colors ──────────────────────────────────────────────────── #
@@ -54,9 +54,9 @@ show_help() {
 
 # ── Error / Info helpers ─────────────────────────────────────── #
 
-die()  { printf "%b[ERROR]%b %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
-info() { printf "%b[INFO]%b  %s\n" "${BLUE}" "${RESET}" "$1"; }
-warn() { printf "%b[WARN]%b  %s\n" "${YELLOW}" "${RESET}" "$1" >&2; }
+die()  { printf "%b⦻%b  %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
+info() { printf "%b◈%b  %s\n" "${CYAN}" "${RESET}" "$1"; }
+warn() { printf "%b◇%b  %s\n" "${YELLOW}" "${RESET}" "$1" >&2; }
 
 # ── Collect scripts ─────────────────────────────────────────── #
 # Uses two parallel arrays (names + paths) — no associative arrays,
@@ -124,8 +124,8 @@ _run_script() {
         return 0
     fi
     $DO_CLEAR && clear
-    printf "%b▶  Running:%b  %s\n" "${GREEN}" "${RESET}" "$name"
-    printf "%b   Path:   %b  %s\n\n" "${DIM}" "${RESET}" "$path"
+    printf "%b▶%b  Running:  %s\n" "${GREEN}" "${RESET}" "$name"
+    printf "%b  Path:  %b  %s\n\n" "${DIM}" "${RESET}" "$path"
     exec bash "$path"
 }
 

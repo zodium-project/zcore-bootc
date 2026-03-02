@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
-#  zync-auto-updates — Manage automatic updates for zync
+#  System-Maintainance — Update & Clear Oprhans using zync
 # ================================================================
-set -euo pipefail
+set -Eeuo pipefail
 
 /usr/bin/zync --brew --rpm-ostree --flatpak --no-reboot --maintain

@@ -1,53 +1,82 @@
 #!/usr/bin/env bash
 # ================================================================
-#  gaming-meta — Flatpak Gaming Meta Installer
+#  Gaming-Meta — Flatpak Gaming Meta Installer
 # ================================================================
-
 set -Eeuo pipefail
 
-# ── Colors ───────────────────────────────────────────────────── #
+command -v flatpak &>/dev/null || { echo "⦻  flatpak is required" >&2; exit 1; }
 
-if [[ -t 1 ]] && tput colors &>/dev/null && [[ $(tput colors) -ge 8 ]]; then
-    RED="\033[31m";    GREEN="\033[32m";  YELLOW="\033[33m"
-    CYAN="\033[36m";   BOLD="\033[1m";   RESET="\033[0m"
-else
-    RED="" GREEN="" YELLOW="" CYAN="" BOLD="" RESET=""
-fi
+# ── Styling ───────────────────────────────────────────────────
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+CYAN='\033[0;36m'; MAGENTA='\033[0;35m'; BOLD='\033[1m'; NC='\033[0m'
 
-# ── Helpers ─────────────────────────────────────────────────── #
+say()  { printf "$@"; printf '\n'; }
+info() { say "${CYAN}◈${NC}  $*"; }
+ok()   { say "${GREEN}◆${NC}  $*"; }
+warn() { say "${YELLOW}◇${NC}  $*"; }
+fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
+skip() { say "  ${BOLD}↷${NC}  $* ${YELLOW}(already installed)${NC}"; }
 
-die()  { printf "%b[!] ERROR%b %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
-info() { printf "%b[*]%b  %s\n" "${CYAN}" "${RESET}" "$1"; }
-ok()   { printf "%b[+]%b  %s\n" "${GREEN}" "${RESET}" "$1"; }
-warn() { printf "%b[!]%b  %s\n" "${YELLOW}" "${RESET}" "$1"; }
+# ── Header ────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Gaming Meta Installer  ◈            ║${NC}"
+say "${MAGENTA}${BOLD}║      Flatpak gaming apps setup           ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say ""
 
-# ── Header ─────────────────────────────────────────────────── #
-
-printf "%b%s Gaming Meta (Flatpak) %s%b\n" "${CYAN}${BOLD}" "[*]" "[*]" "${RESET}"
-echo
-
-# ── Flathub Setup ──────────────────────────────────────────── #
-
+# ── Flathub remote ────────────────────────────────────────────
 if ! flatpak remote-list | grep -q flathub; then
     info "Adding Flathub remote..."
     flatpak remote-add --if-not-exists flathub \
-        https://flathub.org/repo/flathub.flatpakrepo
-    ok "Flathub added."
+        https://flathub.org/repo/flathub.flatpakrepo \
+        && ok "Flathub remote added" \
+        || fail "Failed to add Flathub remote"
+else
+    skip "Flathub remote"
 fi
+say ""
 
-# ── Install Gaming Applications ───────────────────────────── #
+# ── Apps ──────────────────────────────────────────────────────
+declare -A APPS=(
+    ["Steam"]="com.valvesoftware.Steam"
+    ["Heroic Games Launcher"]="com.heroicgameslauncher.hgl"
+    ["Lutris"]="net.lutris.Lutris"
+    ["ProtonPlus"]="com.vysp3r.ProtonPlus"
+    ["MangoJuice"]="io.github.radiolamp.mangojuice"
+)
+
+FAILED=()
 
 info "Installing gaming applications..."
+say ""
 
-flatpak install -y flathub \
-    com.valvesoftware.Steam \
-    com.heroicgameslauncher.hgl \
-    net.lutris.Lutris \
-    com.vysp3r.ProtonPlus \
-    io.github.radiolamp.mangojuice \
-    || warn "Some installs may have failed."
+for NAME in "${!APPS[@]}"; do
+    ID="${APPS[$NAME]}"
+    if flatpak info "$ID" &>/dev/null; then
+        skip "$NAME ($ID)"
+    else
+        info "Installing $NAME..."
+        if flatpak install -y flathub "$ID" &>/dev/null; then
+            ok "$NAME installed"
+        else
+            warn "$NAME failed — $ID"
+            FAILED+=("$NAME")
+        fi
+    fi
+done
 
-# ── Done ───────────────────────────────────────────────────── #
+# ── Summary ───────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Gaming Meta Setup Complete          ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 
-echo
-ok "Gaming meta setup finished."
+if (( ${#FAILED[@]} > 0 )); then
+    say ""
+    warn "The following apps failed to install:"
+    for f in "${FAILED[@]}"; do
+        say "  ${RED}◇${NC}  $f"
+    done
+fi
+say ""

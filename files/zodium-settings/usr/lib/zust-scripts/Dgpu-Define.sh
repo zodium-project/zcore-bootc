@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
-#  dgpu-define — Create ~/.config/dgpu-run/defined
+#  Dgpu-Define — Create ~/.config/gpu-run/defined
 # ================================================================
-
-set -euo pipefail
-shopt -s nullglob
+set -Eeuo pipefail
 
 /usr/bin/gpu-run --define

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
-#  zync-auto-updates — Manage automatic updates for zync
+#  Rollback-Helper — Manage Rollback using zync
 # ================================================================
-set -euo pipefail
+set -Eeuo pipefail
 
 /usr/bin/zync --rollback

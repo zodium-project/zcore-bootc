@@ -1,32 +1,27 @@
 #!/usr/bin/env bash
 # ================================================================
-#  update-system — Updates system using zyncc (core updates only)
+#  Update-System — Updates system using zync (core updates only)
 # ================================================================
 
 set -Eeuo pipefail
 
-# ── Colors ───────────────────────────────────────────────────── #
-if [[ -t 1 ]] && tput colors &>/dev/null && [[ $(tput colors) -ge 8 ]]; then
-    RED="\033[31m";    GREEN="\033[32m";  YELLOW="\033[33m"
-    BLUE="\033[34m";   MAGENTA="\033[35m"; CYAN="\033[36m"
-    BOLD="\033[1m";    DIM="\033[2m";    RESET="\033[0m"
-else
-    RED="" GREEN="" YELLOW="" BLUE="" MAGENTA="" CYAN="" BOLD="" DIM="" RESET=""
-fi
+# ── Styling ───────────────────────────────────────────────────
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+CYAN='\033[0;36m'; MAGENTA='\033[0;35m'; BOLD='\033[1m'; NC='\033[0m'
 
-# ── Helpers ─────────────────────────────────────────────────── #
-die()  { printf "%b[!] ERROR%b %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
-info() { printf "%b[*]%b  %s\n" "${CYAN}" "${RESET}" "$1"; }
-ok()   { printf "%b[+]%b  %s\n" "${GREEN}" "${RESET}" "$1"; }
-warn() { printf "%b[!]%b  %s\n" "${YELLOW}" "${RESET}" "$1"; }
+say()  { printf "$@"; printf '\n'; }
+info() { say "${CYAN}◈${NC}  $*"; }
+ok()   { say "${GREEN}◆${NC}  $*"; }
+fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 
-# ── Header ─────────────────────────────────────────────────── #
-printf "%b%s System Update %s%b\n" "${CYAN}${BOLD}" "[*]" "[*]" "${RESET}"
-echo
+# ── Header ────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◈  System Update  ◈                    ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say ""
 
-# ── Run zync update ─────────────────────────────────────────── #
+# ── Run zync update ───────────────────────────────────────────
 info "Running system update using zync..."
-if ! /usr/bin/zync --system --flatpak --firmware --brew ; then
-    die "zync update failed."
-fi
+/usr/bin/zync --system --flatpak --firmware --brew || fail "zync update failed."
 ok "System update completed successfully."

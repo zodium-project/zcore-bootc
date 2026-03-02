@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ================================================================
-#  OpenTabletDriver Installer — Install, Upgrade, or Remove OTD
+#  OpenTabletDriver-Setup — Install, Upgrade, or Remove OTD
 #  Detects current state before acting — never blindly executes
-#  Only requires: curl, flatpak, systemd
+#  requires: curl, flatpak, systemd
 #  For use on zcore derivatives / any systemd+flatpak distro
 # ================================================================
 

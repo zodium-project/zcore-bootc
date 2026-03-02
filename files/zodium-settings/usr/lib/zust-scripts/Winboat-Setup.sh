@@ -8,10 +8,10 @@
 
 set -Eeuo pipefail
 
-# ── Dependency check ─────────────────────────────────────────
-command -v curl &>/dev/null || { echo "[✖]  curl is required but not installed" >&2; exit 1; }
+# ── Dependency check ──────────────────────────────────────────
+command -v curl &>/dev/null || { echo "⦻  curl is required but not installed" >&2; exit 1; }
 
-# ── Paths & Styling ─────────────────────────────────────────
+# ── Paths ─────────────────────────────────────────────────────
 APP_DIR="$HOME/Applications/WinBoat"
 APPIMAGE="$APP_DIR/WinBoat.AppImage"
 ICON="$APP_DIR/winboat_logo.svg"
@@ -20,23 +20,24 @@ LOCAL_DESKTOP="$HOME/.local/share/applications/winboat.desktop"
 CLI_LAUNCHER="$HOME/.local/bin/winboat"
 VERSION_FILE="$APP_DIR/.version"
 
+# ── Styling ───────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; MAGENTA='\033[0;35m'; BOLD='\033[1m'; NC='\033[0m'
 
-ICON_INFO="[i]"; ICON_OK="[✔]"; ICON_WARN="[⚠]"; ICON_ERR="[✖]"
+say()  { printf "$@"; printf '\n'; }
+info() { say "${CYAN}◈${NC}  $*"; }
+ok()   { say "${GREEN}◆${NC}  $*"; }
+warn() { say "${YELLOW}◇${NC}  $*"; }
+fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 
-info()  { echo -e "${CYAN}${ICON_INFO}${NC}  $*"; }
-ok()    { echo -e "${GREEN}${ICON_OK}${NC}  $*"; }
-warn()  { echo -e "${YELLOW}${ICON_WARN}${NC}  $*"; }
-fail()  { echo -e "${RED}${ICON_ERR}${NC}  $*" >&2; exit 1; }
+# ── Header ────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔════════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◈  WinBoat Installer  ◈                  ║${NC}"
+say "${MAGENTA}${BOLD}╚════════════════════════════════════════════╝${NC}"
+say ""
 
-# ── Header ───────────────────────────────────────────
-echo -e "${MAGENTA}${BOLD}╔════════════════════════════════════╗${NC}"
-echo -e "${MAGENTA}${BOLD}║        WinBoat Installer Script    ║${NC}"
-echo -e "${MAGENTA}${BOLD}╚════════════════════════════════════╝${NC}"
-echo ""
-
-# ── Get latest release info from GitHub API ─────────────
+# ── Get latest release info from GitHub API ───────────────────
 info "Checking latest WinBoat release..."
 API_JSON=$(curl -fsSL https://api.github.com/repos/TibixDev/winboat/releases/latest) \
     || fail "Failed to query GitHub API"
@@ -52,7 +53,7 @@ fi
 [[ -z "$LATEST_VERSION" ]] && fail "Could not detect latest version"
 [[ -z "$LATEST_URL" ]]     && fail "Could not detect AppImage download URL"
 
-# ── Version check ───────────────────────────────────────
+# ── Version check ─────────────────────────────────────────────
 INSTALLED_VERSION=""
 [[ -f "$VERSION_FILE" ]] && INSTALLED_VERSION=$(< "$VERSION_FILE")
 
@@ -61,27 +62,27 @@ if [[ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]]; then
 else
     [[ -n "$INSTALLED_VERSION" ]] && info "Upgrading: $INSTALLED_VERSION → $LATEST_VERSION"
 
-    # ── Cleanup old installation ──────────────────────
+    # ── Cleanup old installation ──────────────────────────────
     info "Removing old installation..."
     [[ -n "$APP_DIR" && "$APP_DIR" == "$HOME/Applications/WinBoat" ]] \
         || fail "Unexpected APP_DIR value, aborting cleanup"
     rm -rf "$APP_DIR" "$CLI_LAUNCHER" "$LOCAL_DESKTOP"
     mkdir -p "$APP_DIR"
 
-    # ── Download AppImage ───────────────────────────
+    # ── Download AppImage ─────────────────────────────────────
     info "Downloading AppImage..."
     curl -L --progress-bar -o "$APPIMAGE" "$LATEST_URL" \
         || fail "Failed to download AppImage"
     chmod +x "$APPIMAGE"
     ok "AppImage installed"
 
-    # ── Download Icon ───────────────────────────────
+    # ── Download Icon ─────────────────────────────────────────
     info "Downloading icon..."
     curl -fsSL -o "$ICON" https://raw.githubusercontent.com/TibixDev/winboat/main/icons/winboat_logo.svg \
-        || warn "Failed to fetch icon; desktop entry will have no icon"
+        || warn "Failed to fetch icon — desktop entry will have no icon"
     ok "Icon ready"
 
-    # ── Create .desktop shortcut ───────────────────
+    # ── Create .desktop shortcut ──────────────────────────────
     mkdir -p "$(dirname "$LOCAL_DESKTOP")"
     cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
@@ -97,7 +98,7 @@ EOF
     ln -sf "$DESKTOP_FILE" "$LOCAL_DESKTOP"
     ok ".desktop shortcut ready"
 
-    # ── CLI symlink ───────────────────────────────
+    # ── CLI symlink ───────────────────────────────────────────
     mkdir -p "$HOME/.local/bin"
     ln -sf "$APPIMAGE" "$CLI_LAUNCHER"
     [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] \
@@ -107,19 +108,16 @@ EOF
     echo "$LATEST_VERSION" > "$VERSION_FILE"
 fi
 
-# ── Final Clean Output ───────────────────────────────
-echo ""
-echo -e "${MAGENTA}${BOLD}╔════════════════════════════════════╗${NC}"
-echo -e "${MAGENTA}${BOLD}║        WinBoat Setup Completed     ║${NC}"
-echo -e "${MAGENTA}${BOLD}╚════════════════════════════════════╝${NC}"
-echo -e "  Installed Version  : ${BOLD}$LATEST_VERSION${NC}"
-echo -e "  AppImage Path      : ${BOLD}~/Applications/WinBoat/WinBoat.AppImage${NC}"
-echo -e "  Desktop Shortcut   : ${BOLD}~/.local/share/applications/winboat.desktop${NC}"
-echo -e "  CLI Launcher       : ${BOLD}~/.local/bin/winboat${NC}\n"
-
-echo -e "${MAGENTA}╭──────────────────────────────────────────╮${NC}"
-echo -e "${MAGENTA}│  Run 'WinBoat.AppImage' to launch WinBoat│${NC}"
-echo -e "${MAGENTA}╰──────────────────────────────────────────╯${NC}"
-echo -e "${MAGENTA}╭──────────────────────────────────────────╮${NC}"
-echo -e "${MAGENTA}│  Only Podman mode in winboat is supported│${NC}"
-echo -e "${MAGENTA}╰──────────────────────────────────────────╯${NC}"
+# ── Summary ───────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔════════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  WinBoat Setup Completed               ║${NC}"
+say "${MAGENTA}${BOLD}╚════════════════════════════════════════════╝${NC}"
+say "  Version  : ${BOLD}$LATEST_VERSION${NC}"
+say "  AppImage : ${BOLD}~/Applications/WinBoat/WinBoat.AppImage${NC}"
+say "  Desktop  : ${BOLD}~/.local/share/applications/winboat.desktop${NC}"
+say "  CLI      : ${BOLD}~/.local/bin/winboat${NC}"
+say ""
+say "  ${CYAN}◈${NC}  Run ${BOLD}WinBoat.AppImage${NC} to launch WinBoat"
+say "  ${CYAN}◈${NC}  Only Podman mode is supported"
+say ""

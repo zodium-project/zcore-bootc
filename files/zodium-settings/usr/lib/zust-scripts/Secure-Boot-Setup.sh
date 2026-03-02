@@ -6,60 +6,56 @@
 
 set -Eeuo pipefail
 
-# ── Colors ───────────────────────────────────────────────────── #
+# ── Dependency check ──────────────────────────────────────────
+command -v mokutil &>/dev/null || { echo "⦻  mokutil is required but not installed" >&2; exit 1; }
 
-if [[ -t 1 ]] && tput colors &>/dev/null && [[ $(tput colors) -ge 8 ]]; then
-    RED="\033[31m";    GREEN="\033[32m";  YELLOW="\033[33m"
-    BLUE="\033[34m";   MAGENTA="\033[35m"; CYAN="\033[36m"
-    BOLD="\033[1m";    DIM="\033[2m";    RESET="\033[0m"
-else
-    RED="" GREEN="" YELLOW="" BLUE="" MAGENTA="" CYAN="" BOLD="" DIM="" RESET=""
-fi
+# ── Styling ───────────────────────────────────────────────────
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+CYAN='\033[0;36m'; MAGENTA='\033[0;35m'; BOLD='\033[1m'; NC='\033[0m'
 
-# ── Config ─────────────────────────────────────────────────── #
+say()  { printf "$@"; printf '\n'; }
+info() { say "${CYAN}◈${NC}  $*"; }
+ok()   { say "${GREEN}◆${NC}  $*"; }
+warn() { say "${YELLOW}◇${NC}  $*"; }
+fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 
+# ── Config ────────────────────────────────────────────────────
 ENROLLMENT_PASSWORD="zodium"
 ENROLLMENT_MOK_DER="/etc/pki/akmods/certs/zodium-akmod.der"
 
-# ── Helpers ─────────────────────────────────────────────────── #
+# ── Header ────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Secure Boot MOK Enrollment  ◈       ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say ""
 
-die()  { printf "%b[!] ERROR%b %s\n" "${RED}" "${RESET}" "$1" >&2; exit 1; }
-info() { printf "%b[*]%b  %s\n" "${CYAN}" "${RESET}" "$1"; }
-ok()   { printf "%b[+]%b  %s\n" "${GREEN}" "${RESET}" "$1"; }
-warn() { printf "%b[!]%b  %s\n" "${YELLOW}" "${RESET}" "$1"; }
+# ── Check MOK file ────────────────────────────────────────────
+sudo test -f "$ENROLLMENT_MOK_DER" || fail "MOK file not found at $ENROLLMENT_MOK_DER"
+ok "MOK file found → $ENROLLMENT_MOK_DER"
 
-# ── Header ─────────────────────────────────────────────────── #
+# ── Enrollment ────────────────────────────────────────────────
+info "Starting MOK enrollment..."
 
-printf "%b%s Secure Boot MOK Enrollment %s%b\n" "${CYAN}${BOLD}" "[*]" "[*]" "${RESET}"
-echo
+OUTPUT=$(printf '%s\n%s\n' "$ENROLLMENT_PASSWORD" "$ENROLLMENT_PASSWORD" \
+    | sudo mokutil --import "$ENROLLMENT_MOK_DER" 2>&1) || true
 
-# ── Enrollment ───────────────────────────────────────────────── #
-
-sudo bash <<EOF
-# Check MOK file exists (root via sudo)
-if [[ ! -f "$ENROLLMENT_MOK_DER" ]]; then
-    echo -e "${YELLOW}[!] ERROR: MOK file not found at $ENROLLMENT_MOK_DER${RESET}"
-    exit 1
-fi
-
-echo -e "${CYAN}[*] Starting MOK enrollment...${RESET}"
-
-# Import MOK and capture output
-OUTPUT=\$(echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "$ENROLLMENT_MOK_DER" 2>&1)
-
-# Handle SKIP / already pending
-if [[ "\$OUTPUT" == *"SKIP:"* ]]; then
-    echo -e "${YELLOW}[!] Key already pending enrollment.${RESET}"
+if [[ "$OUTPUT" == *"SKIP:"* ]]; then
+    warn "Key is already pending enrollment — no changes made"
 else
-    echo -e "${GREEN}[+] MOK enrollment request added.${RESET}"
+    ok "MOK enrollment request added"
 fi
-EOF
 
-# ── Instructions ─────────────────────────────────────────────── #
-
-echo
-echo -e "${CYAN}[i] Next steps:${RESET}"
-echo -e "  1. Reboot your system."
-echo -e "  2. When the MOK menu appears, select '${BOLD}Enroll MOK${RESET}${CYAN}'."
-echo -e "  3. Type the password: '${BOLD}$ENROLLMENT_PASSWORD${RESET}${CYAN}'."
-echo -e "  4. Press '${BOLD}Enter${RESET}' to confirm, then reboot."
+# ── Next steps ────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Enrollment Queued                   ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say ""
+say "  ${CYAN}◈${NC}  Next steps:"
+say ""
+say "  ${BOLD}1)${NC} Reboot your system"
+say "  ${BOLD}2)${NC} When the MOK menu appears, select ${BOLD}Enroll MOK${NC}"
+say "  ${BOLD}3)${NC} Enter the password: ${BOLD}$ENROLLMENT_PASSWORD${NC}"
+say "  ${BOLD}4)${NC} Confirm and reboot"
+say ""

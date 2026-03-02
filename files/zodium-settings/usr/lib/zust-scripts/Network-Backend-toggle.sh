@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
-#  Network Backend Toggle — Switch NM between iwd and wpa_supplicant
-#  Only requires: bash, NetworkManager (nmcli), systemd
+#  Network-Backend-Toggle — Switch NM between iwd and wpa_supplicant
+#  requires: bash, NetworkManager (nmcli), systemd
 # ================================================================
 
 set -Eeuo pipefail
