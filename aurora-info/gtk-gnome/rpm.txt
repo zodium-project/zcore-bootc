@@ -1,0 +1,58 @@
+himanshu at aurora in ~
+➜  rpm -qa | grep gtk
+breeze-gtk-common-6.6.0-1.fc43.noarch
+unity-gtk-module-common-0.0.0+17.04.20170403-23.fc43.noarch
+gtk-update-icon-cache-3.24.51-2.fc43.x86_64
+gtk3-3.24.51-2.fc43.x86_64
+gtk4-4.20.3-1.fc43.x86_64
+libdbusmenu-gtk3-16.04.0-30.fc43.x86_64
+gtkmm3.0-3.24.10-2.fc43.x86_64
+ibus-gtk3-1.5.33-5.fc43.x86_64
+libunity-gtk3-parser-0.0.0+17.04.20170403-23.fc43.x86_64
+unity-gtk3-module-0.0.0+17.04.20170403-23.fc43.x86_64
+xdg-desktop-portal-gtk-1.15.3-2.fc43.x86_64
+kde-gtk-config-6.6.0-1.fc43.x86_64
+libappindicator-gtk3-12.10.1-9.fc43.x86_64
+ibus-gtk4-1.5.33-5.fc43.x86_64
+libcanberra-gtk3-0.30-38.fc43.x86_64
+breeze-gtk-gtk3-6.6.0-1.fc43.noarch
+breeze-gtk-gtk4-6.6.0-1.fc43.noarch
+libportal-gtk4-0.9.1-3.fc43.x86_64
+fcitx5-gtk-5.1.5-1.fc43.x86_64
+fcitx5-gtk4-5.1.5-1.fc43.x86_64
+fcitx5-gtk3-5.1.5-1.fc43.x86_64
+vte291-gtk4-0.82.3-1.fc43.x86_64
+gtksourceview4-4.8.4-10.fc43.x86_64
+libayatana-ido-gtk3-0.10.4-6.fc43.x86_64
+libayatana-indicator-gtk3-0.9.4-9.fc43.x86_64
+libayatana-appindicator-gtk3-0.5.94-4.fc43.x86_64
+
+himanshu at aurora in ~
+➜  rpm -qa | grep adwaita
+adwaita-icon-theme-legacy-46.2-4.fc43.noarch
+adwaita-cursor-theme-49.0-1.fc43.noarch
+adwaita-icon-theme-49.0-1.fc43.noarch
+libadwaita-1.8.4-1.fc43.x86_64
+adwaita-mono-fonts-49.0-2.fc43.noarch
+adwaita-sans-fonts-49.0-2.fc43.noarch
+
+himanshu at aurora in ~
+➜  rpm -qa | grep gnome
+
+himanshu at aurora in ~
+✗  rpm -qa | grep aurora
+aurorae-6.6.0-1.fc43.x86_64
+
+himanshu at aurora in ~
+➜  rpm -qa | grep icon
+hicolor-icon-theme-0.18-2.fc43.noarch
+breeze-icon-theme-6.23.0-1.fc43.noarch
+gtk-update-icon-cache-3.24.51-2.fc43.x86_64
+kf5-kiconthemes-5.116.0-4.fc43.x86_64
+adwaita-icon-theme-legacy-46.2-4.fc43.noarch
+adwaita-icon-theme-49.0-1.fc43.noarch
+kf6-breeze-icons-6.23.0-1.fc43.x86_64
+kf6-kiconthemes-6.23.0-1.fc43.x86_64
+
+himanshu at aurora in ~
+➜
