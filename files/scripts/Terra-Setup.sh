@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
 #  Terra-Setup — Enable Terra repo
-#  Zodium Project
+#  Zodium Project : github.com/zodium-project
 # ================================================================
 
 set -Eeuo pipefail

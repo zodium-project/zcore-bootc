@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
 #  Useradd-Defaults — Configure default shell and groups for new users
-#  Zodium Project
+#  Zodium Project : github.com/zodium-project
 # ================================================================
 
 set -Eeuo pipefail

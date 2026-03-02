@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
 #  Set-Permissions — Make Zodium tools and scripts executable
-#  Zodium Project
+#  Zodium Project : github.com/zodium-project
 # ================================================================
 
 set -Eeuo pipefail

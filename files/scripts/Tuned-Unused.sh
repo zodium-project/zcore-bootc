@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
 #  Remove unused TuneD profiles
-#  Zodium Project
+#  Zodium Project : github.com/zodium-project
 # ================================================================
 
 set -Eeuo pipefail

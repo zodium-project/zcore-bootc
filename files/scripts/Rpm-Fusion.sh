@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ================================================================
 #  Rpm-Fusion — Enable RPM Fusion repos
-#  Zodium Project
+#  Zodium Project : github.com/zodium-project
 # ================================================================
 
 set -Eeuo pipefail
