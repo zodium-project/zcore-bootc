@@ -8,7 +8,6 @@ modules:
        packages:
          - podman
          - podman-compose
-         - podman-docker
          - buildah
          - git
          - git-lfs
