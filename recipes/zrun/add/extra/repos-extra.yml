@@ -5,5 +5,5 @@ modules:
 #=> install Terra repo setup script
   - type: script
     scripts:
-      - terra-repo-add.sh
-      - vscode-repo-install.sh
+      - Terra-Setup.sh
+      - Vscode-Repo.sh

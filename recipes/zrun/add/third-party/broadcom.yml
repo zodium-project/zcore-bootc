@@ -13,4 +13,4 @@ modules:
           type: file
           destination: /tmp/certs/kernel_key.pem
     scripts:
-      - broadcom-install.sh
+      - Broadcom-WL.sh

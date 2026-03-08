@@ -19,9 +19,9 @@ modules:
 
  - type: script
    scripts:
-      - system-executables.sh
-      - useradd-config.sh
-      - fedora-tuned-remove.sh
+      - Set-Permissions.sh
+      - Useradd-Defaults.sh
+      - Tuned-Unused.sh
 
  - type: script
    snippets:
