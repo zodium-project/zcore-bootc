@@ -36,4 +36,3 @@ modules:
       - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
       - systemctl enable nvidia-persistenced.service
       - systemctl enable nvidia-cdi-refresh.path
-      - systemctl enable zodium-nvidia-check.service
