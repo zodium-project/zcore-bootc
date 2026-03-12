@@ -9,5 +9,4 @@ modules:
        - NetworkManager-openvpn
        - openvpn
        - wireguard-tools
-       - wgctrl
        - tailscale
