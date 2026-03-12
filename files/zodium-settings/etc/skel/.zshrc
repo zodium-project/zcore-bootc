@@ -1,5 +1,5 @@
 # ================================================================
-#  zshrc — User Zsh configuration for zcore
+#  ~/.zshrc — User Zsh configuration
 #  Zodium Project : github.com/zodium-project
 # ================================================================
 
@@ -9,14 +9,13 @@
 # and edit it there.
 
 # Files in /etc like /etc/zshrc & /etc/zsh-zc-overrides are 
-# system-wide configurations and you are not expected to edit
-# /etc/zshrc & /etc/zsh-zc-overrides is only there to set/env
-# functions in /etc/zshrc
+# system-wide configurations and you are not expected to edit /etc/zshrc &
+# /etc/zsh-zc-overrides is only there to set/env that enable/disable features in /etc/zshrc
 
 # ── History ───────────────────────────────────────────────────
 HISTFILE=~/.zsh_history
-HISTSIZE=1250
-SAVEHIST=1250
+HISTSIZE=1500
+SAVEHIST=1500
 
 # ── Keybindings ───────────────────────────────────────────────
 bindkey -e

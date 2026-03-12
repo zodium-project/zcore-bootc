@@ -2,7 +2,7 @@
 # Do not edit — use ~/.zshrc to override or disable via env vars
 
 # ---- Load user overrides ----
-[[ -f "/etc/zsh-zodium-overrides" ]] && source "/etc/zsh-zodium-overrides"
+[[ -f "/etc/zsh-preference" ]] && source "/etc/zsh-preference"
 
 # ---- Zsh plugins ----
 
