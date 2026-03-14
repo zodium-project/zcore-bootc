@@ -62,8 +62,6 @@ fi
 
 # ── Install akmod-v4l2loopback & Build Deps ───────────────────
 info "Installing kernel modules for kernel version: ${KERNEL_VERSION}..."
-dnf --refresh install -y --setopt=install_weak_deps=False \
-    "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
 # ── Workaround Fix (monkey patch akmodsbuild) ─────────────────
@@ -139,7 +137,7 @@ ok "v4l2loopback module signing complete"
 
 # ── Remove Orphans/Useless Deps ───────────────────────────────
 info "Removing build dependencies..."
-dnf remove -y akmod-v4l2loopback akmods gcc-c++ kernel-devel kernel-headers
+dnf remove -y akmod-v4l2loopback akmods gcc-c++
 ok "Build dependencies removed"
 
 # ── Install Userspace Tools ───────────────────────────────────

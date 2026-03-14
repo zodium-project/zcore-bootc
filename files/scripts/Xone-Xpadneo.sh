@@ -71,8 +71,6 @@ ok "Negativo17 repo added"
 
 # ── Install Build Dependencies & akmods ───────────────────────
 info "Installing build dependencies for kernel version: ${KERNEL_VERSION}..."
-dnf --refresh install -y --setopt=install_weak_deps=False \
-    "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
 # ── Workaround Fix (monkey patch akmodsbuild) ─────────────────
@@ -164,7 +162,7 @@ ok "xpadneo & xone module signing complete"
 
 # ── Remove Orphans/Useless Deps ───────────────────────────────
 info "Removing build dependencies..."
-dnf remove -y akmod-xpadneo akmod-xone akmods kernel-devel kernel-headers gcc-c++
+dnf remove -y akmod-xpadneo akmod-xone akmods gcc-c++
 ok "Build dependencies removed"
 
 # ── Remove Added Repos ────────────────────────────────────────

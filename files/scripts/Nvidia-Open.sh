@@ -75,8 +75,6 @@ ok "Negativo17 repo added"
 
 # ── Build/Install Nvidia Driver Modules ───────────────────────
 info "Installing kernel modules for kernel version: ${KERNEL_VERSION}..."
-dnf install -y --setopt=install_weak_deps=False \
-    "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
 # ── Workaround Fix (monkey patch akmodsbuild) ─────────────────
@@ -216,8 +214,6 @@ info "Removing build dependencies..."
 dnf remove -y \
     akmod-nvidia \
     akmods \
-    kernel-devel \
-    kernel-headers \
     gcc-c++
 ok "Build dependencies removed"
 

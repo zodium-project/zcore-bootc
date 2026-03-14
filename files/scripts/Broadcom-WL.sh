@@ -61,8 +61,6 @@ fi
 
 # ── Install akmod-wl & build deps ─────────────────────────────
 info "Installing akmod-wl and dependencies for kernel ${KERNEL_VERSION}..."
-dnf --refresh install -y --setopt=install_weak_deps=False \
-    "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 
 # ── Monkey-patch akmodsbuild (workaround) ─────────────────────
@@ -134,7 +132,7 @@ ok "Module signing complete"
 
 # ── Remove akmod-wl & cleanup build deps ──────────────────────
 info "Removing build dependencies..."
-dnf remove -y akmod-wl akmods gcc-c++ kernel-devel kernel-headers
+dnf remove -y akmod-wl akmods gcc-c++
 ok "Build dependencies removed"
 
 # ── Restore Terra repos ───────────────────────────────────────

@@ -3,13 +3,6 @@
 
 modules:
 
- - type: dnf
-   group-install:
-     with-optional: false
-     install-weak-deps: false
-     packages:
-         - development-tools
-
  - type: script
    snippets:
       - dnf5 autoremove -y
@@ -20,4 +13,11 @@ modules:
       - dnf5 clean all
       - dnf5 clean packages
       - dnf upgrade --refresh --setopt=install_weak_deps=False -y
-      - dnf remove -y "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')"
+      - dnf remove -y kernel-devel kernel-headers
+
+ - type: dnf
+   group-install:
+     with-optional: false
+     install-weak-deps: false
+     packages:
+         - development-tools
