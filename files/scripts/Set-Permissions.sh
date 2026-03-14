@@ -30,7 +30,6 @@ ok "Tools set executable"
 
 # ── Make Scripts Executable ───────────────────────────────────
 info "Setting script permissions..."
-chmod 0755 /usr/libexec/zodium-tuned-sync.sh
 chmod 0755 /usr/lib/zust-scripts/*
 ok "Scripts set executable"
 
