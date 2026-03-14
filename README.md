@@ -1,4 +1,4 @@
-zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 17/3/2026)
+zcore-bootc images are still in beta , dont use them rn. ( release 1 is planned for 15/6/2026)
 
 to-do :
 1. add bold brew safely out of the box.
