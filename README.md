@@ -10,14 +10,12 @@ to-do :
 7. 
 8. 
 9. 
-10. add zjust & commands like : tpm2-auto-unlock , update , mok-enroll , windows-container , btrfs-compression-level , rebase
 11. 
 12. add openrazer akmods ??
 13. use cachyos kernel & sign it ? or use linux-zen/liqorx and sign it ? or use OGC/Bazzite kernel and sign it ?
 14. add cachyos & OGC patches to base (needed/Qol only , no opinionated ones)
 15. better zodium-update service ? or disable automatic updates OOTB ?
 16. 
-17. Rework Zodium Update Service & make it toggleable.
 18. 
 19. make a new branch ( unstable & rename current one to stable)
 20. 
