@@ -36,10 +36,14 @@ dnf config-manager setopt fedora-multimedia.priority=90
 
 ok "negativo17 fedora-multimedia repo added"
 
-# ── Swap packages with different names in negativo17 ──────────
+# ── Swap packages ─────────────────────────────────────────────
 info "Swapping fdk-aac-free → libfdk-aac..."
 dnf swap -y fdk-aac-free libfdk-aac
 ok "libfdk-aac swapped"
+
+info "Swapping libheif → negativo17 libheif..."
+dnf swap -y libheif libheif
+ok "libheif swapped"
 
 # ── Multimedia Codecs & Libraries ─────────────────────────────
 MULTIMEDIA_PKGS=(
@@ -52,7 +56,6 @@ MULTIMEDIA_PKGS=(
     gstreamer1-plugins-good-extras
     gstreamer1-vaapi
     libva
-    libheif
     libwebp6
     libjxl
     libldac
@@ -76,6 +79,20 @@ GPU_PKGS=(
     intel-gmmlib
     intel-mediasdk
     libva-intel-media-driver
+)
+
+info "Installing GPU & video acceleration drivers..."
+for pkg in "${GPU_PKGS[@]}"; do
+    say "  ${CYAN}◈${NC}  ${pkg}"
+done
+
+dnf install -y --setopt=install_weak_deps=False \
+    "${GPU_PKGS[@]}"
+
+ok "GPU packages installed"
+
+# ── Sync mesa packages to negativo17 versions ─────────────────
+MESA_PKGS=(
     mesa-dri-drivers
     mesa-filesystem
     mesa-libEGL
@@ -85,25 +102,24 @@ GPU_PKGS=(
     mesa-vulkan-drivers
 )
 
-info "Installing GPU & video acceleration drivers..."
-for pkg in "${GPU_PKGS[@]}"; do
+info "Syncing mesa packages to negativo17 versions..."
+for pkg in "${MESA_PKGS[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
-dnf install -y --setopt=install_weak_deps=False \
-    --exclude='*.i686' \
-    "${GPU_PKGS[@]}"
+dnf distro-sync -y --setopt=install_weak_deps=False \
+    --repo=fedora-multimedia "${MESA_PKGS[@]}"
 
-ok "GPU & video acceleration drivers installed"
+ok "mesa packages synced"
 
 # ── PipeWire Audio Stack ──────────────────────────────────────
 PIPEWIRE_PKGS=(
     wireplumber
     pipewire
     pipewire-libs
+    pipewire-libs-extra
     pipewire-jack-audio-connection-kit-libs
     pipewire-jack-audio-connection-kit
-    pipewire-codec-aptx
     pipewire-pulseaudio
     pipewire-alsa
     pipewire-gstreamer
