@@ -5,4 +5,4 @@ modules:
 # => Add RPM-fusion ( tainted included ) to image.
   - type: bling
     install:
-     - rpmfusion
+     - negativo17
