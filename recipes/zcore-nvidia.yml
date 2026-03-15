@@ -46,7 +46,6 @@ modules:
 ### => Removal Modules/Scripts
   - from-file: zrun/remove/fedora-cli.yml
   - from-file: zrun/remove/rpm-dnf-extra.yml
-  - from-file: zrun/remove/zodium-repos.yml
 ### => Tweaks Modules/Scripts
   - from-file: zrun/tweak/set-zcore-default.yml
   - from-file: zrun/tweak/post-install-setup.yml

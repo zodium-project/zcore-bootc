@@ -5,9 +5,5 @@ modules:
   - type: dnf
     remove:
       packages:
-        #- rpmfusion-nonfree-release
-        #- rpmfusion-free-release
-        #- rpmfusion-free-release-tainted
-        #- rpmfusion-nonfree-release-tainted
         - terra-release
         - terra-gpg-keys
