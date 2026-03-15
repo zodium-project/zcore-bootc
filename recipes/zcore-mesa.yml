@@ -38,7 +38,7 @@ modules:
   - from-file: zrun/add/extra/langpacks.yml
   - from-file: zrun/add/extra/fonts.yml
 #### => Nonfree Packages / Tweaks to install.
-  - from-file: zrun/add/third-party/multimedia.yml
+  - from-file: zrun/add/third-party/media-codecs.yml
   - from-file: zrun/add/third-party/v4l2loopback.yml
   - from-file: zrun/add/third-party/broadcom.yml
   - from-file: zrun/add/third-party/xbox-gamepad.yml
