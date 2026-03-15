@@ -41,7 +41,7 @@ modules:
   - from-file: zrun/add/third-party/repos-nonfree.yml
   - from-file: zrun/add/third-party/codecs.yml
   - from-file: zrun/add/third-party/pipewire.yml
-  - from-file: zrun/add/third-party/mesa-freeworld.yml
+  - from-file: zrun/add/third-party/mesa-stack.yml
   - from-file: zrun/add/third-party/v4l2loopback.yml
   - from-file: zrun/add/third-party/broadcom.yml
   - from-file: zrun/add/third-party/xbox-gamepad.yml
