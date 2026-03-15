@@ -36,60 +36,46 @@ dnf config-manager setopt fedora-multimedia.priority=90
 
 ok "negativo17 fedora-multimedia repo added"
 
-# ── Install intel-vpl-gpu-rt first (provides libvpl.so.2) ─────
-info "Installing intel-vpl-gpu-rt..."
-dnf install -y --setopt=install_weak_deps=False intel-vpl-gpu-rt
-ok "intel-vpl-gpu-rt installed"
-
-# ── Swap fdk-aac-free for libfdk-aac from negativo17 ──────────
-info "Swapping fdk-aac-free for libfdk-aac..."
-dnf swap -y --repo=fedora-multimedia fdk-aac-free libfdk-aac
+# ── Swap packages with different names in negativo17 ──────────
+info "Swapping fdk-aac-free → libfdk-aac..."
+dnf swap -y fdk-aac-free libfdk-aac
 ok "libfdk-aac swapped"
 
-# ── Install negativo17 Multimedia Codecs ──────────────────────
-NEGATIVO_PKGS=(
+# ── Multimedia Codecs & Libraries ─────────────────────────────
+MULTIMEDIA_PKGS=(
     ffmpeg
     ffmpeg-libs
     gstreamer1-plugin-libav
     gstreamer1-plugins-bad
     gstreamer1-plugins-ugly
-    libva
-    libwebp6
-    libheif
-)
-
-info "Installing negativo17 multimedia codecs..."
-for pkg in "${NEGATIVO_PKGS[@]}"; do
-    say "  ${CYAN}◈${NC}  ${pkg}"
-done
-
-dnf install -y --setopt=install_weak_deps=False \
-    --repo=fedora-multimedia "${NEGATIVO_PKGS[@]}"
-
-ok "negativo17 multimedia codecs installed"
-
-# ── Install Fedora Base Multimedia Packages ───────────────────
-FEDORA_PKGS=(
     gstreamer1-plugins-good
     gstreamer1-plugins-good-extras
     gstreamer1-vaapi
+    libva
+    libheif
+    libwebp6
     libjxl
     libldac
     exiv2
 )
 
-info "Installing Fedora base multimedia packages..."
-for pkg in "${FEDORA_PKGS[@]}"; do
+info "Installing multimedia codecs & libraries..."
+for pkg in "${MULTIMEDIA_PKGS[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
 dnf install -y --setopt=install_weak_deps=False \
-    "${FEDORA_PKGS[@]}"
+    --exclude='*.i686' \
+    "${MULTIMEDIA_PKGS[@]}"
 
-ok "Fedora multimedia packages installed"
+ok "Multimedia codecs & libraries installed"
 
-# ── Swap mesa packages with negativo17 versions ───────────────
-MESA_SWAPS=(
+# ── GPU / Video Acceleration Drivers ─────────────────────────
+GPU_PKGS=(
+    intel-vpl-gpu-rt
+    intel-gmmlib
+    intel-mediasdk
+    libva-intel-media-driver
     mesa-dri-drivers
     mesa-filesystem
     mesa-libEGL
@@ -99,34 +85,18 @@ MESA_SWAPS=(
     mesa-vulkan-drivers
 )
 
-info "Swapping mesa packages from fedora-multimedia..."
-for pkg in "${MESA_SWAPS[@]}"; do
-    say "  ${CYAN}◈${NC}  ${pkg}"
-done
-
-dnf install -y --setopt=install_weak_deps=False \
-    --repo=fedora-multimedia "${MESA_SWAPS[@]}"
-
-ok "mesa packages swapped"
-
-# ── Install remaining GPU packages ────────────────────────────
-GPU_PKGS=(
-    intel-gmmlib
-    intel-mediasdk
-    libva-intel-media-driver
-)
-
-info "Installing GPU packages from fedora-multimedia..."
+info "Installing GPU & video acceleration drivers..."
 for pkg in "${GPU_PKGS[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
 dnf install -y --setopt=install_weak_deps=False \
-    --repo=fedora-multimedia "${GPU_PKGS[@]}"
+    --exclude='*.i686' \
+    "${GPU_PKGS[@]}"
 
-ok "GPU packages installed"
+ok "GPU & video acceleration drivers installed"
 
-# ── Install PipeWire Audio Stack ──────────────────────────────
+# ── PipeWire Audio Stack ──────────────────────────────────────
 PIPEWIRE_PKGS=(
     wireplumber
     pipewire
