@@ -6,6 +6,7 @@ modules:
     install:
        install-weak-deps: false
        packages:
+         # move them to a zust script ?
          - fzf
          - fd-find
          - bat
@@ -14,3 +15,6 @@ modules:
          - trash-cli
          - starship
          - zoxide
+         - procs
+         - dust
+         - btop
