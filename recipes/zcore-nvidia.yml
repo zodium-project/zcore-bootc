@@ -26,9 +26,9 @@ modules:
   - from-file: zrun/add/core/network-tools.yml
   - from-file: zrun/add/core/bluetooth.yml
   - from-file: zrun/add/core/libcamera.yml
-  - from-file: zrun/add/core/cups.yml
+  - from-file: zrun/add/core/printers.yml
 #### => Extra Packages / Tweaks to install.
-  - from-file: zrun/add/extra/repos-extra.yml
+  - from-file: zrun/add/extra/extra-repo-add.yml
   - from-file: zrun/add/extra/vpn.yml
   - from-file: zrun/add/extra/zcore-cli.yml
   - from-file: zrun/add/extra/dev-tools.yml
@@ -37,6 +37,7 @@ modules:
   - from-file: zrun/add/extra/zsh-shell.yml
   - from-file: zrun/add/extra/langpacks.yml
   - from-file: zrun/add/extra/fonts.yml
+  - from-file: zrun/add/extra/extra-repo-remove.yml
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/add/third-party/media-codecs.yml
   - from-file: zrun/add/third-party/nvidia.yml

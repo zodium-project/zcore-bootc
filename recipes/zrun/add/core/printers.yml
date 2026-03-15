@@ -15,3 +15,4 @@ modules:
         - cups-browsed
         - nss-mdns 
         - ipp-usb
+        - hplip

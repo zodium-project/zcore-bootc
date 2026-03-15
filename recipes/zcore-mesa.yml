@@ -26,7 +26,7 @@ modules:
   - from-file: zrun/add/core/network-tools.yml
   - from-file: zrun/add/core/bluetooth.yml
   - from-file: zrun/add/core/libcamera.yml
-  - from-file: zrun/add/core/cups.yml
+  - from-file: zrun/add/core/printers.yml
 #### => Extra Packages / Tweaks to install.
   - from-file: zrun/add/extra/extra-repo-add.yml
   - from-file: zrun/add/extra/vpn.yml
