@@ -34,6 +34,9 @@ info "Adding negativo17 fedora-multimedia repo..."
 dnf config-manager addrepo \
     --from-repofile=https://negativo17.org/repos/fedora-multimedia.repo
 
+info "Setting fedora-multimedia repo priority..."
+dnf config-manager setopt fedora-multimedia.priority=90
+
 ok "negativo17 fedora-multimedia repo added"
 say ""
 say "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}"
@@ -67,7 +70,9 @@ for pkg in "${MULTIMEDIA_PKGS[@]}"; do
 done
 say ""
 
-dnf install -y --setopt=install_weak_deps=False "${MULTIMEDIA_PKGS[@]}"
+dnf distro-sync --skip-unavailable -y \
+    --setopt=install_weak_deps=False \
+    --repo=fedora-multimedia "${MULTIMEDIA_PKGS[@]}"
 
 ok "Multimedia codecs & libraries installed"
 say ""
@@ -92,13 +97,14 @@ GPU_PKGS=(
     mesa-vulkan-drivers
 )
 
-info "Installing GPU & video acceleration drivers..."
+info "Overriding GPU & video acceleration packages from fedora-multimedia..."
 for pkg in "${GPU_PKGS[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 say ""
 
-dnf install -y --setopt=install_weak_deps=False "${GPU_PKGS[@]}"
+dnf distro-sync --skip-unavailable -y \
+    --repo=fedora-multimedia "${GPU_PKGS[@]}"
 
 ok "GPU & video acceleration drivers installed"
 say ""
