@@ -38,12 +38,16 @@ ok "negativo17 fedora-multimedia repo added"
 
 # ── Swap packages ─────────────────────────────────────────────
 info "Swapping fdk-aac-free → libfdk-aac..."
-dnf swap -y fdk-aac-free libfdk-aac
+dnf swap -y --setopt=install_weak_deps=False fdk-aac-free libfdk-aac
 ok "libfdk-aac swapped"
 
 info "Swapping libheif → negativo17 libheif..."
-dnf swap -y libheif libheif
+dnf swap -y --setopt=install_weak_deps=False libheif libheif
 ok "libheif swapped"
+
+info "Swapping libva → negativo17 libva..."
+dnf swap -y --setopt=install_weak_deps=False libva libva
+ok "libva swapped"
 
 # ── Multimedia Codecs & Libraries ─────────────────────────────
 MULTIMEDIA_PKGS=(
@@ -55,7 +59,6 @@ MULTIMEDIA_PKGS=(
     gstreamer1-plugins-good
     gstreamer1-plugins-good-extras
     gstreamer1-vaapi
-    libva
     libwebp6
     libjxl
     libldac
@@ -91,26 +94,40 @@ dnf install -y --setopt=install_weak_deps=False \
 
 ok "GPU packages installed"
 
-# ── Sync mesa packages to negativo17 versions ─────────────────
-MESA_PKGS=(
+# ── Sync pre-installed mesa packages to negativo17 versions ────
+MESA_SYNC=(
     mesa-dri-drivers
     mesa-filesystem
     mesa-libEGL
     mesa-libGL
     mesa-libgbm
-    mesa-va-drivers
-    mesa-vulkan-drivers
 )
 
-info "Syncing mesa packages to negativo17 versions..."
-for pkg in "${MESA_PKGS[@]}"; do
+info "Syncing pre-installed mesa packages to negativo17 versions..."
+for pkg in "${MESA_SYNC[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
 dnf distro-sync -y --setopt=install_weak_deps=False \
-    --repo=fedora-multimedia "${MESA_PKGS[@]}"
+    --repo=fedora-multimedia "${MESA_SYNC[@]}"
 
-ok "mesa packages synced"
+ok "Pre-installed mesa packages synced"
+
+# ── Install remaining mesa packages from negativo17 ───────────
+MESA_INSTALL=(
+    mesa-va-drivers
+    mesa-vulkan-drivers
+)
+
+info "Installing remaining mesa packages from negativo17..."
+for pkg in "${MESA_INSTALL[@]}"; do
+    say "  ${CYAN}◈${NC}  ${pkg}"
+done
+
+dnf install -y --setopt=install_weak_deps=False \
+    --repo=fedora-multimedia "${MESA_INSTALL[@]}"
+
+ok "Remaining mesa packages installed"
 
 # ── PipeWire Audio Stack ──────────────────────────────────────
 PIPEWIRE_PKGS=(
