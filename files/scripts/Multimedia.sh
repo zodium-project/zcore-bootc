@@ -54,7 +54,6 @@ MULTIMEDIA_PKGS=(
     gstreamer1-plugins-ugly
     gstreamer1-plugins-good
     gstreamer1-plugins-good-extras
-    gstreamer1-vaapi
     libfreeaptx
     libwebp6
     libjxl
@@ -72,24 +71,6 @@ dnf install -y --setopt=install_weak_deps=False \
     "${MULTIMEDIA_PKGS[@]}"
 
 ok "Multimedia codecs & libraries installed"
-
-# ── GPU / Video Acceleration Drivers ─────────────────────────
-GPU_PKGS=(
-    intel-vpl-gpu-rt
-    intel-gmmlib
-    intel-mediasdk
-    libva-intel-media-driver
-)
-
-info "Installing GPU & video acceleration drivers..."
-for pkg in "${GPU_PKGS[@]}"; do
-    say "  ${CYAN}◈${NC}  ${pkg}"
-done
-
-dnf install -y --setopt=install_weak_deps=False \
-    "${GPU_PKGS[@]}"
-
-ok "GPU packages installed"
 
 # ── Sync pre-installed mesa packages to negativo17 versions ────
 MESA_SYNC=(
@@ -109,24 +90,6 @@ dnf distro-sync -y --setopt=install_weak_deps=False \
     --repo=fedora-multimedia "${MESA_SYNC[@]}"
 
 ok "Pre-installed mesa packages synced"
-
-# ── Install remaining mesa packages from negativo17 ───────────
-MESA_INSTALL=(
-    mesa-va-drivers
-    mesa-vulkan-drivers
-)
-
-info "Installing remaining mesa packages from negativo17..."
-for pkg in "${MESA_INSTALL[@]}"; do
-    say "  ${CYAN}◈${NC}  ${pkg}"
-done
-
-dnf install -y \
-    --setopt=install_weak_deps=False \
-    --exclude='*.i686' \
-    "${MESA_INSTALL[@]}"
-
-ok "Remaining mesa packages installed"
 
 # ── PipeWire Audio Stack ──────────────────────────────────────
 PIPEWIRE_PKGS=(

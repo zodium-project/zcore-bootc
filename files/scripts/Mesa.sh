@@ -55,42 +55,23 @@ dnf install -y --setopt=install_weak_deps=False \
 
 ok "Intel GPU packages installed"
 
-# ── Sync pre-installed mesa packages to negativo17 versions ────
-MESA_SYNC=(
-    mesa-dri-drivers
-    mesa-filesystem
-    mesa-libEGL
-    mesa-libGL
-    mesa-libgbm
-)
-
-info "Syncing pre-installed mesa packages to negativo17 versions..."
-for pkg in "${MESA_SYNC[@]}"; do
-    say "  ${CYAN}◈${NC}  ${pkg}"
-done
-
-dnf distro-sync -y --setopt=install_weak_deps=False \
-    --repo=fedora-multimedia "${MESA_SYNC[@]}"
-
-ok "Pre-installed mesa packages synced"
-
-# ── Install remaining mesa packages from negativo17 ───────────
-MESA_INSTALL=(
+# ── Install mesa packages from negativo17 ─────────────────────
+MESA_PKGS=(
     mesa-va-drivers
     mesa-vulkan-drivers
 )
 
-info "Installing remaining mesa packages from negativo17..."
-for pkg in "${MESA_INSTALL[@]}"; do
+info "Installing mesa packages from negativo17..."
+for pkg in "${MESA_PKGS[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
 dnf install -y \
     --setopt=install_weak_deps=False \
     --exclude='*.i686' \
-    "${MESA_INSTALL[@]}"
+    "${MESA_PKGS[@]}"
 
-ok "Remaining mesa packages installed"
+ok "Mesa packages installed"
 
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
