@@ -7,7 +7,6 @@ modules:
      install-weak-deps: false
      packages:
       - plymouth
-      - plymouth-theme-spinner
       - plymouth-plugin-two-step
       - plymouth-plugin-fade-throbber
       - plymouth-plugin-space-flares
