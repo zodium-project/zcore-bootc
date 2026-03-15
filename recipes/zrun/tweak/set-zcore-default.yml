@@ -34,3 +34,4 @@ modules:
  - type: script
    snippets:
       - "systemctl enable zodium-set-hostname.service"
+      - "plymouth-set-default-theme bgrt-mac-style"
