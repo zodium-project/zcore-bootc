@@ -23,7 +23,6 @@ jobs:
         recipe:
           - zcore-mesa.yml
           - zcore-nvidia.yml
-          - zcore-hybrid.yml
 
     steps:
       - uses: actions/checkout@v6
