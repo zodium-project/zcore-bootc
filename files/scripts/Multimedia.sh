@@ -124,7 +124,10 @@ for pkg in "${MESA_INSTALL[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
-dnf install -y --setopt=install_weak_deps=False "${MESA_INSTALL[@]}"
+dnf install -y \
+    --setopt=install_weak_deps=False \
+    --exclude='*.i686' \
+    "${MESA_INSTALL[@]}"
 
 ok "Remaining mesa packages installed"
 
