@@ -41,13 +41,13 @@ info "Swapping fdk-aac-free → libfdk-aac..."
 dnf swap -y --setopt=install_weak_deps=False fdk-aac-free libfdk-aac
 ok "libfdk-aac swapped"
 
+info "Swapping libfreeaptx → negativo17 libfreeaptx..."
+dnf swap -y --setopt=install_weak_deps=False libfreeaptx libfreeaptx
+ok "libfreeaptx swapped"
+
 info "Swapping libheif → negativo17 libheif..."
 dnf swap -y --setopt=install_weak_deps=False libheif libheif
 ok "libheif swapped"
-
-info "Swapping libva → negativo17 libva..."
-dnf swap -y --setopt=install_weak_deps=False libva libva
-ok "libva swapped"
 
 # ── Multimedia Codecs & Libraries ─────────────────────────────
 MULTIMEDIA_PKGS=(
@@ -124,8 +124,7 @@ for pkg in "${MESA_INSTALL[@]}"; do
     say "  ${CYAN}◈${NC}  ${pkg}"
 done
 
-dnf install -y --setopt=install_weak_deps=False \
-    --repo=fedora-multimedia "${MESA_INSTALL[@]}"
+dnf install -y --setopt=install_weak_deps=False "${MESA_INSTALL[@]}"
 
 ok "Remaining mesa packages installed"
 
