@@ -47,9 +47,8 @@ NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
 
 # ── Add Negativo17 Nvidia-driver Repo ─────────────────────────
 info "Adding Negativo17 NVIDIA repo..."
-curl -fLsS --retry 5 \
-    -o /etc/yum.repos.d/negativo17-fedora-nvidia.repo \
-    https://negativo17.org/repos/fedora-nvidia.repo
+dnf config-manager addrepo \
+    --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo
 ok "Negativo17 repo added"
 
 # ── Build/Install Nvidia Driver Modules ───────────────────────
@@ -200,7 +199,8 @@ ok "Build dependencies removed"
 info "Removing temporary repos..."
 rm -f nvidia-container.pp
 rm -f /etc/yum.repos.d/nvidia-container-toolkit.repo
-rm -f /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+dnf config-manager setopt fedora-nvidia.enabled=0
+rm -f /etc/yum.repos.d/fedora-nvidia.repo
 ok "Temporary repos removed"
 
 # ── DNF Cleanup ───────────────────────────────────────────────

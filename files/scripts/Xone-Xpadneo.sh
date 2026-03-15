@@ -45,16 +45,15 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 XPAD_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/xpadneo"
 XONE_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/xone"
 
-# ── Add Negativo17 Fedora Multimedia Repo ─────────────────────
-info "Adding Negativo17 Fedora Multimedia repo..."
-curl -fLsS --retry 5 \
-    -o /etc/yum.repos.d/negativo17-fedora-multimedia.repo \
-    https://negativo17.org/repos/fedora-multimedia.repo
-ok "Negativo17 repo added"
+# ── Add Negativo17 Fedora Steam Repo ──────────────────────────
+info "Adding Negativo17 Fedora Steam repo..."
+dnf config-manager addrepo \
+    --from-repofile=https://negativo17.org/repos/fedora-steam.repo
+ok "Negativo17 Steam repo added"
 
 # ── Install Build Dependencies & akmods ───────────────────────
 info "Installing build dependencies for kernel version: ${KERNEL_VERSION}..."
-dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
+dnf install --refresh -y --setopt=install_weak_deps=False akmods gcc-c++
 
 # ── Workaround Fix (monkey patch akmodsbuild) ─────────────────
 warn "Applying akmodsbuild workaround..."
@@ -150,7 +149,8 @@ ok "Build dependencies removed"
 
 # ── Remove Added Repos ────────────────────────────────────────
 info "Removing temporary repos..."
-rm -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+dnf config-manager setopt fedora-steam.enabled=0
+rm -f /etc/yum.repos.d/fedora-steam.repo
 ok "Temporary repos removed"
 
 # ── DNF Cleanup ───────────────────────────────────────────────
