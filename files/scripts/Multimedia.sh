@@ -41,10 +41,6 @@ info "Swapping fdk-aac-free → libfdk-aac..."
 dnf swap -y --setopt=install_weak_deps=False fdk-aac-free libfdk-aac
 ok "libfdk-aac swapped"
 
-info "Swapping libfreeaptx → negativo17 libfreeaptx..."
-dnf swap -y --setopt=install_weak_deps=False libfreeaptx libfreeaptx
-ok "libfreeaptx swapped"
-
 info "Swapping libheif → negativo17 libheif..."
 dnf swap -y --setopt=install_weak_deps=False libheif libheif
 ok "libheif swapped"
@@ -59,6 +55,7 @@ MULTIMEDIA_PKGS=(
     gstreamer1-plugins-good
     gstreamer1-plugins-good-extras
     gstreamer1-vaapi
+    libfreeaptx
     libwebp6
     libjxl
     libldac
