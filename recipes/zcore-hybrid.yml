@@ -5,8 +5,8 @@
 ####################
 #### Image Info ####
 ####################
-name: zcore-mesa
-description: zcore image for AMD/Intel GPUs
+name: zcore-hybrid
+description: zcore image for Hybrid/Prime devices.
 base-image: quay.io/fedora/fedora-bootc
 image-version: latest
 platforms:
@@ -41,6 +41,7 @@ modules:
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zrun/add/third-party/media-codecs.yml
   - from-file: zrun/add/third-party/intel-amd.yml
+  - from-file: zrun/add/third-party/nvidia.yml
   - from-file: zrun/add/third-party/v4l2loopback.yml
   - from-file: zrun/add/third-party/broadcom.yml
   - from-file: zrun/add/third-party/xbox-gamepad.yml
@@ -58,7 +59,7 @@ modules:
     properties:
       ID: fedora
       NAME: zcore-bootc
-      PRETTY_NAME: zcore linux (mesa)
+      PRETTY_NAME: zcore linux (hybrid)
 ## initramfs module ##
   - type: initramfs
 ## Signing Module ##
