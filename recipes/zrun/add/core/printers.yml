@@ -13,6 +13,10 @@ modules:
         - cups-filters
         - cups-filters-driverless
         - cups-browsed
+        - gutenprint-cups
+        - foomatic-db
+        - sane-backends
+        - samba-client
         - nss-mdns 
         - ipp-usb
         - hplip
