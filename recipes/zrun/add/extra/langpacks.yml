@@ -9,6 +9,10 @@ modules:
        - langpacks-en
        - langpacks-core-en
        - langpacks-fonts-en
+       - cracklib-dicts
+       - unicode-emoji
+       - unicode-ucd
+       - unicode-ucd-unihan
 
   - type: dnf
     remove:

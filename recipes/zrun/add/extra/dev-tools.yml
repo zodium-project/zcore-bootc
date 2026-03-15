@@ -6,6 +6,8 @@ modules:
     install:
        install-weak-deps: false
        packages:
+         - docker
+         - docker-compose
          - podman
          - podman-compose
          - buildah

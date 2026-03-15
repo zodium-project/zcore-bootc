@@ -8,3 +8,8 @@ modules:
      packages:
       - plymouth
       - plymouth-theme-spinner
+      - plymouth-plugin-two-step
+      - plymouth-plugin-fade-throbber
+      - plymouth-plugin-space-flares
+      - plymouth-plugin-label
+      - plymouth-plugin-script

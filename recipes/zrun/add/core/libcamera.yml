@@ -11,5 +11,7 @@ modules:
          - libcamera-gstreamer
          - pipewire-plugin-libcamera
          - v4l-utils
+         - gphoto2
+         - libgphoto2
          - libcamera-v4l2
          - pipewire-v4l2

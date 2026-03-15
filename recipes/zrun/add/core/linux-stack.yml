@@ -34,3 +34,6 @@ modules:
       - freerdp
       - pciutils
       - usbutils
+      - fprintd
+      - fprintd-pam
+      - bolt
