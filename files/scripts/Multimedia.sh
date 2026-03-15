@@ -104,6 +104,7 @@ done
 say ""
 
 dnf distro-sync --skip-unavailable -y \
+    --setopt=install_weak_deps=False \
     --repo=fedora-multimedia "${GPU_PKGS[@]}"
 
 ok "GPU & video acceleration drivers installed"
@@ -134,7 +135,9 @@ for pkg in "${PIPEWIRE_PKGS[@]}"; do
 done
 say ""
 
-dnf install -y --setopt=install_weak_deps=False "${PIPEWIRE_PKGS[@]}"
+dnf distro-sync --skip-unavailable -y \
+    --setopt=install_weak_deps=False \
+    --repo=fedora-multimedia "${PIPEWIRE_PKGS[@]}"
 
 ok "PipeWire audio stack installed"
 say ""

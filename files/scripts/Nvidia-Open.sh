@@ -33,7 +33,6 @@ chmod 1777 /var/tmp
 WORKDIR="/tmp/certs"
 
 RELEASE="$(rpm -E '%fedora.%_arch')"
-REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
@@ -45,26 +44,6 @@ PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 NVIDIA_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/nvidia"
-
-# ── Disable External (Nonfree/Extra) Repos ───────────────────
-info "Snapshotting enabled repos..."
-dnf repolist --enabled \
-    | awk 'NR>1 {print $1}' \
-    > "$REPO_SNAPSHOT"
-
-mapfile -t SANDBOX_REPOS < <(
-    dnf repolist --enabled \
-        | awk 'NR>1 {print $1}' \
-        | grep -Ei '^(terra|rpmfusion)'
-)
-
-if (( ${#SANDBOX_REPOS[@]} > 0 )); then
-    info "Disabling external repos temporarily..."
-    for repo in "${SANDBOX_REPOS[@]}"; do
-        dnf config-manager setopt "${repo}.enabled=0"
-    done
-    ok "External repos disabled"
-fi
 
 # ── Add Negativo17 Nvidia-driver Repo ─────────────────────────
 info "Adding Negativo17 NVIDIA repo..."
@@ -224,21 +203,11 @@ rm -f /etc/yum.repos.d/nvidia-container-toolkit.repo
 rm -f /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 ok "Temporary repos removed"
 
-# ── Restore Repos (Nonfree/Extra) ─────────────────────────────
-if [[ -f "$REPO_SNAPSHOT" ]]; then
-    info "Restoring external repos..."
-    while read -r repo; do
-        dnf config-manager setopt "${repo}.enabled=1" || true
-    done < "$REPO_SNAPSHOT"
-    rm -f "$REPO_SNAPSHOT"
-    ok "External repos restored"
-fi
-
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
-dnf5 clean all
-dnf5 autoremove -y
-dnf5 clean packages
+dnf clean all
+dnf autoremove -y
+dnf clean packages
 ok "Cleanup complete"
 
 # ── Done ──────────────────────────────────────────────────────

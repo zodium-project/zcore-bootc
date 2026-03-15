@@ -31,7 +31,6 @@ chmod 1777 /var/tmp
 
 # ── Variables & Paths ─────────────────────────────────────────
 WORKDIR="/tmp/certs"
-REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
@@ -44,21 +43,24 @@ PRIVATE_KEY_PRIV="${WORKDIR}/private_key.priv"
 SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 V4L2_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/v4l2loopback"
 
-# ── Disable Terra Repos Temporarily ──────────────────────────
-info "Snapshotting enabled repos..."
-dnf repolist --enabled | awk 'NR>1 {print $1}' > "$REPO_SNAPSHOT"
+# ── Add RPM Fusion Repos ──────────────────────────────────────
+say "${CYAN}${BOLD}┌─ Repository Setup ──────────────────────┐${NC}"
+say ""
 
-mapfile -t TERRAREPOS < <(
-  dnf repolist --enabled | awk 'NR>1 {print $1}' | grep -Ei '^terra'
-)
+info "Adding RPM Fusion free repo..."
+dnf install -y --setopt=install_weak_deps=False \
+    "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
 
-if (( ${#TERRAREPOS[@]} > 0 )); then
-    info "Disabling Terra repos temporarily..."
-    for repo in "${TERRAREPOS[@]}"; do
-        dnf config-manager setopt "${repo}.enabled=0"
-    done
-    ok "Terra repos disabled"
-fi
+info "Adding RPM Fusion nonfree repo..."
+dnf install -y --setopt=install_weak_deps=False \
+    "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+
+dnf --refresh reinstall -y rpmfusion-free-release rpmfusion-nonfree-release
+
+ok "RPM Fusion repos added"
+say ""
+say "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}"
+say ""
 
 # ── Install akmod-v4l2loopback & Build Deps ───────────────────
 info "Installing kernel modules for kernel version: ${KERNEL_VERSION}..."
@@ -145,15 +147,10 @@ info "Installing v4l2loopback userspace tools..."
 dnf install -y --setopt=install_weak_deps=False v4l2loopback
 ok "Userspace tools installed"
 
-# ── Restore Terra Repos ───────────────────────────────────────
-if [[ -f "$REPO_SNAPSHOT" ]]; then
-    info "Restoring Terra repos..."
-    while read -r repo; do
-        dnf config-manager setopt "${repo}.enabled=1" || true
-    done < "$REPO_SNAPSHOT"
-    rm -f "$REPO_SNAPSHOT"
-    ok "Terra repos restored"
-fi
+# ── Remove RPM Fusion Repos ───────────────────────────────────
+info "Removing RPM Fusion repos..."
+dnf remove -y rpmfusion-free-release rpmfusion-nonfree-release
+ok "RPM Fusion repos removed"
 
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."

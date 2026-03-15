@@ -31,7 +31,6 @@ chmod 1777 /var/tmp
 
 # ── Variables & Paths ─────────────────────────────────────────
 WORKDIR="/tmp/certs"
-REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
@@ -45,22 +44,6 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 
 XPAD_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/xpadneo"
 XONE_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/xone"
-
-# ── Disable External (Terra/RPMFusion) Repos ─────────────────
-info "Snapshotting enabled repos..."
-dnf repolist --enabled | awk 'NR>1 {print $1}' > "$REPO_SNAPSHOT"
-
-mapfile -t SANDBOX_REPOS < <(
-    dnf repolist --enabled | awk 'NR>1 {print $1}' | grep -Ei '^(terra|rpmfusion)'
-)
-
-if (( ${#SANDBOX_REPOS[@]} > 0 )); then
-    info "Disabling external repos temporarily..."
-    for repo in "${SANDBOX_REPOS[@]}"; do
-        dnf config-manager setopt "${repo}.enabled=0"
-    done
-    ok "External repos disabled"
-fi
 
 # ── Add Negativo17 Fedora Multimedia Repo ─────────────────────
 info "Adding Negativo17 Fedora Multimedia repo..."
@@ -169,16 +152,6 @@ ok "Build dependencies removed"
 info "Removing temporary repos..."
 rm -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 ok "Temporary repos removed"
-
-# ── Restore Repos (Terra/RPMFusion) ───────────────────────────
-if [[ -f "$REPO_SNAPSHOT" ]]; then
-    info "Restoring external repos..."
-    while read -r repo; do
-        dnf config-manager setopt "${repo}.enabled=1" || true
-    done < "$REPO_SNAPSHOT"
-    rm -f "$REPO_SNAPSHOT"
-    ok "External repos restored"
-fi
 
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."

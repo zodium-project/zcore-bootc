@@ -32,7 +32,6 @@ chmod 1777 /var/tmp
 # ── Variables & Paths ─────────────────────────────────────────
 WORKDIR="/tmp/certs"
 
-REPO_SNAPSHOT="/var/tmp/zodium-enabled-repos.txt"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 
 PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
@@ -45,19 +44,28 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 
 WL_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/wl"
 
-# ── Disable only Terra repos temporarily ──────────────────────
-info "Snapshotting enabled repos..."
-dnf repolist --enabled | awk 'NR>1 {print $1}' > "$REPO_SNAPSHOT"
-mapfile -t TERRAREPOS < <(
-    dnf repolist --enabled | awk 'NR>1 {print $1}' | grep -Ei '^terra'
-)
-if (( ${#TERRAREPOS[@]} > 0 )); then
-    info "Disabling Terra repos temporarily..."
-    for repo in "${TERRAREPOS[@]}"; do
-        dnf config-manager setopt "${repo}.enabled=0"
-    done
-    ok "Terra repos disabled"
-fi
+# ── Add Terra Repo ────────────────────────────────────────────
+say "${CYAN}${BOLD}┌─ Repository Setup ──────────────────────┐${NC}"
+say ""
+
+info "Installing Terra release..."
+dnf install --nogpgcheck -y \
+    --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' \
+    terra-release
+
+info "Running initial upgrade..."
+dnf upgrade --refresh -y
+
+info "Reinstalling Terra release..."
+dnf reinstall --refresh -y terra-release
+
+info "Running final upgrade..."
+dnf upgrade --refresh -y
+
+ok "Terra repo ready"
+say ""
+say "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}"
+say ""
 
 # ── Install akmod-wl & build deps ─────────────────────────────
 info "Installing akmod-wl and dependencies for kernel ${KERNEL_VERSION}..."
@@ -135,15 +143,10 @@ info "Removing build dependencies..."
 dnf remove -y akmod-wl akmods gcc-c++
 ok "Build dependencies removed"
 
-# ── Restore Terra repos ───────────────────────────────────────
-if [[ -f "$REPO_SNAPSHOT" ]]; then
-    info "Restoring Terra repos..."
-    while read -r repo; do
-        dnf config-manager setopt "${repo}.enabled=1" || true
-    done < "$REPO_SNAPSHOT"
-    rm -f "$REPO_SNAPSHOT"
-    ok "Terra repos restored"
-fi
+# ── Remove Terra Repo ─────────────────────────────────────────
+info "Removing Terra repo..."
+dnf remove -y terra-release
+ok "Terra repo removed"
 
 # ── Cleanup ───────────────────────────────────────────────────
 info "Running DNF cleanup..."
