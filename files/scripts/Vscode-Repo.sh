@@ -27,12 +27,12 @@ say ""
 
 # ── Install Microsoft GPG Key ─────────────────────────────────
 info "Importing Microsoft GPG key..."
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
 ok "GPG key imported"
 
 # ── Add Visual Studio Code Repository ────────────────────────
 info "Adding Visual Studio Code repository..."
-sudo tee /etc/yum.repos.d/vscode.repo > /dev/null << 'EOF'
+tee /etc/yum.repos.d/vscode.repo > /dev/null << 'EOF'
 [code]
 name=Visual Studio Code
 baseurl=https://packages.microsoft.com/yumrepos/vscode

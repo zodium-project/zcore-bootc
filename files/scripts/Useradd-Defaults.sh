@@ -33,8 +33,13 @@ info "Setting default group to gamemode..."
 if grep -q '^GROUPS=' useradd; then
     sed -i 's|^GROUPS=.*|GROUPS=gamemode|' useradd
 else
-    echo 'GROUPS=gamemode' >> useradd
+    printf 'GROUPS=gamemode\n' >> useradd
 fi
 ok "Default group set to gamemode"
 
+# ── Done ──────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Useradd Defaults Set Complete       ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

@@ -10,5 +10,5 @@ modules:
 
  - type: files
    files:
-     - source: secure-boot-der
+     - source: mok-file
        destination: /

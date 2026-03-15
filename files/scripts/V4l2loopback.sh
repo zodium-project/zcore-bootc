@@ -44,9 +44,6 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 V4L2_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/v4l2loopback"
 
 # ── Add RPM Fusion Repos ──────────────────────────────────────
-say "${CYAN}${BOLD}┌─ Repository Setup ──────────────────────┐${NC}"
-say ""
-
 info "Adding RPM Fusion free repo..."
 dnf install -y --setopt=install_weak_deps=False \
     "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
@@ -57,10 +54,7 @@ dnf install -y --setopt=install_weak_deps=False \
 
 dnf --refresh reinstall -y rpmfusion-free-release rpmfusion-nonfree-release
 
-ok "RPM Fusion repos added"
-say ""
-say "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}"
-say ""
+ok "RPM Fusion repos ready"
 
 # ── Install akmod-v4l2loopback & Build Deps ───────────────────
 info "Installing kernel modules for kernel version: ${KERNEL_VERSION}..."

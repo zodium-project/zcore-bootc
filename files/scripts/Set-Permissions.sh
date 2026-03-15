@@ -33,4 +33,9 @@ info "Setting script permissions..."
 chmod 0755 /usr/lib/zust-scripts/*
 ok "Scripts set executable"
 
+# ── Done ──────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Permissions Set Complete            ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

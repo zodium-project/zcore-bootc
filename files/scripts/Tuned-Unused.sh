@@ -37,4 +37,10 @@ rm -rf /usr/lib/tuned/profiles/balanced/
 rm -rf /usr/lib/tuned/profiles/balanced-battery/
 
 ok "Unused TuneD profiles removed"
+
+# ── Done ──────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  TuneD Cleanup Complete              ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

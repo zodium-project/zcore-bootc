@@ -37,4 +37,10 @@ info "Running final upgrade..."
 dnf upgrade --refresh -y
 
 ok "Terra repo setup complete"
+
+# ── Done ──────────────────────────────────────────────────────
+say ""
+say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Terra Repo Setup Complete           ║${NC}"
+say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

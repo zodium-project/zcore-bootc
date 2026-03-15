@@ -44,28 +44,19 @@ SIGN_FILE="/usr/src/kernels/${KERNEL_VERSION}/scripts/sign-file"
 
 WL_MODULE_DIR="/usr/lib/modules/${KERNEL_VERSION}/extra/wl"
 
-# ── Add Terra Repo ────────────────────────────────────────────
-say "${CYAN}${BOLD}┌─ Repository Setup ──────────────────────┐${NC}"
-say ""
+# ── Add RPM Fusion Repos ──────────────────────────────────────
+info "Adding RPM Fusion free repo..."
+dnf install -y --setopt=install_weak_deps=False \
+    "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
 
-info "Installing Terra release..."
-dnf install --nogpgcheck -y \
-    --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' \
-    terra-release
+info "Adding RPM Fusion nonfree repo..."
+dnf install -y --setopt=install_weak_deps=False \
+    "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
 
-info "Running initial upgrade..."
-dnf upgrade --refresh -y
+info "Reinstalling RPM Fusion repos..."
+dnf --refresh reinstall -y rpmfusion-free-release rpmfusion-nonfree-release
 
-info "Reinstalling Terra release..."
-dnf reinstall --refresh -y terra-release
-
-info "Running final upgrade..."
-dnf upgrade --refresh -y
-
-ok "Terra repo ready"
-say ""
-say "${CYAN}${BOLD}└─────────────────────────────────────────┘${NC}"
-say ""
+ok "RPM Fusion repos ready"
 
 # ── Install akmod-wl & build deps ─────────────────────────────
 info "Installing akmod-wl and dependencies for kernel ${KERNEL_VERSION}..."
@@ -143,10 +134,10 @@ info "Removing build dependencies..."
 dnf remove -y akmod-wl akmods gcc-c++
 ok "Build dependencies removed"
 
-# ── Remove Terra Repo ─────────────────────────────────────────
-info "Removing Terra repo..."
-dnf remove -y terra-release
-ok "Terra repo removed"
+# ── Remove RPM Fusion Repos ───────────────────────────────────
+info "Removing RPM Fusion repos..."
+dnf remove -y rpmfusion-free-release rpmfusion-nonfree-release
+ok "RPM Fusion repos removed"
 
 # ── Cleanup ───────────────────────────────────────────────────
 info "Running DNF cleanup..."
