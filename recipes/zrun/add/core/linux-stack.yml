@@ -20,10 +20,6 @@ modules:
       - flatpak
       - distrobox
       - zram-generator
-      - thermald
-      - upower
-      - tuned
-      - tuned-ppd
       - gamemode
       - mangohud
       - dnf5-plugins
@@ -34,6 +30,3 @@ modules:
       - freerdp
       - pciutils
       - usbutils
-      - fprintd
-      - fprintd-pam
-      - bolt

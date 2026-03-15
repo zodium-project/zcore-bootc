@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+      - 3dprinter-udev-rules
+      - openrgb-udev-rules
+      - solaar-udev
+      - unifying-receiver-udev
+      - udev-hid-bpf
+      - udev-hid-bpf-stable
+      - mooltipass-udev
+      - xr-hardware
+      - trezor-common
+      - liquidctl-udev
+
+ - type: script
+   snippets:
+    - curl -O https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-fanatec-wheel-perms.rules -P /usr/lib/udev/rules.d/
+    - curl -O https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-logitech-wheel-perms.rules -P /usr/lib/udev/rules.d/
+    - curl -O https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev/99-thrustmaster-wheel-perms.rules -P /usr/lib/udev/rules.d/

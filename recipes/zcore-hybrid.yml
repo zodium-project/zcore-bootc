@@ -21,7 +21,9 @@ modules:
   - from-file: zrun/tweak/pre-install-setup.yml
 #### => Core Packages / Tweaks to install.
   - from-file: zrun/add/core/linux-stack.yml
+  - from-file: zrun/add/core/hw-drivers.yml
   - from-file: zrun/add/core/firmwares.yml
+  - from-file: zrun/add/core/udev.yml
   - from-file: zrun/add/core/wifi-lan.yml
   - from-file: zrun/add/core/network-tools.yml
   - from-file: zrun/add/core/bluetooth.yml
