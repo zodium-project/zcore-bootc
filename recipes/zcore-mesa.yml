@@ -1,0 +1,55 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+# image will be published to ghcr.io/<user>/<name>
+
+####################
+#### Image Info ####
+####################
+name: zcore-bootc
+description: Base Zcore Bootc Image (Fedora-Bootc + ESSENTIALS)
+base-image: quay.io/fedora/fedora-bootc
+image-version: latest
+platforms:
+  - linux/amd64
+#################
+#### MODULES ####
+#################
+modules:
+## Import Modules/Scripts ##
+### => Installation Modules/Scripts
+#### => Pre-install-setup script.
+  - from-file: zbuild/configure/pre-requisite.yml
+#### => Core Packages / Tweaks to install.
+  - from-file: zbuild/install/necessity/linux-base.yml
+  - from-file: zbuild/install/necessity/hardware.yml
+  - from-file: zbuild/install/necessity/audio.yml
+  - from-file: zbuild/install/necessity/connectivity.yml
+  - from-file: zbuild/install/necessity/camera.yml
+  - from-file: zbuild/install/necessity/printers.yml
+#### => Extra Packages / Tweaks to install.
+  - from-file: zbuild/install/essentials/base-extras.yml
+  - from-file: zbuild/install/essentials/fonts.yml
+  - from-file: zbuild/install/essentials/homebrew.yml
+  - from-file: zbuild/install/essentials/debug-utilities.yml
+### => Removal Modules/Scripts
+  - from-file: zbuild/uninstall/image-pkgs.yml
+  - from-file: zbuild/uninstall/pulled-pkgs.yml
+### => Post Install Configuration
+  - from-file: zbuild/configure/zcore-settings.yml
+  - from-file: zbuild/configure/post-requisite.yml
+#############################
+### End of System Modules ###
+#############################
+## OS-release Module ##
+  - type: os-release
+    properties:
+      NAME: Zcore Linux
+      PRETTY_NAME: Zcore Linux (Bootc)
+      DEFAULT_HOSTNAME: zodium
+## initramfs module ##
+  - type: initramfs
+## Signing Module ##
+  - type: signing
+###################
+### END of File ###
+###################

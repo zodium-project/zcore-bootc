@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+    # => Alsa Core
+      - alsa-ucm
+      - alsa-utils
+    # => Alsa Firmwares
+      - alsa-sof-firmware
+      - alsa-firmware
+      - alsa-tools-firmware

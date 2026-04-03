@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: dnf
+    install:
+      install-weak-deps: false
+      packages:
+      # => CUPS
+        - cups
+        - cups-client
+        - cups-pk-helper
+        - cups-filters
+        - cups-filters-driverless
+        - cups-browsed
+      # => HP Printer Support
+        - hplip
+      # => Backends for Cups
+        - gutenprint-cups
+        - foomatic-db
+        - nss-mdns 
+        - ipp-usb
+      # => Scanner & Samba Support
+        - sane-backends
+        - samba-client

@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: script
+   snippets:
+      - dnf upgrade --refresh --setopt=install_weak_deps=False -y
+      - dnf install -y --setopt=install_weak_deps=False dnf5-plugins
+      - dnf config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-multimedia.repo
+      - dnf config-manager setopt fedora-multimedia.enabled=1
+      - dnf config-manager setopt fedora-multimedia.priority=90
+      - dnf install -y --setopt=install_weak_deps=False "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')" gcc-c++ gcc make
+      - dnf upgrade --refresh --setopt=install_weak_deps=False -y
+
+ - type: dnf
+   group-install:
+     with-optional: false
+     install-weak-deps: false
+     packages:
+         - development-tools
+
+ - type: files
+   files:
+     - source: mok-file
+       destination: /

@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: script
+    scripts:
+      - pkgs/docker-ce.sh
+      - pkgs/udevs.sh 
+      - pkgs/zcore-cli.sh
+      - pkgs/zodium-utils.sh
+      - pkgs/qemu-libvirt.sh
+
+  - type: dnf
+    install:
+       install-weak-deps: false
+       packages:
+         #=> git & git-extras
+         - git
+         - git-lfs
+         - git-annex
+         - git-delta
+         #=> Zsh Shell
+         - zsh
+         - zsh-autosuggestions
+         - zsh-syntax-highlighting
+         #=> Plymouth
+         - plymouth
+         - plymouth-plugin-two-step
+         #=> Containers
+         - waydroid
+         - distrobox
+         - podman
+         - podman-compose
+         - crun

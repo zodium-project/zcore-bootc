@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: dnf
+    install:
+       install-weak-deps: false
+       packages:
+       # => LibCamera
+         - libcamera
+         - libcamera-ipa
+         - libcamera-gstreamer
+         - libcamera-v4l2
+         - pipewire-plugin-libcamera
+       # => V4l & libGP
+         - v4l-utils
+         - gphoto2
+         - libgphoto2
+         - pipewire-v4l2

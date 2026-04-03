@@ -1,0 +1,35 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: kargs
+   kargs:
+      - split_lock_detect=off
+      - split_lock_mitigate=0
+
+ - type: files
+   files:
+     - source: zodium-settings
+       destination: /
+
+ - type: script
+   scripts:
+      - configure/permissions-setup.sh
+      - configure/useradd-setup.sh
+      - configure/tuned-cleanup.sh
+      - configure/plymouth-cleanup.sh
+
+ - type: script
+   snippets:
+      - "systemctl mask systemd-remount-fs.service"
+      - "systemctl disable bootc-fetch-apply-updates.timer"
+      - "systemctl mask bootc-fetch-apply-updates.timer"
+      - "systemctl disable flatpak-add-fedora-repos.service"
+      - "systemctl mask flatpak-add-fedora-repos.service"
+
+ - type: script
+   snippets:
+      - "systemctl enable systemd-timesyncd.service"
+      - "systemctl enable zodium-hostname.service"
+      - "systemctl enable zodium-groups.service"
+      - "plymouth-set-default-theme zomac"

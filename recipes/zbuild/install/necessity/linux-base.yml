@@ -1,0 +1,51 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+    # => Kernel Modules
+      - linux-firmware
+      - kernel-tools-libs
+      - kernel-modules-extra
+
+ - type: script
+   env:
+     PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-akmod.der
+   secrets:
+     - type: file
+       source: /tmp/certs/akmod-signing-private-key.pem
+       mount:
+         type: file
+         destination: /tmp/certs/kernel_key.pem
+   scripts:
+      - kmods/openrazer.sh
+      - kmods/v4l2loopback.sh
+      - kmods/controllers.sh
+      - pkgs/multimedia.sh
+      - pkgs/mesa-nonfree.sh
+
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+    # => Init & Defaults
+      - systemd-oomd-defaults
+      - uresourced
+      - dbus-daemon
+      - unbound-anchor
+      - zram-generator
+      - vulkan-tools
+      - usb_modeswitch
+    # => User Apps
+      - flatpak
+      - mangohud
+    # => TPM2.0 Support
+      - tpm2-tools
+    # => Pacakge Support (Appimage & winboat)
+      - fuse
+      - fuse-libs
+      - freerdp

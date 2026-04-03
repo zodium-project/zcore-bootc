@@ -1,0 +1,27 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: script
+    env:
+      PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-akmod.der
+    secrets:
+      - type: file
+        source: /tmp/certs/akmod-signing-private-key.pem
+        mount:
+          type: file
+          destination: /tmp/certs/kernel_key.pem
+    scripts:
+      - kmods/nvidia-open.sh
+
+  - type: kargs
+    kargs:
+      - rd.driver.blacklist=nouveau,nova_core
+      - modprobe.blacklist=nouveau,nova_core
+
+  - type: script
+    snippets:
+      - sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+      - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+      - systemctl enable nvidia-persistenced.service
+      - systemctl enable nvidia-cdi-refresh.path

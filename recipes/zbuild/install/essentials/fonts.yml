@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: fonts
+    fonts:
+      nerd-fonts:
+       - Hack
+       - Iosevka
+
+  - type: dnf
+    install:
+       install-weak-deps: false
+       packages:
+       # => basic fonts
+         - google-noto-serif-vf-fonts
+         - google-noto-sans-cjk-vf-fonts
+         - google-noto-sans-arabic-vf-fonts
+         - google-noto-sans-hebrew-vf-fonts
+         - google-noto-sans-vf-fonts
+         - google-noto-color-emoji-fonts
+         - liberation-fonts-all
+       # => Math fonts
+         - stix-fonts
+         #=> Langpacks & Locale
+         - glibc-all-langpacks
+         - langpacks-en
+         - langpacks-core-en
+         - langpacks-fonts-en
+         - cracklib-dicts
+         - unicode-emoji

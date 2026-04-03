@@ -1,0 +1,14 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: brew
+    direct-pull: true
+    nofile-limits: true
+    brew-analytics: false
+    auto-update: false
+    auto-upgrade: false
+    update-interval: 24h
+    upgrade-interval: 48h
+    update-wait-after-boot: 4h
+    upgrade-wait-after-boot: 8h

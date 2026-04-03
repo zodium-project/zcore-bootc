@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+    # => Power Management
+      - upower
+      - power-profiles-daemon
+    # => FingerPrint Driver
+      - fprintd
+      - fprintd-pam
+    # => Thunderbolt Driver
+      - bolt
+    # => AIO/RGB support
+      - liquidctl
+      - libratbag-ratbagd
+    # => Inputs
+      - libinput
+      - usbmuxd
+    # => Sensors
+      - lm_sensors
