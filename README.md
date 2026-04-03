@@ -67,10 +67,8 @@ zcore ships in multiple images depending on your hardware .
 
 Current recipe set includes:
 
-- **zcore-hybrid** — for laptops with Intel/AMD igpu & Nvidia dgpu.
 - **zcore-mesa** — for desktops with either Intel or AMD gpus
 - **zcore-nvidia** — for nvidia gpus (Turing and above)
-- **zcore-nvidia-580** — NVIDIA 580 specific image (Older Nvidia Cards)
 
 ---
 
