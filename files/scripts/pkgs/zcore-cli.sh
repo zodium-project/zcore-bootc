@@ -89,6 +89,10 @@ VSCODE_URL="$(
 VSCODE_VERSION="$(basename "${VSCODE_URL}" | grep -oP '(?<=code-)\S+(?=\.rpm)')"
 ok "Found: ${VSCODE_VERSION} → ${ARCH}"
 
+info "Installin VS code deps..."
+dnf -y install --setopt=install_weak_deps=False \
+    xdg-utils
+
 info "Installing VS Code..."
 dnf -y install --setopt=install_weak_deps=False \
     --repofrompath="vscode,${VSCODE_REPO}" \
