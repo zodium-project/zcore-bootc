@@ -66,6 +66,36 @@ dnf -y install --setopt=install_weak_deps=False \
     "${EZA_URL}"
 ok "eza installed → $(eza --version)"
 
+# ── Install VS Code from Microsoft (no repo registration) ─────
+info "Detecting system architecture..."
+ARCH="$(uname -m)"
+[[ "${ARCH}" != "x86_64" && "${ARCH}" != "aarch64" ]] && \
+    fail "Unsupported architecture: ${ARCH} (expected x86_64 or aarch64)"
+ok "Architecture: ${ARCH}"
+
+info "Resolving VS Code RPM from Microsoft..."
+VSCODE_REPO="https://packages.microsoft.com/yumrepos/vscode"
+
+VSCODE_URL="$(
+    dnf -q repoquery code \
+        --repofrompath="vscode,${VSCODE_REPO}" \
+        --repo=vscode \
+        --latest-limit=1 \
+        --qf '%{location}\n' \
+        2>/dev/null | grep "${ARCH}"
+)"
+[[ -z "${VSCODE_URL}" ]] && fail "Could not resolve VS Code RPM for ${ARCH}"
+
+VSCODE_VERSION="$(basename "${VSCODE_URL}" | grep -oP '(?<=code-)\S+(?=\.rpm)')"
+ok "Found: ${VSCODE_VERSION} → ${ARCH}"
+
+info "Installing VS Code..."
+dnf -y install --setopt=install_weak_deps=False \
+    --repofrompath="vscode,${VSCODE_REPO}" \
+    --repo=vscode \
+    "${VSCODE_URL}"
+ok "VS Code installed → ${VSCODE_VERSION}"
+
 # ── Cleanup ───────────────────────────────────────────────────
 info "Disabling COPR repo..."
 dnf -y copr disable atim/starship
