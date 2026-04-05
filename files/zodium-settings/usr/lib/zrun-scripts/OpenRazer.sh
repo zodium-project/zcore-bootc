@@ -2,6 +2,7 @@
 # ================================================================
 #  Razer Setup — Polychromatic + OpenRazer Daemon Manager
 # ================================================================
+# @tags: Hardware
 
 set -Eeuo pipefail
 

@@ -3,6 +3,7 @@
 #  CoolerControl Manager — Install, update, repair or remove
 #  CoolerControlD AppImage
 # ================================================================
+# @tags: Applications
 
 set -Eeuo pipefail
 

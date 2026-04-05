@@ -3,6 +3,7 @@
 #  ElyPrismLauncher Setup — Install, repair or remove
 #  Qt6 Portable build (x86_64 or aarch64)
 # ================================================================
+# @tags: Applications
 
 set -Eeuo pipefail
 

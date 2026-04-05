@@ -2,6 +2,7 @@
 # ================================================================
 #  Gaming-Meta — Flatpak Gaming Meta Installer
 # ================================================================
+# @tags: Applications
 
 set -Eeuo pipefail
 

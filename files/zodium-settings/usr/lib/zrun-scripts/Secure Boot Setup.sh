@@ -3,6 +3,7 @@
 #  enroll-secure-boot-key — MOK Enrollment Script
 #  Automatically adds a MOK key to Secure Boot pending list
 # ================================================================
+# @tags: General
 
 set -Eeuo pipefail
 

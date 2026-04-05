@@ -2,6 +2,7 @@
 # ================================================================
 #  Update-System — Updates system using zync (core updates only)
 # ================================================================
+# @tags: General
 
 set -Eeuo pipefail
 

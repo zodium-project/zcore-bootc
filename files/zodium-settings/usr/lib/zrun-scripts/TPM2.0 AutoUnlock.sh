@@ -4,6 +4,7 @@
 #  Interactive, works on Fedora, Fedora Atomic, ublue images
 #  Made for Zodium Project
 # ================================================================
+# @tags: General
 
 set -Eeuo pipefail
 

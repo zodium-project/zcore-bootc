@@ -4,6 +4,7 @@
 #  AstroNvim / LazyVim / Default
 #  Made for Zodium Project
 # ================================================================
+# @tags: Applications
 
 set -Eeuo pipefail
 

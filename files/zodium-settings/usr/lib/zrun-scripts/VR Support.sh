@@ -6,6 +6,7 @@
 #  requires: flatpak
 #  For use on zcore derivatives / any systemd+flatpak distro
 # ================================================================
+# @tags: Hardware
 
 set -Eeuo pipefail
 

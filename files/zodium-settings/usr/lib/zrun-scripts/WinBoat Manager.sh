@@ -3,6 +3,7 @@
 #  WinBoat Manager — Install, update, repair or remove WinBoat
 #  By Zodium Project for use on zcore derivatives
 # ================================================================
+# @tags: Applications
 
 set -Eeuo pipefail
 
