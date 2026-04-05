@@ -28,7 +28,6 @@ modules:
          - plymouth-plugin-two-step
          #=> Containers
          - waydroid
-         - distrobox
          - podman
          - podman-compose
          - crun
