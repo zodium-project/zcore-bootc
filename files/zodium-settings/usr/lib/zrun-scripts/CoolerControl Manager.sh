@@ -327,12 +327,13 @@ do_remove() {
 # ── Terminal detection ────────────────────────────────────────
 build_manager_exec() {
     local term
-    for term in alacritty kitty konsole wezterm foot gnome-terminal kgx; do
+    for term in alacritty kitty konsole wezterm foot gnome-terminal kgx ghostty; do
         command -v "$term" &>/dev/null || continue
         case "$term" in
             wezterm)        printf '%s' "wezterm start -- $SCRIPT_PATH --check-update --interactive --start-daemon --web-ui" ;;
             gnome-terminal) printf '%s' "gnome-terminal -- $SCRIPT_PATH --check-update --interactive --start-daemon --web-ui" ;;
             kgx)            printf '%s' "kgx -- $SCRIPT_PATH --check-update --interactive --start-daemon --web-ui" ;;
+            ghostty)        printf '%s' "ghostty -e $SCRIPT_PATH --check-update --interactive --start-daemon --web-ui" ;;
             *)              printf '%s' "$term -e $SCRIPT_PATH --check-update --interactive --start-daemon --web-ui" ;;
         esac
         return 0
