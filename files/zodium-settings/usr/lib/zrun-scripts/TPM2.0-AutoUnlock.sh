@@ -27,13 +27,8 @@ say ""
 
 # ── Root check ────────────────────────────────────────────────
 if [[ $EUID -ne 0 ]]; then
-    warn "This script must be run as root."
-    read -rp "  Re-run with sudo? [y/N]: " yn
-    if [[ "${yn,,}" == "y" ]]; then
-        exec sudo bash "$0" "$@"
-    else
-        fail "Run as root to continue."
-    fi
+    warn "This script requires root — re-running with sudo..."
+    exec sudo bash "$0" "$@"
 fi
 
 # ── TPM2 check ────────────────────────────────────────────────
