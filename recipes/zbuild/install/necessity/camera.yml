@@ -13,7 +13,6 @@ modules:
          - libcamera-v4l2
          - pipewire-plugin-libcamera
        # => V4l & libGP
-         - v4l-utils
          - gphoto2
          - libgphoto2
          - pipewire-v4l2

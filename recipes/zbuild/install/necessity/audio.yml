@@ -8,7 +8,6 @@ modules:
      packages:
     # => Alsa Core
       - alsa-ucm
-      - alsa-utils
     # => Alsa Firmwares
       - alsa-sof-firmware
       - alsa-firmware
