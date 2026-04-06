@@ -36,7 +36,7 @@ KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | 
 USBIO_BUILD_DIR="/tmp/usbio-drivers"
 ZENPOWER5_BUILD_DIR="/tmp/zenpower5"
 
-PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
+PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-mok.der"
 PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
 
 SIGNING_KEY="${WORKDIR}/signing_key.pem"

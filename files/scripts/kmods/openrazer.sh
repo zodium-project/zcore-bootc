@@ -34,7 +34,7 @@ WORKDIR="/tmp/certs"
 KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
 BUILD_DIR="/tmp/openrazer"
 
-PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-akmod.der"
+PUBLIC_KEY_DER="/etc/pki/akmods/certs/zodium-mok.der"
 PRIVATE_KEY_PEM="/tmp/certs/kernel_key.pem"
 
 SIGNING_KEY="${WORKDIR}/signing_key.pem"
