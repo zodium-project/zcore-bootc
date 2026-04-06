@@ -14,7 +14,7 @@ modules:
 
  - type: script
    env:
-     PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-akmod.der
+     PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-mok.der
    secrets:
      - type: file
        source: /tmp/certs/akmod-signing-private-key.pem

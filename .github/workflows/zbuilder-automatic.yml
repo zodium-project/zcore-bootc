@@ -34,11 +34,11 @@ jobs:
       - name: Extract Akmods module signing key
         shell: bash
         env:
-           ZODIUM_NVIDIA_PRIV: ${{ secrets.ZODIUM_NVIDIA_PRIV }}
+           ZODIUM_MOK_KEY: ${{ secrets.ZODIUM_MOK_KEY }}
         run: |
          mkdir -p /tmp/certs
          chmod 700 /tmp/certs
-         echo "${ZODIUM_NVIDIA_PRIV}" > /tmp/certs/akmod-signing-private-key.pem
+         echo "${ZODIUM_MOK_KEY}" > /tmp/certs/akmod-signing-private-key.pem
          chmod 600 /tmp/certs/akmod-signing-private-key.pem
 
       - name: Build Zodium Image

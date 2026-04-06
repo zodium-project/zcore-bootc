@@ -22,7 +22,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 
 # ── Config ────────────────────────────────────────────────────
 ENROLLMENT_PASSWORD="zodium"
-ENROLLMENT_MOK_DER="/etc/pki/akmods/certs/zodium-akmod.der"
+ENROLLMENT_MOK_DER="/etc/pki/akmods/certs/zodium-mok.der"
 
 # ── Header ────────────────────────────────────────────────────
 say ""
