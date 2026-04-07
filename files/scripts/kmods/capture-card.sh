@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ================================================================
-#  OpenRazer — Razer hardware support for zcore
+#  capture-card — install pre-built kmod RPMs from kmods-zodium
 #  Zodium Project : github.com/zodium-project
 # ================================================================
 
@@ -19,14 +19,14 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  OpenRazer Installer  ◈              ║${NC}"
-say "${MAGENTA}${BOLD}║   Razer hardware support for zcore       ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  sc0710 Installer  ◈                 ║${NC}"
+say "${MAGENTA}${BOLD}║   pre-built kmods from kmods-zodium      ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
 
 # ── Config ────────────────────────────────────────────────────
 KMODS_ZODIUM_REPO="zodium-project/kmods-zodium"
-KMOD="openrazer"
+KMOD="sc0710"
 
 # ── Temp dir with auto-cleanup ────────────────────────────────
 WORKDIR="$(mktemp -d)"
@@ -47,26 +47,26 @@ RELEASE_JSON="$(curl -fLsS "${RELEASE_API}")" \
 
 ok "Release found: ${RELEASE_TAG}"
 
-# ── Find the openrazer.zip asset URL ─────────────────────────
+# ── Find the sc0710.zip asset URL ─────────────────────────────
 ASSET_URL="$(
   printf '%s' "${RELEASE_JSON}" \
   | python3 -c "
 import json, sys
 assets = json.load(sys.stdin).get('assets', [])
-match = next((a['browser_download_url'] for a in assets if a['name'] == 'openrazer.zip'), None)
+match = next((a['browser_download_url'] for a in assets if a['name'] == 'sc0710.zip'), None)
 if not match:
-    raise SystemExit('openrazer.zip not found in release assets')
+    raise SystemExit('sc0710.zip not found in release assets')
 print(match)
-")" || fail "openrazer.zip not found in release ${RELEASE_TAG} — kmods-zodium may still be building"
+")" || fail "sc0710.zip not found in release ${RELEASE_TAG} — kmods-zodium may still be building"
 
 ok "Found asset: ${ASSET_URL}"
 
 # ── Download & extract ────────────────────────────────────────
-ZIP_PATH="${WORKDIR}/openrazer.zip"
+ZIP_PATH="${WORKDIR}/sc0710.zip"
 RPM_DIR="${WORKDIR}/rpms"
 mkdir -p "${RPM_DIR}"
 
-info "Downloading openrazer.zip..."
+info "Downloading sc0710.zip..."
 curl -fL --progress-bar "${ASSET_URL}" -o "${ZIP_PATH}"
 ok "Download complete"
 
@@ -74,7 +74,7 @@ info "Extracting RPMs..."
 unzip -q "${ZIP_PATH}" -d "${RPM_DIR}"
 
 RPM_COUNT="$(find "${RPM_DIR}" -name '*.rpm' | wc -l)"
-[[ "${RPM_COUNT}" -gt 0 ]] || fail "No RPMs found inside openrazer.zip"
+[[ "${RPM_COUNT}" -gt 0 ]] || fail "No RPMs found inside sc0710.zip"
 ok "Extracted ${RPM_COUNT} RPM(s):"
 find "${RPM_DIR}" -name '*.rpm' | while read -r rpm; do
   say "  ${CYAN}◈${NC}  $(basename "${rpm}")"
@@ -90,15 +90,6 @@ info "Refreshing module dependencies..."
 depmod -a "${KERNEL_VERSION}"
 ok "depmod complete"
 
-# ── Ensure plugdev group exists ───────────────────────────────
-info "Ensuring plugdev group exists..."
-if ! getent group plugdev > /dev/null; then
-    groupadd -r plugdev
-    ok "plugdev group created"
-else
-    ok "plugdev group already exists"
-fi
-
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
 dnf clean all
@@ -107,7 +98,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  OpenRazer Install Complete          ║${NC}"
-say "${MAGENTA}${BOLD}║   GUI: install Polychromatic via Flatpak ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  sc0710 Install Complete             ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

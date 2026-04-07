@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ================================================================
-#  OpenRazer — Razer hardware support for zcore
+#  wheels — install pre-built kmod RPMs from kmods-zodium
 #  Zodium Project : github.com/zodium-project
 # ================================================================
 
@@ -19,14 +19,14 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  OpenRazer Installer  ◈              ║${NC}"
-say "${MAGENTA}${BOLD}║   Razer hardware support for zcore       ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Wheel & Pedal kmods Install  ◈      ║${NC}"
+say "${MAGENTA}${BOLD}║   pre-built kmods from kmods-zodium      ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
 
 # ── Config ────────────────────────────────────────────────────
 KMODS_ZODIUM_REPO="zodium-project/kmods-zodium"
-KMOD="openrazer"
+KMODS=(new-lg4ff hid-fanatecff hid-tmff2)
 
 # ── Temp dir with auto-cleanup ────────────────────────────────
 WORKDIR="$(mktemp -d)"
@@ -47,57 +47,56 @@ RELEASE_JSON="$(curl -fLsS "${RELEASE_API}")" \
 
 ok "Release found: ${RELEASE_TAG}"
 
-# ── Find the openrazer.zip asset URL ─────────────────────────
-ASSET_URL="$(
-  printf '%s' "${RELEASE_JSON}" \
-  | python3 -c "
+# ── Fetch, extract & install each kmod ───────────────────────
+for KMOD in "${KMODS[@]}"; do
+  say ""
+  info "Processing ${KMOD}..."
+
+  # Find asset URL
+  ASSET_URL="$(
+    printf '%s' "${RELEASE_JSON}" \
+    | python3 -c "
 import json, sys
 assets = json.load(sys.stdin).get('assets', [])
-match = next((a['browser_download_url'] for a in assets if a['name'] == 'openrazer.zip'), None)
+match = next((a['browser_download_url'] for a in assets if a['name'] == '${KMOD}.zip'), None)
 if not match:
-    raise SystemExit('openrazer.zip not found in release assets')
+    raise SystemExit('${KMOD}.zip not found in release assets')
 print(match)
-")" || fail "openrazer.zip not found in release ${RELEASE_TAG} — kmods-zodium may still be building"
+  ")" || fail "${KMOD}.zip not found in release ${RELEASE_TAG} — kmods-zodium may still be building"
 
-ok "Found asset: ${ASSET_URL}"
+  ok "Found asset: ${ASSET_URL}"
 
-# ── Download & extract ────────────────────────────────────────
-ZIP_PATH="${WORKDIR}/openrazer.zip"
-RPM_DIR="${WORKDIR}/rpms"
-mkdir -p "${RPM_DIR}"
+  # Download
+  ZIP_PATH="${WORKDIR}/${KMOD}.zip"
+  RPM_DIR="${WORKDIR}/${KMOD}-rpms"
+  mkdir -p "${RPM_DIR}"
 
-info "Downloading openrazer.zip..."
-curl -fL --progress-bar "${ASSET_URL}" -o "${ZIP_PATH}"
-ok "Download complete"
+  info "Downloading ${KMOD}.zip..."
+  curl -fL --progress-bar "${ASSET_URL}" -o "${ZIP_PATH}"
+  ok "Download complete"
 
-info "Extracting RPMs..."
-unzip -q "${ZIP_PATH}" -d "${RPM_DIR}"
+  # Extract
+  info "Extracting RPMs..."
+  unzip -q "${ZIP_PATH}" -d "${RPM_DIR}"
 
-RPM_COUNT="$(find "${RPM_DIR}" -name '*.rpm' | wc -l)"
-[[ "${RPM_COUNT}" -gt 0 ]] || fail "No RPMs found inside openrazer.zip"
-ok "Extracted ${RPM_COUNT} RPM(s):"
-find "${RPM_DIR}" -name '*.rpm' | while read -r rpm; do
-  say "  ${CYAN}◈${NC}  $(basename "${rpm}")"
+  RPM_COUNT="$(find "${RPM_DIR}" -name '*.rpm' | wc -l)"
+  [[ "${RPM_COUNT}" -gt 0 ]] || fail "No RPMs found inside ${KMOD}.zip"
+  ok "Extracted ${RPM_COUNT} RPM(s):"
+  find "${RPM_DIR}" -name '*.rpm' | while read -r rpm; do
+    say "  ${CYAN}◈${NC}  $(basename "${rpm}")"
+  done
+
+  # Install
+  info "Installing ${KMOD} RPMs via dnf..."
+  dnf install -y --setopt=install_weak_deps=False "${RPM_DIR}"/*.rpm
+  ok "${KMOD} RPMs installed"
 done
 
-# ── Install RPMs ──────────────────────────────────────────────
-info "Installing RPMs via dnf..."
-dnf install -y --setopt=install_weak_deps=False "${RPM_DIR}"/*.rpm
-ok "RPMs installed"
-
 # ── Refresh module dependencies ───────────────────────────────
+say ""
 info "Refreshing module dependencies..."
 depmod -a "${KERNEL_VERSION}"
 ok "depmod complete"
-
-# ── Ensure plugdev group exists ───────────────────────────────
-info "Ensuring plugdev group exists..."
-if ! getent group plugdev > /dev/null; then
-    groupadd -r plugdev
-    ok "plugdev group created"
-else
-    ok "plugdev group already exists"
-fi
 
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
@@ -106,8 +105,7 @@ ok "Cleanup complete"
 
 # ── Done ──────────────────────────────────────────────────────
 say ""
-say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  OpenRazer Install Complete          ║${NC}"
-say "${MAGENTA}${BOLD}║   GUI: install Polychromatic via Flatpak ║${NC}"
-say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say "${MAGENTA}${BOLD}╔════════════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Wheel & Pedal kmods Install Complete      ║${NC}"
+say "${MAGENTA}${BOLD}╚════════════════════════════════════════════════╝${NC}"
 say ""

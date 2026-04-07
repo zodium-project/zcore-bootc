@@ -25,6 +25,11 @@ modules:
       - kmods/openrazer.sh
       - kmods/v4l2loopback.sh
       - kmods/controllers.sh
+      - kmods/capture-card.sh
+      - kmods/displaylink.sh
+      - kmods/openzfs.sh
+      - kmods/wheels.sh
+      - kmods/broadcom-wl.sh
       - pkgs/multimedia.sh
       - pkgs/mesa-nonfree.sh
 
