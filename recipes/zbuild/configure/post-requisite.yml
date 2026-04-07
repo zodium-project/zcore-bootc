@@ -6,13 +6,6 @@ modules:
    snippets:
       - dnf remove -y kernel-devel kernel-headers gcc gcc-c++ make
 
-# - type: dnf
-#   group-install:
-#     with-optional: false
-#     install-weak-deps: false
-#     packages:
-#         - development-tools
-
  - type: script
    snippets:
       - dnf upgrade --refresh --setopt=install_weak_deps=False -y

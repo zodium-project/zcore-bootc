@@ -9,14 +9,6 @@ modules:
       - dnf config-manager setopt fedora-multimedia.enabled=1
       - dnf config-manager setopt fedora-multimedia.priority=90
       - dnf upgrade --refresh --setopt=install_weak_deps=False -y
-#      - dnf install -y --setopt=install_weak_deps=False "kernel-devel-matched-$(rpm -q kernel --queryformat '%{VERSION}')" gcc-c++ gcc make
-
-# - type: dnf
-#   group-install:
-#     with-optional: false
-#     install-weak-deps: false
-#     packages:
-#         - development-tools
 
  - type: files
    files:

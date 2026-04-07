@@ -80,16 +80,6 @@ find "${RPM_DIR}" -name '*.rpm' | while read -r rpm; do
   say "  ${CYAN}◈${NC}  $(basename "${rpm}")"
 done
 
-# ── Install kmod RPMs ─────────────────────────────────────────
-info "Installing nvidia kmod RPMs via dnf..."
-dnf install -y --setopt=install_weak_deps=False "${RPM_DIR}"/*.rpm
-ok "nvidia kmod RPMs installed"
-
-# ── Refresh module dependencies ───────────────────────────────
-info "Refreshing module dependencies..."
-depmod -a "${KERNEL_VERSION}"
-ok "depmod complete"
-
 # ── Add Negativo17 NVIDIA repo ────────────────────────────────
 say ""
 info "Adding Negativo17 NVIDIA repo..."
@@ -101,6 +91,16 @@ info "Disabling Negativo17 Multimedia repo..."
 dnf config-manager setopt fedora-multimedia.enabled=0
 dnf --refresh makecache
 ok "Negativo17 repos added"
+
+# ── Install kmod RPMs ─────────────────────────────────────────
+info "Installing nvidia kmod RPMs via dnf..."
+dnf install -y --setopt=install_weak_deps=False "${RPM_DIR}"/*.rpm
+ok "nvidia kmod RPMs installed"
+
+# ── Refresh module dependencies ───────────────────────────────
+info "Refreshing module dependencies..."
+depmod -a "${KERNEL_VERSION}"
+ok "depmod complete"
 
 # ── Install NVIDIA userspace & container toolkit ──────────────
 info "Installing NVIDIA userspace driver and container toolkit..."
