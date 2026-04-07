@@ -11,6 +11,12 @@ modules:
       - linux-firmware
       - kernel-tools-libs
       - kernel-modules-extra
+    # => Kmod Deps
+      - curl 
+      - python3
+      - unzip
+      - kmod
+      - policycoreutils
 
  - type: script
    env:
