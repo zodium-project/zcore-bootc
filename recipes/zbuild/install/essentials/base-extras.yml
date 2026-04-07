@@ -8,7 +8,6 @@ modules:
       - pkgs/udevs.sh 
       - pkgs/zcore-cli.sh
       - pkgs/zodium-utils.sh
-    # - pkgs/qemu-libvirt.sh
 
   - type: dnf
     install:
