@@ -6,7 +6,6 @@ modules:
     fonts:
       nerd-fonts:
        - Hack
-       - Iosevka
 
   - type: dnf
     install:
