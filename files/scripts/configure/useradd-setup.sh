@@ -29,15 +29,6 @@ info "Setting default shell to zsh..."
 sed -i 's|^SHELL=.*|SHELL=/usr/bin/zsh|' useradd
 ok "Default shell set to /usr/bin/zsh"
 
-# ── Ensure all new users are in gamemode group ────────────────
-info "Setting default group to gamemode..."
-if grep -q '^GROUPS=' useradd; then
-    sed -i 's|^GROUPS=.*|GROUPS=gamemode|' useradd
-else
-    printf 'GROUPS=gamemode\n' >> useradd
-fi
-ok "Default group set to gamemode"
-
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
