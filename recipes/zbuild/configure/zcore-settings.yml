@@ -32,4 +32,5 @@ modules:
       - "systemctl enable systemd-timesyncd.service"
       - "systemctl enable zodium-hostname.service"
       - "systemctl enable zodium-groups.service"
+      - "systemctl enable zodium-rfkill.service"
       - "plymouth-set-default-theme zomac"
