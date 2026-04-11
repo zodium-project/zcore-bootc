@@ -28,7 +28,6 @@ modules:
          type: file
          destination: /tmp/certs/kernel_key.pem
    scripts:
-      - pkgs/zodium-pkgs.sh
       - kmods/openrazer.sh
       - kmods/v4l2loopback.sh
       - kmods/controllers.sh
