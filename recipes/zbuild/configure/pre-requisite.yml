@@ -8,6 +8,8 @@ modules:
       - dnf config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-multimedia.repo
       - dnf config-manager setopt fedora-multimedia.enabled=1
       - dnf config-manager setopt fedora-multimedia.priority=90
+      - curl -o /etc/yum.repos.d/zodium-kmods.repo https://zodium-project.github.io/repo/zodium-kmods.repo
+      - curl -o /etc/yum.repos.d/zodium-pkgs.repo https://zodium-project.github.io/repo/zodium-pkgs.repo
       - dnf upgrade --refresh --setopt=install_weak_deps=False -y
 
  - type: files
