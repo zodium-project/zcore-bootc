@@ -4,7 +4,7 @@
 modules:
  - type: script
    snippets:
-      - dnf remove -y kernel-devel kernel-headers gcc gcc-c++ make
+    # - dnf remove -y kernel-devel kernel-headers gcc gcc-c++ make
 
  - type: script
    snippets:
