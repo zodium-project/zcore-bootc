@@ -13,56 +13,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  # ── Detect latest Fedora kernel & verify kmods available ─────
-  check-kmods:
-    name: Check kmods availability
-    runs-on: ubuntu-latest
-    outputs:
-      kmods_available: ${{ steps.check.outputs.kmods_available }}
-      kernel_version: ${{ steps.check.outputs.kernel_version }}
-
-    steps:
-      - name: Detect kernel & check kmods-zodium release
-        id: check
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          FEDORA_VERSION="$(curl -fLsS "https://endoflife.date/api/fedora.json" \
-            | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['cycle'])")"
-
-          KERNEL_VERSION="$(curl -fLsS "https://koji.fedoraproject.org/kojihub" \
-            -H "Content-Type: text/xml" \
-            -d "<?xml version=\"1.0\"?><methodCall><methodName>getLatestRPMS</methodName><params><param><value>f${FEDORA_VERSION}-updates</value></param><param><value>kernel</value></param></params></methodCall>" \
-            | grep -oP '<string>\K[^<]+' | grep '^kernel-[0-9]' | head -1 \
-            | sed 's/^kernel-//' | sed 's/$/.x86_64/')"
-
-          [[ -n "$KERNEL_VERSION" ]] \
-            || { echo "Failed to detect kernel version"; exit 1; }
-          echo "Detected kernel: ${KERNEL_VERSION}"
-
-          RELEASE_TAG="kernel-${KERNEL_VERSION}"
-          echo "Looking for kmods-zodium release: ${RELEASE_TAG}"
-
-          STATUS="$(gh release view "${RELEASE_TAG}" \
-            --repo zodium-project/kmods-zodium \
-            --json tagName \
-            --jq '.tagName' 2>/dev/null || echo "")"
-
-          if [[ "${STATUS}" == "${RELEASE_TAG}" ]]; then
-            echo "kmods available for ${KERNEL_VERSION} ✓"
-            echo "kmods_available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No kmods release found for ${KERNEL_VERSION} — skipping build"
-            echo "kmods_available=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          echo "kernel_version=${KERNEL_VERSION}" >> "$GITHUB_OUTPUT"
-
   bluebuild:
     name: zbuild (${{ matrix.recipe }})
     runs-on: ubuntu-latest
-    needs: check-kmods
-    if: needs.check-kmods.outputs.kmods_available == 'true'
     permissions:
       contents: read
       packages: write
