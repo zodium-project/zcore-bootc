@@ -3,7 +3,6 @@
 #  Xone, Xpadneo — install pre-built kmod RPMs from kmods-zodium
 #  Zodium Project : github.com/zodium-project
 # ================================================================
-
 set -Eeuo pipefail
 
 # ── Styling ───────────────────────────────────────────────────
