@@ -14,8 +14,8 @@ modules:
 
  - type: script
    snippets:
-      - "dnf swap fedora-logos fedora-logos --repo=zodium-pkgs"
-      - "dnf install zodium-settings"
+      - "dnf swap fedora-logos fedora-logos --repo=zodium-pkgs -y"
+      - "dnf install zodium-settings -y"
 
  - type: script
    scripts:
