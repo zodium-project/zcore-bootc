@@ -5,6 +5,7 @@ on:
       - "**.md"
       - ".gitignore"
       - "LICENSE"
+      - ".keepalive"
 
   pull_request:
   workflow_dispatch:
