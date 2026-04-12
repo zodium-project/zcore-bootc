@@ -25,17 +25,6 @@ say "${MAGENTA}${BOLD}║   docker-ce · containerd · compose       ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
 
-# ── Add Docker CE Repository ──────────────────────────────────
-info "Adding Docker CE repo..."
-
-dnf config-manager addrepo \
-    --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
-dnf config-manager setopt docker-ce-stable.enabled=1
-dnf config-manager setopt docker-ce-stable.priority=90
-dnf --refresh makecache
-
-ok "Docker CE repo added"
-
 # ── Docker CE Packages ────────────────────────────────────────
 DOCKER_PKGS=(
     docker-ce
@@ -63,8 +52,6 @@ ok "Services enabled"
 
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
-dnf config-manager setopt docker-ce-stable.enabled=0
-rm -f /etc/yum.repos.d/docker-ce.repo
 dnf clean all
 dnf autoremove -y
 dnf clean packages

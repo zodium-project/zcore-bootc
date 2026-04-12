@@ -7,7 +7,6 @@ modules:
       - pkgs/docker-ce.sh
       - pkgs/udevs.sh 
       - pkgs/zcore-cli.sh
-      - pkgs/zodium-utils.sh
 
   - type: dnf
     install:

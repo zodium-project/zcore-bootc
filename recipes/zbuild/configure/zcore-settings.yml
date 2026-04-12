@@ -13,8 +13,12 @@ modules:
        destination: /
 
  - type: script
+   snippets:
+      - "dnf swap fedora-logos fedora-logos --repo=zodium-pkgs"
+      - "dnf install zodium-settings"
+
+ - type: script
    scripts:
-      - pkgs/zodium-pkgs.sh
       - configure/permissions-setup.sh
       - configure/useradd-setup.sh
       - configure/tuned-cleanup.sh
