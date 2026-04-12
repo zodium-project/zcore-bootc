@@ -2,10 +2,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
 
 modules:
-# - type: script
-#   snippets:
-#      - dnf remove -y kernel-devel kernel-headers gcc gcc-c++ make
-
  - type: script
    snippets:
       - dnf upgrade --refresh --setopt=install_weak_deps=False -y

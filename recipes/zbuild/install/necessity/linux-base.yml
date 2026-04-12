@@ -19,14 +19,6 @@ modules:
       - policycoreutils
 
  - type: script
-   env:
-     PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/zodium-mok.der
-   secrets:
-     - type: file
-       source: /tmp/certs/akmod-signing-private-key.pem
-       mount:
-         type: file
-         destination: /tmp/certs/kernel_key.pem
    scripts:
       - kmods/openrazer.sh
       - kmods/v4l2loopback.sh

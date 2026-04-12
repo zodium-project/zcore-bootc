@@ -20,7 +20,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  Docker CE Installer          ◈      ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Docker CE Installer          ◈    ║${NC}"
 say "${MAGENTA}${BOLD}║   docker-ce · containerd · compose       ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -60,6 +60,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  Docker CE Install Complete          ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Docker CE Install Complete         ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

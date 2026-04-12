@@ -18,7 +18,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  OpenRazer Installer  ◈              ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  OpenRazer Installer  ◈            ║${NC}"
 say "${MAGENTA}${BOLD}║   Razer hardware support for zcore       ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -57,7 +57,7 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  OpenRazer Install Complete          ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  OpenRazer Install Complete         ║${NC}"
 say "${MAGENTA}${BOLD}║   GUI: install Polychromatic via Flatpak ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

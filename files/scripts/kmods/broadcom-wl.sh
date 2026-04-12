@@ -18,10 +18,10 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 
 # ── Header ────────────────────────────────────────────────────
 say ""
-say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  akmod-wl Install (kmods-zodium)  ◈  ║${NC}"
-say "${MAGENTA}${BOLD}║   Broadcom Wi-Fi kernel module           ║${NC}"
-say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say "${MAGENTA}${BOLD}╔═════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║ ◈  akmod-wl Install (kmods-zodium)  ◈ ║${NC}"
+say "${MAGENTA}${BOLD}║   Broadcom Wi-Fi kernel module          ║${NC}"
+say "${MAGENTA}${BOLD}╚═════════════════════════════════════════╝${NC}"
 say ""
 
 # ── Detect running kernel ─────────────────────────────────────
@@ -48,7 +48,7 @@ ok "Cleanup complete"
 
 # ── Done ──────────────────────────────────────────────────────
 say ""
-say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  akmod-wl Install Complete           ║${NC}"
-say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
+say "${MAGENTA}${BOLD}╔═════════════════════════════════════════╗${NC}"
+say "${MAGENTA}${BOLD}║   ◆  akmod-wl Install Complete         ║${NC}"
+say "${MAGENTA}${BOLD}╚═════════════════════════════════════════╝${NC}"
 say ""

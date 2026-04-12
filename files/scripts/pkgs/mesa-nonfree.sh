@@ -20,7 +20,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  Mesa & GPU Driver Installer  ◈      ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Mesa & GPU Driver Installer  ◈    ║${NC}"
 say "${MAGENTA}${BOLD}║   negativo17 · mesa · intel · vaapi      ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -70,6 +70,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  Mesa & GPU Install Complete         ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Mesa & GPU Install Complete        ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

@@ -19,9 +19,7 @@ modules:
 
  - type: script
    scripts:
-      - configure/permissions-setup.sh
       - configure/useradd-setup.sh
-      - configure/tuned-cleanup.sh
       - configure/plymouth-cleanup.sh
 
  - type: script

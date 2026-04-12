@@ -18,7 +18,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  evdi Installer  ◈                   ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  evdi Installer  ◈                 ║${NC}"
 say "${MAGENTA}${BOLD}║   pre-built kmods from kmods-zodium      ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -49,6 +49,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  evdi Install Complete               ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  evdi Install Complete              ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

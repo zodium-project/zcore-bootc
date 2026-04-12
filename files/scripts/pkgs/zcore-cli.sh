@@ -20,7 +20,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  CLI Tools Installer  ◈              ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  CLI Tools Installer  ◈            ║${NC}"
 say "${MAGENTA}${BOLD}║   modern shell utilities                 ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -76,6 +76,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  CLI Tools Install Complete          ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  CLI Tools Install Complete         ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

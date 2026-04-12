@@ -20,7 +20,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  Udev Rules Installer  ◈             ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Udev Rules Installer  ◈           ║${NC}"
 say "${MAGENTA}${BOLD}║   hardware & peripheral support          ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -69,6 +69,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  Udev Rules Install Complete         ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Udev Rules Install Complete        ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

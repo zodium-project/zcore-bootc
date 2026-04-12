@@ -18,7 +18,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  xpadneo & xone Install  ◈           ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  xpadneo & xone Install  ◈         ║${NC}"
 say "${MAGENTA}${BOLD}║   pre-built kmods from kmods-zodium      ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -50,6 +50,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  xpadneo & xone Install Complete     ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  xpadneo & xone Install Complete    ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

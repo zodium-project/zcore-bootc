@@ -42,7 +42,7 @@ PACKAGES=(
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  KVM Setup  ◈                    ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  KVM Setup  ◈                  ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════╝${NC}"
 say ""
 
@@ -77,7 +77,7 @@ fi
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  KVM Setup Complete  ◆           ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  KVM Setup Complete  ◆         ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════╝${NC}"
 say ""
 say "  ${YELLOW}◇${NC}  ${DIM}To start libvirt:     systemctl enable --now libvirtd${NC}"

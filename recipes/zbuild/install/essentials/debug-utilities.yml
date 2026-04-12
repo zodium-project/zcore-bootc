@@ -13,3 +13,4 @@ modules:
       - libinput-utils
       - pipewire-utils
       - libva-utils
+      - vdpauinfo

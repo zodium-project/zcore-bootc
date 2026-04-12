@@ -19,7 +19,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  NVIDIA Driver Installer  ◈          ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  NVIDIA Driver Installer  ◈        ║${NC}"
 say "${MAGENTA}${BOLD}║   NVIDIA OPEN drivers for zcore          ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
@@ -102,6 +102,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  NVIDIA Driver Install Complete      ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  NVIDIA Driver Install Complete     ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
