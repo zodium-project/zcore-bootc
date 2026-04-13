@@ -45,8 +45,8 @@ modules:
 ## OS-release Module ##
   - type: os-release
     properties:
-      NAME: Zcore Linux
-      PRETTY_NAME: Zcore Linux (NVIDIA)
+      NAME: zcore linux
+      PRETTY_NAME: Zcore Linux
       DEFAULT_HOSTNAME: zodium
 ## initramfs module ##
   - type: initramfs

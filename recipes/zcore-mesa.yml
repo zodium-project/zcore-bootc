@@ -6,7 +6,7 @@
 #### Image Info ####
 ####################
 name: zcore-bootc
-description: Base Zcore Bootc Image (Fedora-Bootc + ESSENTIALS)
+description: zcore image for Intel/AMD GPUs
 base-image: quay.io/fedora/fedora-bootc
 image-version: latest
 platforms:
@@ -43,8 +43,8 @@ modules:
 ## OS-release Module ##
   - type: os-release
     properties:
-      NAME: Zcore Linux
-      PRETTY_NAME: Zcore Linux (Bootc)
+      NAME: zcore linux
+      PRETTY_NAME: Zcore Linux
       DEFAULT_HOSTNAME: zodium
 ## initramfs module ##
   - type: initramfs
