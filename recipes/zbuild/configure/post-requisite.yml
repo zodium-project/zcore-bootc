@@ -6,6 +6,8 @@ modules:
    snippets:
       - dnf upgrade --refresh --setopt=install_weak_deps=False -y
       - dnf config-manager setopt fedora-multimedia.enabled=0
+      - dnf config-manager setopt zodium-kmods.enabled=0
+      - dnf config-manager setopt zodium-pkgs.enabled=0
       - rm -f /etc/yum.repos.d/fedora-multimedia.repo
       - rm -f /etc/yum.repos.d/zodium-kmods.repo
       - rm -f /etc/yum.repos.d/zodium-pkgs.repo
