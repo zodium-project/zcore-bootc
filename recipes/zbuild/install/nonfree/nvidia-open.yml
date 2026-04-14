@@ -43,15 +43,13 @@ modules:
       - modprobe.blacklist=nouveau,nova_core
 
   - type: script
-    env:
-      KERNEL_VERSION: "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
     snippets:
       - |
+        KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
         depmod -a "${KERNEL_VERSION}"
         sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
         sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
         systemctl enable nvidia-persistenced.service
-        systemctl enable nvidia-cdi-refresh.path
 
   - type: script
     snippets:
