@@ -2,7 +2,6 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
 
 modules:
-
  - type: dnf
    install:
      install-weak-deps: false
@@ -11,31 +10,6 @@ modules:
       - linux-firmware
       - kernel-tools-libs
       - kernel-modules-extra
-    # => Kmod Deps
-      - curl 
-      - python3
-      - unzip
-      - kmod
-      - policycoreutils
-
- - type: script
-   scripts:
-      - kmods/openrazer.sh
-      - kmods/v4l2loopback.sh
-      - kmods/controllers.sh
-      - kmods/capture-card.sh
-      - kmods/displaylink.sh
-      - kmods/openzfs.sh
-      - kmods/wheels.sh
-      - kmods/kmod-map.sh
-      - kmods/broadcom-wl.sh
-      - pkgs/multimedia.sh
-      - pkgs/mesa-nonfree.sh
-
- - type: dnf
-   install:
-     install-weak-deps: false
-     packages:
     # => Init & Defaults
       - systemd-oomd-defaults
       - uresourced
@@ -49,7 +23,7 @@ modules:
       - mangohud
     # => TPM2.0 Support
       - tpm2-tools
-    # => Pacakge Support (Appimage & winboat)
+    # => fuse (Appimage & winboat)
       - fuse
       - fuse-libs
       - freerdp

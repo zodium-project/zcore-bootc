@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+      # => Kvm-requirements
+      - swtpm
+      - edk2-ovmf
+      - swtpm-tools
+      # => Qemu-kvm
+      - qemu-kvm
+      - qemu-img
+      - qemu-device-display-virtio-gpu
+      - qemu-device-display-virtio-gpu-gl
+      - qemu-device-display-virtio-vga-gl
+      # => libvirt
+      - libvirt
+      - libvirt-daemon-kvm
+      - libvirt-daemon-driver-qemu
+      - libvirt-daemon-config-network
+      - libvirt-daemon-driver-nodedev
+      # => virt-extras
+      - virtiofsd
+      - virtio-win
+      - virt-viewer
+      - virt-install

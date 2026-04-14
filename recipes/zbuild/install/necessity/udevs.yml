@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+ - type: dnf
+   install:
+     install-weak-deps: false
+     packages:
+        - solaar-udev
+        - xr-hardware
+        - trezor-common
+        - oversteer-udev
+        - liquidctl-udev
+        - udev-hid-bpf
+        - openrgb-udev-rules
+        - 3dprinter-udev-rules
+        - ublue-os-udev-rules
+        - unifying-receiver-udev
+        - udev-hid-bpf-stable
+        - mooltipass-udev

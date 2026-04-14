@@ -26,6 +26,10 @@ modules:
   - from-file: zbuild/install/necessity/connectivity.yml
   - from-file: zbuild/install/necessity/camera.yml
   - from-file: zbuild/install/necessity/printers.yml
+#### => Nonfree Packages / Tweaks to install.
+  - from-file: zbuild/install/nonfree/mesa.yml
+  - from-file: zbuild/install/nonfree/kmods.yml
+  - from-file: zbuild/install/nonfree/codecs.yml
 #### => Extra Packages / Tweaks to install.
   - from-file: zbuild/install/essentials/base-extras.yml
   - from-file: zbuild/install/essentials/fonts.yml
@@ -45,7 +49,6 @@ modules:
     properties:
       NAME: zcore linux
       PRETTY_NAME: Zcore Linux
-      DEFAULT_HOSTNAME: zodium
 ## initramfs module ##
   - type: initramfs
 ## Signing Module ##
