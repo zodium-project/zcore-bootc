@@ -13,7 +13,7 @@ modules:
     env:
       KERNEL_VERSION: "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
     snippets:
-      - dnf install -y kmod-nvidia-"${KERNEL_VERSION} nvidia-modprobe nvidia-kmod-common nvidia-driver-selinux"
+      - dnf install -y kmod-nvidia-"${KERNEL_VERSION}" nvidia-modprobe nvidia-kmod-common nvidia-driver-selinux
 
   - type: dnf
     repos:
