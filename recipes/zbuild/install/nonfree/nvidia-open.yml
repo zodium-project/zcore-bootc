@@ -9,9 +9,13 @@ modules:
       - dnf config-manager setopt fedora-nvidia.enabled=1
       - dnf config-manager setopt fedora-nvidia.priority=90
 
-  - type: dnf
+  - type: script
     env:
       KERNEL_VERSION: "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+    snippets:
+      - dnf install kmod-nvidia-"${KERNEL_VERSION}"
+
+  - type: dnf
     repos:
      copr:
       - ai-ml/nvidia-container-toolkit
@@ -22,7 +26,6 @@ modules:
       - nvidia-modprobe
       - nvidia-kmod-common
       - nvidia-driver-selinux
-      - kmod-nvidia-"${KERNEL_VERSION}"
     # => userspace-driver
       - nvidia-driver
       - nvidia-persistenced
