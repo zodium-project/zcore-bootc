@@ -31,8 +31,8 @@ info "Kernel: ${KERNEL_VERSION}"
 # ── Install RPMs ──────────────────────────────────────────────
 info "Installing RPMs via dnf..."
 dnf install -y --setopt=install_weak_deps=False \
-               v4l2loopback-kmod-common-devel   \
-               v4l2loopback-kmod-common-utils   \
+               v4l2loopback                     \
+               v4l2loopback-akmod-modules       \
                kmod-v4l2loopback-"${KERNEL_VERSION}"
 ok "RPMs installed"
 
