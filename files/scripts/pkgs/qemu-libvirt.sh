@@ -16,10 +16,6 @@ warn() { say "${YELLOW}◇${NC}  $*"; }
 fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 step() { say "${BLUE}›${NC}  $*"; }
 
-command -v dnf &>/dev/null || fail "dnf not found — is this Fedora?"
-
-VIRTIO_WIN_URL="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.noarch.rpm"
-
 PACKAGES=(
     qemu-kvm
     qemu-img
@@ -34,6 +30,7 @@ PACKAGES=(
     qemu-device-display-virtio-gpu
     qemu-device-display-virtio-gpu-gl
     qemu-device-display-virtio-vga-gl
+    virtio-win
     virtiofsd
     virt-install
     virt-viewer
@@ -50,12 +47,6 @@ say ""
 step "Installing KVM packages..."
 dnf --setopt=install_weak_deps=false install -y "${PACKAGES[@]}"
 ok "Packages installed"
-
-# ── virtio-win from direct URL ────────────────────────────────
-say ""
-step "Installing virtio-win from direct URL..."
-dnf --setopt=install_weak_deps=false install -y "$VIRTIO_WIN_URL"
-ok "virtio-win installed  ${DIM}(ISO at /usr/share/virtio-win/virtio-win.iso)${NC}"
 
 # ── Ensure libvirt group exists ───────────────────────────────
 step "Ensuring libvirt group exists..."
@@ -82,6 +73,4 @@ say "${MAGENTA}${BOLD}╚══════════════════�
 say ""
 say "  ${YELLOW}◇${NC}  ${DIM}To start libvirt:     systemctl enable --now libvirtd${NC}"
 say "  ${YELLOW}◇${NC}  ${DIM}To add your user:     usermod -aG libvirt,kvm \$(whoami)${NC}"
-say "  ${YELLOW}◇${NC}  ${DIM}virtio-win ISO:       /usr/share/virtio-win/virtio-win.iso${NC}"
-say "  ${YELLOW}◇${NC}  ${DIM}Verify KVM:           virt-host-validate${NC}"
 say ""

@@ -25,11 +25,6 @@ say "${MAGENTA}${BOLD}║   hardware & peripheral support          ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
 
-# ── Add COPR repo ─────────────────────────────────────────────
-info "Enabling ublue-os/packages COPR..."
-dnf -y copr enable ublue-os/packages
-ok "COPR repo enabled"
-
 # ── Install udev packages ─────────────────────────────────────
 info "Installing udev packages..."
 dnf -y install --setopt=install_weak_deps=False \
@@ -43,24 +38,9 @@ dnf -y install --setopt=install_weak_deps=False \
     mooltipass-udev \
     xr-hardware \
     trezor-common \
-    liquidctl-udev
+    liquidctl-udev \
+    oversteer-udev
 ok "udev packages installed"
-
-# ── Oversteer wheel rules ─────────────────────────────────────
-info "Fetching Oversteer wheel rules..."
-RULES_DIR="/usr/lib/udev/rules.d"
-OVERSTEER_BASE="https://github.com/berarma/oversteer/raw/refs/heads/master/data/udev"
-
-curl -fLsS -o "${RULES_DIR}/99-fanatec-wheel-perms.rules"      "${OVERSTEER_BASE}/99-fanatec-wheel-perms.rules"
-curl -fLsS -o "${RULES_DIR}/99-logitech-wheel-perms.rules"     "${OVERSTEER_BASE}/99-logitech-wheel-perms.rules"
-curl -fLsS -o "${RULES_DIR}/99-thrustmaster-wheel-perms.rules" "${OVERSTEER_BASE}/99-thrustmaster-wheel-perms.rules"
-ok "Oversteer wheel rules installed"
-
-# ── Cleanup ───────────────────────────────────────────────────
-info "Disabling COPR repo..."
-dnf -y copr disable ublue-os/packages
-rm -rf /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:ublue-os:packages.repo
-ok "COPR repo disabled"
 
 info "Running DNF cleanup..."
 dnf clean all
