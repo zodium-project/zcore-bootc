@@ -18,7 +18,7 @@ modules:
   - type: dnf
     repos:
      copr:
-      - ai-ml/nvidia-container-toolkit
+      - "@ai-ml/nvidia-container-toolkit"
     install:
      install-weak-deps: false
      packages:
@@ -55,5 +55,5 @@ modules:
     snippets:
       - dnf config-manager setopt fedora-nvidia.enabled=0
       - rm -f /etc/yum.repos.d/fedora-nvidia.repo
-      - rm -rf /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:ai-ml:nvidia-container-toolkit.repo
+      - rm -rf /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:*
       - dnf config-manager setopt fedora-multimedia.enabled=1
