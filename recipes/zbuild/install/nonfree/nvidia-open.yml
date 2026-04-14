@@ -4,10 +4,11 @@
 modules:
   - type: script
     snippets:
-      - dnf config-manager setopt fedora-multimedia.enabled=0
-      - dnf config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo
-      - dnf config-manager setopt fedora-nvidia.enabled=1
-      - dnf config-manager setopt fedora-nvidia.priority=90
+      - |
+        dnf config-manager setopt fedora-multimedia.enabled=0
+        dnf config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo
+        dnf config-manager setopt fedora-nvidia.enabled=1
+        dnf config-manager setopt fedora-nvidia.priority=90
 
   - type: script
     env:
@@ -17,24 +18,24 @@ modules:
 
   - type: dnf
     repos:
-     copr:
-      - "@ai-ml/nvidia-container-toolkit"
+      copr:
+        - "@ai-ml/nvidia-container-toolkit"
     install:
-     install-weak-deps: false
-     packages:
-    # => userspace-driver
-      - nvidia-driver
-      - nvidia-persistenced
-      - nvidia-driver-cuda
-      - nvidia-driver-NvFBCOpenGL
-      - libnvidia-fbc
-    # => VA-API support
-      - libva-nvidia-driver
-    # => settings GUI
-      - nvidia-settings
-    # => container toolkit
-      - nvidia-container-toolkit
-      - nvidia-container-toolkit-selinux
+      install-weak-deps: false
+      packages:
+        # => userspace-driver
+        - nvidia-driver
+        - nvidia-persistenced
+        - nvidia-driver-cuda
+        - nvidia-driver-NvFBCOpenGL
+        - libnvidia-fbc
+        # => VA-API support
+        - libva-nvidia-driver
+        # => settings GUI
+        - nvidia-settings
+        # => container toolkit
+        - nvidia-container-toolkit
+        - nvidia-container-toolkit-selinux
 
   - type: kargs
     kargs:
@@ -45,15 +46,17 @@ modules:
     env:
       KERNEL_VERSION: "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
     snippets:
-      - depmod -a "${KERNEL_VERSION}"
-      - sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
-      - sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
-      - systemctl enable nvidia-persistenced.service
-      - systemctl enable nvidia-cdi-refresh.path
+      - |
+        depmod -a "${KERNEL_VERSION}"
+        sed -i 's/omit_drivers/force_drivers/g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+        sed -i 's/ nvidia / i915 amdgpu nvidia /g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
+        systemctl enable nvidia-persistenced.service
+        systemctl enable nvidia-cdi-refresh.path
 
   - type: script
     snippets:
-      - dnf config-manager setopt fedora-nvidia.enabled=0
-      - rm -f /etc/yum.repos.d/fedora-nvidia.repo
-      - rm -rf /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:*
-      - dnf config-manager setopt fedora-multimedia.enabled=1
+      - |
+        dnf config-manager setopt fedora-nvidia.enabled=0
+        rm -f /etc/yum.repos.d/fedora-nvidia.repo
+        rm -rf /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:*
+        dnf config-manager setopt fedora-multimedia.enabled=1

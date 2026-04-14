@@ -4,19 +4,20 @@
 modules:
  - type: script
    snippets:
-      - dnf install -y --setopt=install_weak_deps=False dnf5-plugins
-      - dnf config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-multimedia.repo
-      - curl -o /etc/yum.repos.d/zodium-kmods.repo https://zodium-project.github.io/repo/zodium-kmods.repo
-      - curl -o /etc/yum.repos.d/zodium-pkgs.repo https://zodium-project.github.io/repo/zodium-pkgs.repo
-      - dnf config-manager setopt fedora-multimedia.enabled=1
-      - dnf config-manager setopt zodium-kmods.enabled=1
-      - dnf config-manager setopt zodium-pkgs.enabled=1
-      - dnf config-manager setopt fedora-multimedia.priority=90
-      - dnf config-manager setopt zodium-kmods.priority=90
-      - dnf config-manager setopt zodium-pkgs.priority=90
-      - dnf upgrade --refresh --setopt=install_weak_deps=False -y
+      - |
+        dnf install -y --setopt=install_weak_deps=False dnf5-plugins
+        dnf config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-multimedia.repo
+        curl -o /etc/yum.repos.d/zodium-kmods.repo https://zodium-project.github.io/repo/zodium-kmods.repo
+        curl -o /etc/yum.repos.d/zodium-pkgs.repo https://zodium-project.github.io/repo/zodium-pkgs.repo
+        dnf config-manager setopt fedora-multimedia.enabled=1
+        dnf config-manager setopt zodium-kmods.enabled=1
+        dnf config-manager setopt zodium-pkgs.enabled=1
+        dnf config-manager setopt fedora-multimedia.priority=90
+        dnf config-manager setopt zodium-kmods.priority=90
+        dnf config-manager setopt zodium-pkgs.priority=90
+        dnf upgrade --refresh --setopt=install_weak_deps=False -y
 
  - type: files
    files:
-     - source: mok-file
-       destination: /
+      - source: mok-file
+        destination: /

@@ -2,44 +2,42 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
 
 modules:
- - type: kargs
-   kargs:
+  - type: kargs
+    kargs:
       - split_lock_detect=off
       - split_lock_mitigate=0
 
- - type: files
-   files:
-     - source: zodium-settings
-       destination: /
+  - type: files
+    files:
+      - source: zodium-settings
+        destination: /
 
- - type: script
-   snippets:
-      - "dnf swap fedora-logos fedora-logos --repo=zodium-pkgs -y"
-      - "dnf install zodium-settings -y"
-      - "sed -i 's|^SHELL=.*|SHELL=/usr/bin/zsh|' /etc/default/useradd"
-      - "rm -rf /usr/share/plymouth/themes/charge"
-      - "rm -rf /usr/share/plymouth/themes/details"
-      - "rm -rf /usr/share/plymouth/themes/spinner"
-      - "rm -rf /usr/share/plymouth/themes/text"
-      - "rm -rf /usr/share/plymouth/themes/tribar"
+  - type: script
+    snippets:
+      - |
+        dnf swap fedora-logos fedora-logos --repo=zodium-pkgs -y
+        dnf install zodium-settings -y
+        sed -i 's|^SHELL=.*|SHELL=/usr/bin/zsh|' /etc/default/useradd
+        rm -rf /usr/share/plymouth/themes/charge
+        rm -rf /usr/share/plymouth/themes/details
+        rm -rf /usr/share/plymouth/themes/spinner
+        rm -rf /usr/share/plymouth/themes/text
+        rm -rf /usr/share/plymouth/themes/tribar
 
- - type: script
-   scripts:
-      - configure/useradd-setup.sh
-      - configure/plymouth-cleanup.sh
+  - type: script
+    snippets:
+      - |
+        systemctl mask systemd-remount-fs.service
+        systemctl disable bootc-fetch-apply-updates.timer
+        systemctl mask bootc-fetch-apply-updates.timer
+        systemctl disable flatpak-add-fedora-repos.service
+        systemctl mask flatpak-add-fedora-repos.service
 
- - type: script
-   snippets:
-      - "systemctl mask systemd-remount-fs.service"
-      - "systemctl disable bootc-fetch-apply-updates.timer"
-      - "systemctl mask bootc-fetch-apply-updates.timer"
-      - "systemctl disable flatpak-add-fedora-repos.service"
-      - "systemctl mask flatpak-add-fedora-repos.service"
-
- - type: script
-   snippets:
-      - "systemctl enable systemd-timesyncd.service"
-      - "systemctl enable zodium-hostname.service"
-      - "systemctl enable zodium-groups.service"
-      - "systemctl enable zodium-rfkill.service"
-      - "plymouth-set-default-theme zomac"
+  - type: script
+    snippets:
+      - |
+        systemctl enable systemd-timesyncd.service
+        systemctl enable zodium-hostname.service
+        systemctl enable zodium-groups.service
+        systemctl enable zodium-rfkill.service
+        plymouth-set-default-theme zomac

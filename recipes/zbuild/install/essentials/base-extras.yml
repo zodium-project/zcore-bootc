@@ -4,34 +4,35 @@
 modules:
   - type: dnf
     install:
-       install-weak-deps: false
-       packages:
-         #=> git & git-extras
-         - git
-         - git-lfs
-         - git-annex
-         - git-delta
-         #=> Zsh Shell
-         - zsh
-         - zsh-autosuggestions
-         - zsh-syntax-highlighting
-         #=> Plymouth
-         - plymouth
-         - plymouth-plugin-two-step
-         #=> podman (containers)
-         - crun
-         - podman
-         - podman-compose
-         #=> android (containers)
-         - waydroid
-         #=> docker-ce (containers)
-         - docker-ce
-         - docker-ce-cli
-         - containerd.io
-         - docker-buildx-plugin
-         - docker-compose-plugin
+      install-weak-deps: false
+      packages:
+        #=> git & git-extras
+        - git
+        - git-lfs
+        - git-annex
+        - git-delta
+        #=> Zsh Shell
+        - zsh
+        - zsh-autosuggestions
+        - zsh-syntax-highlighting
+        #=> Plymouth
+        - plymouth
+        - plymouth-plugin-two-step
+        #=> podman (containers)
+        - crun
+        - podman
+        - podman-compose
+        #=> android (containers)
+        - waydroid
+        #=> docker-ce (containers)
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
 
   - type: script
     snippets:
-         - systemctl enable docker.service
-         - systemctl enable containerd.service
+      - |
+        systemctl enable docker.service
+        systemctl enable containerd.service
