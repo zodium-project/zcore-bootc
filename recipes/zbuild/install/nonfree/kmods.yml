@@ -4,28 +4,30 @@
 modules:
 
  - type: dnf
+   env:
+     KERNEL_VERSION: "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
    install:
      install-weak-deps: false
      packages:
     # => boardcom-wl
       - broadcom-wl
-      - kmod-wl-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-wl-"${KERNEL_VERSION}"
     # => sc0710 (capture-card)
       - sc0710
-      - kmod-sc0710-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-sc0710-"${KERNEL_VERSION}"
     # => xone
       - xone-kmod-common
-      - kmod-xone-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-xone-"${KERNEL_VERSION}"
     # => xpadneo
       - xpadneo-kmod-common
-      - kmod-xpadneo-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-xpadneo-"${KERNEL_VERSION}"
     # => displaylink
       - libevdi
       - displaylink
-      - kmod-evdi-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-evdi-"${KERNEL_VERSION}"
     # => openrazer
       - openrazer-kmod-common
-      - kmod-openrazer-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-openrazer-"${KERNEL_VERSION}"
     # => openZFS
       - zfs
       - libzfs7
@@ -34,24 +36,26 @@ modules:
       - zfs-dracut
       - libnvpair3
       - python3-pyzfs
-      - kmod-zfs-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-zfs-"${KERNEL_VERSION}"
     # => v4l2loopback
       - v4l2loopback
       - v4l2loopback-akmod-modules
-      - kmod-v4l2loopback-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-v4l2loopback-"${KERNEL_VERSION}"
     # => new-lg4ff (wheels)
       - new-lg4ff
       - new-lg4ff-akmod-modules
-      - kmod-new-lg4ff-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-new-lg4ff-"${KERNEL_VERSION}"
     # => hid-fanatecff (wheels)
       - hid-fanatecff
       - hid-fanatecff-akmod-modules
-      - kmod-hid-fanatecff-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-hid-fanatecff-"${KERNEL_VERSION}"
     # => hid-tmff2 (wheels)
       - hid-tmff2
       - hid-tmff2-akmod-modules
-      - kmod-hid-tmff2-"$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - kmod-hid-tmff2-"${KERNEL_VERSION}"
 
  - type: script
+   env:
+     KERNEL_VERSION: "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
    snippets:
-      - depmod -a "$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | tail -1)"
+      - depmod -a "${KERNEL_VERSION}"
