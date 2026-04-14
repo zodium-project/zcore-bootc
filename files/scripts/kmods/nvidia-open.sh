@@ -50,11 +50,6 @@ dnf install -y --setopt=install_weak_deps=False \
                kmod-nvidia-"${KERNEL_VERSION}"
 ok "nvidia kmod RPMs installed"
 
-# ── Refresh module dependencies ───────────────────────────────
-info "Refreshing module dependencies..."
-depmod -a "${KERNEL_VERSION}"
-ok "depmod complete"
-
 # ── Install NVIDIA userspace & container toolkit ──────────────
 info "Installing NVIDIA userspace driver and container toolkit..."
 

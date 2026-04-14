@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # ================================================================
-#  openzfs — install pre-built kmod RPMs from kmods-zodium
+#  OpenRazer — Razer hardware support for zcore
 #  Zodium Project : github.com/zodium-project
 # ================================================================
-
 set -Eeuo pipefail
 
 # ── Styling ───────────────────────────────────────────────────
@@ -19,8 +18,7 @@ fail() { say "${RED}⦻${NC}  $*" >&2; exit 1; }
 # ── Header ────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◈  OpenZFS Installer  ◈              ║${NC}"
-say "${MAGENTA}${BOLD}║   pre-built kmods from kmods-zodium      ║${NC}"
+say "${MAGENTA}${BOLD}║   ◈  Kmod Tree/Map Refresh  ◈          ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""
 
@@ -29,18 +27,10 @@ KERNEL_VERSION="$(rpm -q kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' | 
 [[ -n "${KERNEL_VERSION}" ]] || fail "Could not detect kernel version"
 info "Kernel: ${KERNEL_VERSION}"
 
-# ── Install RPMs ──────────────────────────────────────────────
-info "Installing RPMs via dnf..."
-dnf install -y --setopt=install_weak_deps=False \
-                 kmod-zfs-"${KERNEL_VERSION}"   \
-                 libnvpair3                     \
-                 libuutil3                      \
-                 python3-pyzfs                  \
-                 zfs                            \
-                 libzfs7                        \
-                 libzpool7                      \
-                 zfs-dracut
-ok "RPMs installed"
+# ── Refresh module dependencies ───────────────────────────────
+info "Refreshing module dependencies..."
+depmod -a "${KERNEL_VERSION}"
+ok "depmod complete"
 
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
@@ -50,6 +40,6 @@ ok "Cleanup complete"
 # ── Done ──────────────────────────────────────────────────────
 say ""
 say "${MAGENTA}${BOLD}╔══════════════════════════════════════════╗${NC}"
-say "${MAGENTA}${BOLD}║   ◆  OpenZFS Install Complete           ║${NC}"
+say "${MAGENTA}${BOLD}║   ◆  Kmod Map Refresh  Complete         ║${NC}"
 say "${MAGENTA}${BOLD}╚══════════════════════════════════════════╝${NC}"
 say ""

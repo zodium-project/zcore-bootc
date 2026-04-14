@@ -43,11 +43,6 @@ dnf install -y --setopt=install_weak_deps=False        \
                  hid-tmff2-akmod-modules
 ok "RPMs installed"
 
-# ── Refresh module dependencies ───────────────────────────────
-info "Refreshing module dependencies..."
-depmod -a "${KERNEL_VERSION}"
-ok "depmod complete"
-
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
 dnf clean all

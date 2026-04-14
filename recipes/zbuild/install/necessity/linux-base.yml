@@ -27,6 +27,7 @@ modules:
       - kmods/displaylink.sh
       - kmods/openzfs.sh
       - kmods/wheels.sh
+      - kmods/kmod-map.sh
       - kmods/broadcom-wl.sh
       - pkgs/multimedia.sh
       - pkgs/mesa-nonfree.sh

@@ -35,11 +35,6 @@ dnf install -y --setopt=install_weak_deps=False \
                  openrazer-kmod-common
 ok "RPMs installed"
 
-# ── Refresh module dependencies ───────────────────────────────
-info "Refreshing module dependencies..."
-depmod -a "${KERNEL_VERSION}"
-ok "depmod complete"
-
 # ── Ensure plugdev group exists ───────────────────────────────
 info "Ensuring plugdev group exists..."
 if ! getent group plugdev > /dev/null; then

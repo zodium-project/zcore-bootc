@@ -35,11 +35,6 @@ dnf install -y --setopt=install_weak_deps=False \
                kmod-sc0710-"${KERNEL_VERSION}"
 ok "RPMs installed"
 
-# ── Refresh module dependencies ───────────────────────────────
-info "Refreshing module dependencies..."
-depmod -a "${KERNEL_VERSION}"
-ok "depmod complete"
-
 # ── DNF Cleanup ───────────────────────────────────────────────
 info "Running DNF cleanup..."
 dnf clean all
