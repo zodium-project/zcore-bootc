@@ -35,6 +35,7 @@ modules:
         - nvidia-settings
         # => container toolkit
         - nvidia-container-toolkit
+        - nvidia-container-services
         - nvidia-container-toolkit-selinux
 
   - type: kargs
