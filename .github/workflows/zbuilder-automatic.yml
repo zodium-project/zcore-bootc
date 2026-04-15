@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   bluebuild:
-    name: zbuild (${{ matrix.recipe }})
+    name: Building-Image (${{ matrix.recipe }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,21 +28,7 @@ jobs:
           - zcore-nvidia.yml
 
     steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-
-      - name: Extract Akmods module signing key
-        shell: bash
-        env:
-           ZODIUM_MOK_KEY: ${{ secrets.ZODIUM_MOK_KEY }}
-        run: |
-         mkdir -p /tmp/certs
-         chmod 700 /tmp/certs
-         echo "${ZODIUM_MOK_KEY}" > /tmp/certs/akmod-signing-private-key.pem
-         chmod 600 /tmp/certs/akmod-signing-private-key.pem
-
-      - name: Build Zodium Image
+      - name: BlueBuild-Image Builder
         uses: blue-build/github-action@v1.11
         with:
           recipe: ${{ matrix.recipe }}
