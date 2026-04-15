@@ -17,6 +17,7 @@ modules:
       - libjxl
       - libheif
       - libwebp
+      - libavif
       # => Gstreamer Plugins
       - gstreamer1-plugins-bad
       - gstreamer1-plugin-libav
