@@ -20,23 +20,23 @@ modules:
 #### => Pre-install-setup script.
   - from-file: zbuild/configure/pre-requisite.yml
 #### => Core Packages / Tweaks to install.
-  - from-file: zbuild/install/core/linux-base.yml
+  - from-file: zbuild/install/core/base.yml
   - from-file: zbuild/install/core/udevs.yml
-  - from-file: zbuild/install/core/hardware.yml
   - from-file: zbuild/install/core/audio.yml
-  - from-file: zbuild/install/core/connectivity.yml
   - from-file: zbuild/install/core/camera.yml
+  - from-file: zbuild/install/core/hardware.yml
   - from-file: zbuild/install/core/printers.yml
+  - from-file: zbuild/install/core/connectivity.yml
 #### => Nonfree Packages / Tweaks to install.
   - from-file: zbuild/install/nonfree/mesa.yml
   - from-file: zbuild/install/nonfree/kmods.yml
   - from-file: zbuild/install/nonfree/codecs.yml
   - from-file: zbuild/install/nonfree/nvidia-open.yml
 #### => Extra Packages / Tweaks to install.
-  - from-file: zbuild/install/extras/base-extras.yml
-  - from-file: zbuild/install/extras/zcore-cli.yml
   - from-file: zbuild/install/extras/fonts.yml
   - from-file: zbuild/install/extras/homebrew.yml
+  - from-file: zbuild/install/extras/dev-tools.yml
+  - from-file: zbuild/install/extras/zcore-cli.yml
   - from-file: zbuild/install/extras/debug-utilities.yml
 ### => Removal Modules/Scripts
   - from-file: zbuild/uninstall/image-pkgs.yml
