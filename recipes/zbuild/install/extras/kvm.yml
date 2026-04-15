@@ -9,10 +9,16 @@ modules:
       # => Kvm-requirements
       - swtpm
       - edk2-ovmf
+      - libguestfs
       - swtpm-tools
+      - guestfs-tools
       # => Qemu-kvm
       - qemu-kvm
       - qemu-img
+      - spice-server
+      - qemu-char-spice
+      - qemu-audio-spice
+      - qemu-device-display-qxl
       - qemu-device-display-virtio-gpu
       - qemu-device-display-virtio-gpu-gl
       - qemu-device-display-virtio-vga-gl
@@ -22,8 +28,10 @@ modules:
       - libvirt-daemon-driver-qemu
       - libvirt-daemon-config-network
       - libvirt-daemon-driver-nodedev
+      - libvirt-daemon-config-nwfilter
       # => virt-extras
       - virtiofsd
       - virtio-win
       - virt-viewer
       - virt-install
+      - virt-manager
