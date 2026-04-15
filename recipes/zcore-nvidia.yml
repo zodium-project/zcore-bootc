@@ -2,22 +2,15 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
 
-####################
-#### Image Info ####
-####################
 name: zcore-nvidia
 description: zcore image for NVIDIA GPUs
 base-image: quay.io/fedora/fedora-bootc
 image-version: latest
 platforms:
   - linux/amd64
-#################
-#### MODULES ####
-#################
+
 modules:
 ## Import Modules/Scripts ##
-### => Installation Modules/Scripts
-#### => Pre-install-setup script.
   - from-file: zbuild/configure/pre-requisite.yml
 #### => Core Packages / Tweaks to install.
   - from-file: zbuild/install/core/base.yml
@@ -44,18 +37,4 @@ modules:
 ### => Post Install Configuration
   - from-file: zbuild/configure/zcore-settings.yml
   - from-file: zbuild/configure/post-requisite.yml
-#############################
-### End of System Modules ###
-#############################
-## OS-release Module ##
-  - type: os-release
-    properties:
-      NAME: zcore linux
-      PRETTY_NAME: Zcore Linux
-## initramfs module ##
-  - type: initramfs
-## Signing Module ##
-  - type: signing
-###################
-### END of File ###
-###################
+  - from-file: zbuild/configure/os-release.yml
