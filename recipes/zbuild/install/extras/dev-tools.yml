@@ -11,13 +11,6 @@ modules:
         - git-lfs
         - git-annex
         - git-delta
-        #=> Zsh Shell
-        - zsh
-        - zsh-autosuggestions
-        - zsh-syntax-highlighting
-        #=> Plymouth
-        - plymouth
-        - plymouth-plugin-two-step
         #=> podman (containers)
         - crun
         - podman

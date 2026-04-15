@@ -27,3 +27,10 @@ modules:
       - fuse
       - fuse-libs
       - freerdp
+    #=> Zsh Shell
+      - zsh
+      - zsh-autosuggestions
+      - zsh-syntax-highlighting
+    #=> Plymouth
+      - plymouth
+      - plymouth-plugin-two-step
