@@ -9,6 +9,7 @@ modules:
      # => gnu tools replacement
        - bat
        - eza
+       - fzf
        - btop
        - zoxide
        - fd-find
