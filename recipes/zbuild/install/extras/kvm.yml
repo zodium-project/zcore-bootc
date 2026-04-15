@@ -8,6 +8,8 @@ modules:
      packages:
       # => Kvm-requirements
       - swtpm
+      - usbredir
+      - driverctl
       - edk2-ovmf
       - libguestfs
       - swtpm-tools
@@ -15,20 +17,36 @@ modules:
       # => Qemu-kvm
       - qemu-kvm
       - qemu-img
+      - qemu-ui-sdl
+      - qemu-ui-gtk
       - spice-server
+      - qemu-ui-opengl
       - qemu-char-spice
+      - qemu-audio-alsa
       - qemu-audio-spice
+      - qemu-ui-spice-app
+      - qemu-ui-spice-core
+      - qemu-audio-pipewire
+      - qemu-device-usb-host
       - qemu-device-display-qxl
+      - qemu-device-usb-redirect
       - qemu-device-display-virtio-gpu
+      - qemu-device-display-virtio-vga
       - qemu-device-display-virtio-gpu-gl
       - qemu-device-display-virtio-vga-gl
+      - qemu-device-display-virtio-gpu-pci
+      - qemu-device-display-virtio-gpu-pci-gl
       # => libvirt
       - libvirt
+      - libvirt-nss
+      - libvirt-client
+      - python3-libvirt
       - libvirt-daemon-kvm
       - libvirt-daemon-driver-qemu
       - libvirt-daemon-config-network
       - libvirt-daemon-driver-nodedev
       - libvirt-daemon-config-nwfilter
+      - libvirt-daemon-driver-storage-core
       # => virt-extras
       - virtiofsd
       - virtio-win
