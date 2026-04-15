@@ -21,6 +21,7 @@ modules:
   - from-file: zbuild/configure/pre-requisite.yml
 #### => Core Packages / Tweaks to install.
   - from-file: zbuild/install/necessity/linux-base.yml
+  - from-file: zbuild/install/necessity/udevs.yml
   - from-file: zbuild/install/necessity/hardware.yml
   - from-file: zbuild/install/necessity/audio.yml
   - from-file: zbuild/install/necessity/connectivity.yml
@@ -32,6 +33,7 @@ modules:
   - from-file: zbuild/install/nonfree/codecs.yml
 #### => Extra Packages / Tweaks to install.
   - from-file: zbuild/install/essentials/base-extras.yml
+  - from-file: zbuild/install/essentials/zcore-cli.yml
   - from-file: zbuild/install/essentials/fonts.yml
   - from-file: zbuild/install/essentials/homebrew.yml
   - from-file: zbuild/install/essentials/debug-utilities.yml
