@@ -15,6 +15,16 @@ modules:
         dnf config-manager setopt fedora-multimedia.priority=90
         dnf config-manager setopt zodium-kmods.priority=90
         dnf config-manager setopt zodium-pkgs.priority=90
+        dnf remove -y fedora-repos-archive
+        dnf config-manager setopt updates-testing.enabled=0
+        dnf config-manager setopt updates-archive.enabled=0
+        dnf config-manager setopt cisco-openh264.enabled=0
+        rm -f /etc/yum.repos.d/fedora-updates-testing.repo
+        rm -f /etc/yum.repos.d/fedora-updates-archive.repo
+        rm -f /etc/yum.repos.d/fedora-cisco-openh264.repo
+        dnf autoremove -y
+        dnf clean packages
+        dnf clean all
         dnf upgrade --refresh --setopt=install_weak_deps=False -y
 
  - type: files
