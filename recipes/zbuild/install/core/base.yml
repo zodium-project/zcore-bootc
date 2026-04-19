@@ -6,6 +6,11 @@ modules:
    install:
      install-weak-deps: false
      packages:
+    # => Alsa Core
+      - alsa-ucm
+      - alsa-sof-firmware
+      - alsa-firmware
+      - alsa-tools-firmware
     # => Kernel Modules
       - linux-firmware
       - kernel-tools-libs
