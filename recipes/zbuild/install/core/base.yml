@@ -11,6 +11,16 @@ modules:
       - alsa-sof-firmware
       - alsa-firmware
       - alsa-tools-firmware
+    # => LibCamera
+      - libcamera
+      - libcamera-ipa
+      - libcamera-gstreamer
+      - libcamera-v4l2
+      - pipewire-plugin-libcamera
+    # => V4l & libGP
+      - gphoto2
+      - libgphoto2
+      - pipewire-v4l2
     # => Kernel Modules
       - linux-firmware
       - kernel-tools-libs
