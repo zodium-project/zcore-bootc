@@ -26,7 +26,6 @@ modules:
 #### => Extra Packages / Tweaks to install.
   - from-file: zbuild/install/extras/fonts.yml
   - from-file: zbuild/install/extras/devtools.yml
-  - from-file: zbuild/install/extras/homebrew.yml
   - from-file: zbuild/install/extras/debug-utils.yml
 ### => Removal Modules/Scripts
   - from-file: zbuild/uninstall/image-pkgs.yml
