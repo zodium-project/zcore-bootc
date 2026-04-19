@@ -14,7 +14,6 @@ modules:
   - from-file: zbuild/configure/pre-requisite.yml
 #### => Core Packages / Tweaks to install.
   - from-file: zbuild/install/core/base.yml
-  - from-file: zbuild/install/core/udevs.yml
   - from-file: zbuild/install/core/hardware.yml
   - from-file: zbuild/install/core/printers.yml
   - from-file: zbuild/install/core/connectivity.yml
