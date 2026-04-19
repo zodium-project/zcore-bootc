@@ -6,23 +6,41 @@ modules:
     install:
       install-weak-deps: false
       packages:
-        #=> git & git-extras
-        - git
-        - git-lfs
-        - git-annex
-        - git-delta
-        #=> podman (containers)
-        - crun
-        - podman
-        - podman-compose
-        #=> android (containers)
-        - waydroid
-        #=> docker-ce (containers)
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
-        - docker-buildx-plugin
-        - docker-compose-plugin
+      # => gnu tools replacement
+       - bat
+       - eza
+       - fzf
+       - btop
+       - zoxide
+       - fd-find
+       - ripgrep
+       - starship
+       - trash-cli
+      # => text-editors
+       - code
+       - neovim
+      # => zutils
+       - zrun
+       - zgpu
+       - zync
+       - zfetch
+      #=> git & git-extras
+       - git
+       - git-lfs
+       - git-annex
+       - git-delta
+      #=> podman (containers)
+       - crun
+       - podman
+       - podman-compose
+      #=> android (containers)
+       - waydroid
+      #=> docker-ce (containers)
+       - docker-ce
+       - docker-ce-cli
+       - containerd.io
+       - docker-buildx-plugin
+       - docker-compose-plugin
 
   - type: script
     snippets:
