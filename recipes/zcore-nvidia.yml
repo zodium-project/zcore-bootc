@@ -11,27 +11,6 @@ platforms:
 
 modules:
 ## Import Modules/Scripts ##
-  - from-file: zbuild/configure/pre-requisite.yml
-#### => Core Packages / Tweaks to install.
-  - from-file: zbuild/install/core/base.yml
-  - from-file: zbuild/install/core/hardware.yml
-  - from-file: zbuild/install/core/printers.yml
-  - from-file: zbuild/install/core/connectivity.yml
-#### => Nonfree Packages / Tweaks to install.
-  - from-file: zbuild/install/nonfree/mesa.yml
-  - from-file: zbuild/install/nonfree/kmods.yml
-  - from-file: zbuild/install/nonfree/codecs.yml
+  - from-file: zbuild/builder.yml
   - from-file: zbuild/install/nonfree/nvidia-open.yml
-#### => Extra Packages / Tweaks to install.
-  - from-file: zbuild/install/extras/fonts.yml
-  - from-file: zbuild/install/extras/devtools.yml
-  - from-file: zbuild/install/extras/homebrew.yml
-  - from-file: zbuild/install/extras/zcore-cli.yml
-  - from-file: zbuild/install/extras/debug-utilities.yml
-### => Removal Modules/Scripts
-  - from-file: zbuild/uninstall/image-pkgs.yml
-  - from-file: zbuild/uninstall/pulled-pkgs.yml
-### => Post Install Configuration
-  - from-file: zbuild/configure/zcore-settings.yml
-  - from-file: zbuild/configure/post-requisite.yml
   - from-file: zbuild/configure/os-release.yml
