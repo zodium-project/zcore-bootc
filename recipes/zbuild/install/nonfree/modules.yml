@@ -13,7 +13,6 @@ modules:
           kmod-xone-"${KERNEL_VERSION}" \
           kmod-xpadneo-"${KERNEL_VERSION}" \
           kmod-evdi-"${KERNEL_VERSION}" \
-          kmod-openrazer-"${KERNEL_VERSION}" \
           kmod-zfs-"${KERNEL_VERSION}" \
           kmod-v4l2loopback-"${KERNEL_VERSION}" \
           kmod-new-lg4ff-"${KERNEL_VERSION}" \
@@ -35,8 +34,9 @@ modules:
     # => displaylink
       - libevdi
       - displaylink
-    # => openrazer
-      - openrazer-kmod-common
+    # => openrazer (Removed temporarily)
+    # - openrazer-kmod-common
+    #   kmod-openrazer-"${KERNEL_VERSION}" \
     # => openZFS
       - zfs
       - libzfs7
