@@ -16,6 +16,17 @@ modules:
        - ripgrep
        - starship
        - trash-cli
+      # => Compilers & libraries
+       - gcc
+       - curl
+       - zstd
+       - gcc-c++
+       - musl-gcc
+       - musl-libc
+       - musl-devel
+       - glibc-devel
+       - musl-filesystem
+       - musl-libc-static
       # => text-editors
        - code
        - neovim
