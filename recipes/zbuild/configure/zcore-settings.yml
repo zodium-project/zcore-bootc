@@ -36,6 +36,8 @@ modules:
   - type: script
     snippets:
       - |
+        mkdir -p /nix
+        mkdir -p /var/nix
         systemctl enable nix.mount
         systemctl enable nix-daemon
         systemctl enable systemd-timesyncd.service
