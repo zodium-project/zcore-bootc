@@ -35,6 +35,10 @@ modules:
       - usb_modeswitch
     # => User Apps
       - flatpak
+    # => Nix
+      - nix
+      - nix-daemon
+    # => System stats
       - mangohud
     # => TPM2.0 Support
       - tpm2-tools

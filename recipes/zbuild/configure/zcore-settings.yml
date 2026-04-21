@@ -36,6 +36,8 @@ modules:
   - type: script
     snippets:
       - |
+        systemctl enable nix.mount
+        systemctl enable nix-daemon
         systemctl enable systemd-timesyncd.service
         systemctl enable zodium-hostname.service
         systemctl enable zodium-groups.service
