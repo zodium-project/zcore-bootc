@@ -18,7 +18,8 @@ modules:
           kmod-v4l2loopback-"${KERNEL_VERSION}" \
           kmod-new-lg4ff-"${KERNEL_VERSION}" \
           kmod-hid-fanatecff-"${KERNEL_VERSION}" \
-          kmod-hid-tmff2-"${KERNEL_VERSION}"
+          kmod-hid-tmff2-"${KERNEL_VERSION}" \
+          kernel-devel-matched-"${KERNEL_VERSION}"
 
  - type: dnf
    install:

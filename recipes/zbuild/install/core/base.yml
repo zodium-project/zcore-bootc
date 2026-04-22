@@ -38,6 +38,11 @@ modules:
     # => Nix
       - nix
       - nix-daemon
+      - busybox
+      - glibc
+      - sqlite
+      - patch
+      - make
     # => System stats
       - mangohud
     # => TPM2.0 Support
