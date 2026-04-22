@@ -23,8 +23,3 @@ modules:
         dnf clean packages
         dnf clean all
         dnf upgrade --refresh --setopt=install_weak_deps=False -y
-
- - type: files
-   files:
-      - source: mok-file
-        destination: /
