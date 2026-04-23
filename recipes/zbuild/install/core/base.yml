@@ -28,6 +28,7 @@ modules:
     # => Init & Defaults
       - systemd-oomd-defaults
       - uresourced
+      - inotify-tools
       - dbus-daemon
       - unbound-anchor
       - zram-generator
