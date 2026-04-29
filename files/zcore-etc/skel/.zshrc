@@ -5,8 +5,8 @@
 
 # ── History ───────────────────────────────────────────────────
 HISTFILE=~/.zsh_history
-HISTSIZE=1500
-SAVEHIST=1500
+HISTSIZE=3000
+SAVEHIST=3000
 
 # ── Keybindings ───────────────────────────────────────────────
 bindkey -e
