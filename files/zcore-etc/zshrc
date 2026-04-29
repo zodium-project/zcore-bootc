@@ -66,10 +66,11 @@ fi
 
 # ---- Zodium Aliases ----
 
-if command -v btop >/dev/null 2>&1 &&
-   [[ -z "$DISABLE_ZODIUM_ALIASES" ]]; then
+if [[ -z "$DISABLE_ZODIUM_ALIASES" ]]; then
   alias top='btop'
-  alias zync='topgrade'
+  alias vim='nvim'
+  alias dbox='distrobox'
+  alias upgrade='topgrade'
 fi
 
 # ---- Homebrew ----

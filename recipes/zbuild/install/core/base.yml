@@ -45,8 +45,9 @@ modules:
       - sqlite
       - patch
       - make
-    # => System stats
+    # => Gaming apps
       - mangohud
+      - gamemode
     # => TPM2.0 Support
       - tpm2-tools
     # => fuse (Appimage & winboat)

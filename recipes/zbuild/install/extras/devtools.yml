@@ -21,12 +21,6 @@ modules:
        - curl
        - zstd
        - gcc-c++
-       - musl-gcc
-       - musl-libc
-       - musl-devel
-       - glibc-devel
-       - musl-filesystem
-       - musl-libc-static
       # => text-editors
        - neovim
       # => common user utils
@@ -42,7 +36,6 @@ modules:
        - crun
        - podman
        - buildah
-       - podman-compose
       #=> LXC (VM-like containers)
        - lxc
        - lxc-libs
