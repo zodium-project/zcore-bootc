@@ -41,13 +41,13 @@ modules:
       #=> podman (containers)
        - crun
        - podman
+       - buildah
        - podman-compose
       #=> LXC (VM-like containers)
        - lxc
        - lxc-libs
        - lxc-templates
       #=> User Container Management tools
-       - toolbox
        - waydroid
        - distrobox
       #=> docker-ce (containers)

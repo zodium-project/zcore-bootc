@@ -8,6 +8,7 @@ modules:
         - firefox
         - firefox-langpacks
         - fdk-aac-free
+        - toolbox
         - glibc-minimal-langpack
         - gstreamer1-plugins-bad-free
         - gstreamer1-plugins-bad-free-extras
