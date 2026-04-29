@@ -27,6 +27,7 @@ modules:
       - kernel-modules-extra
     # => Init & Defaults
       - systemd-oomd-defaults
+      - shadow-utils
       - uresourced
       - inotify-tools
       - dbus-daemon

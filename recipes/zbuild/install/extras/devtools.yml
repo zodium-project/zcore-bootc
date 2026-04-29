@@ -32,7 +32,6 @@ modules:
        - neovim
       # => zutils
        - zrun
-       - zgpu
        - zync
        - zfetch
       #=> git & git-extras
@@ -44,8 +43,14 @@ modules:
        - crun
        - podman
        - podman-compose
-      #=> android (containers)
+      #=> LXC (VM-like containers)
+       - lxc
+       - lxc-libs
+       - lxc-templates
+      #=> User Container Management tools
+       - toolbox
        - waydroid
+       - distrobox
       #=> docker-ce (containers)
        - docker-ce
        - docker-ce-cli
@@ -58,3 +63,4 @@ modules:
       - |
         systemctl enable docker.service
         systemctl enable containerd.service
+        chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
