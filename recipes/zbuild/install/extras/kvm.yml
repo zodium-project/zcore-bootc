@@ -69,7 +69,6 @@ modules:
       - libvirt-daemon-driver-storage-core
       # => virt-extras
       - virtiofsd
-      - virtio-win
       - virt-viewer
       - virt-install
       - virt-manager
