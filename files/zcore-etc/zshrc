@@ -66,12 +66,10 @@ fi
 
 # ---- Zodium Aliases ----
 
-if command -v zoxide >/dev/null 2>&1 &&
+if command -v btop >/dev/null 2>&1 &&
    [[ -z "$DISABLE_ZODIUM_ALIASES" ]]; then
-  alias lns='ln -s'
   alias top='btop'
-  alias zjust='zrun'
-  alias prime-run='zgpu'
+  alias zync='topgrade'
 fi
 
 # ---- Homebrew ----
